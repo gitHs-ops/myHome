@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>김현수 | AI 디지털 비서</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:      #7C3AED;
+      --purple-light:#A78BFA;
+      --purple-dark: #4C1D95;
+      --accent:      #10B981;
+      --orange:      #F59E0B;
+      --bg:          #F5F3FF;
+      --text:        #1E293B;
+      --muted:       #64748B;
+      --border:      #E2E8F0;
+      --white:       #FFFFFF;
+      --radius:      14px;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .logo { font-size: 1.2rem; font-weight: 900; color: var(--purple); letter-spacing: -0.5px; }
+    .logo span { color: var(--accent); }
+    nav ul { list-style: none; display: flex; gap: 2rem; }
+    nav ul a { text-decoration: none; font-size: 0.9rem; font-weight: 500; color: var(--muted); transition: color 0.2s; }
+    nav ul a:hover { color: var(--purple); }
+    .nav-cta {
+      background: var(--purple); color: var(--white) !important;
+      padding: 0.45rem 1.1rem; border-radius: 8px; font-weight: 700 !important;
+    }
+    .nav-cta:hover { background: var(--purple-dark) !important; }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, var(--purple-dark) 0%, var(--purple) 55%, var(--purple-light) 100%);
+      color: var(--white);
+      padding: 100px 5% 80px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '🤖';
+      position: absolute; font-size: 300px; opacity: 0.05;
+      top: -20px; right: -20px; line-height: 1;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      padding: 0.3rem 1rem; font-size: 0.82rem; font-weight: 500;
+      margin-bottom: 1.5rem; letter-spacing: 0.5px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      font-weight: 900; line-height: 1.15;
+      margin-bottom: 1.2rem; letter-spacing: -1px;
+    }
+    .hero h1 em { font-style: normal; color: #C4B5FD; }
+    .hero p { font-size: 1.1rem; opacity: 0.88; max-width: 560px; margin: 0 auto 2.2rem; }
+    .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--white); color: var(--purple);
+      padding: 0.85rem 2rem; border-radius: 10px;
+      font-weight: 700; font-size: 1rem; text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+    .btn-outline {
+      border: 2px solid rgba(255,255,255,0.6); color: var(--white);
+      padding: 0.85rem 2rem; border-radius: 10px;
+      font-weight: 600; font-size: 1rem; text-decoration: none;
+      transition: background 0.15s;
+    }
+    .btn-outline:hover { background: rgba(255,255,255,0.12); }
+
+    .hero-stats { display: flex; justify-content: center; gap: 3rem; margin-top: 3.5rem; flex-wrap: wrap; }
+    .hero-stat .num { font-size: 2rem; font-weight: 900; display: block; }
+    .hero-stat .label { font-size: 0.82rem; opacity: 0.7; }
+
+    /* SECTION COMMON */
+    section { padding: 80px 5%; }
+    .section-tag {
+      display: inline-block; background: #EDE9FE; color: var(--purple);
+      font-size: 0.78rem; font-weight: 700;
+      padding: 0.25rem 0.8rem; border-radius: 999px;
+      margin-bottom: 0.8rem; letter-spacing: 0.5px;
+    }
+    .section-title { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 900; line-height: 1.25; margin-bottom: 0.6rem; letter-spacing: -0.5px; }
+    .section-sub { color: var(--muted); font-size: 1rem; max-width: 520px; margin-bottom: 3rem; }
+
+    /* SERVICES */
+    .services { background: var(--bg); }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+    .card {
+      background: var(--white); border-radius: var(--radius);
+      padding: 2rem 1.6rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid var(--border);
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+    .card-icon { font-size: 2.2rem; margin-bottom: 1rem; display: block; }
+    .card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .card p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+    .card-tag {
+      display: inline-block; font-size: 0.72rem; font-weight: 700;
+      padding: 0.2rem 0.6rem; border-radius: 999px; margin-bottom: 0.8rem;
+    }
+    .tag-ai { background: #EDE9FE; color: var(--purple); }
+    .tag-web { background: #D1FAE5; color: #065F46; }
+    .tag-data { background: #FEF3C7; color: #92400E; }
+    .tag-auto { background: #DBEAFE; color: #1E40AF; }
+
+    /* PORTFOLIO */
+    .portfolio { background: var(--white); }
+    .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .portfolio-card {
+      border-radius: var(--radius); overflow: hidden;
+      border: 1px solid var(--border);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .portfolio-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+    .portfolio-thumb {
+      height: 160px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4rem;
+    }
+    .thumb-tennis { background: linear-gradient(135deg, #1E3A8A, #3B82F6); }
+    .thumb-skill  { background: linear-gradient(135deg, #4C1D95, #7C3AED); }
+    .thumb-sheet  { background: linear-gradient(135deg, #065F46, #10B981); }
+    .portfolio-info { padding: 1.2rem 1.4rem; }
+    .portfolio-info h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .portfolio-info p { font-size: 0.85rem; color: var(--muted); margin-bottom: 0.8rem; }
+    .portfolio-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .ptag {
+      font-size: 0.72rem; font-weight: 600;
+      padding: 0.2rem 0.6rem; border-radius: 999px;
+      background: var(--bg); color: var(--purple);
+    }
+    .portfolio-link {
+      display: inline-block; margin-top: 0.8rem;
+      font-size: 0.82rem; font-weight: 700; color: var(--purple);
+      text-decoration: none;
+    }
+    .portfolio-link:hover { text-decoration: underline; }
+
+    /* ABOUT */
+    .about { background: var(--bg); }
+    .about-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .about-visual {
+      background: linear-gradient(135deg, var(--purple-dark), var(--purple));
+      border-radius: 20px; aspect-ratio: 4/3;
+      display: flex; align-items: center; justify-content: center; font-size: 7rem;
+    }
+    .about-text .section-sub { margin-bottom: 2rem; }
+    .strengths { display: flex; flex-direction: column; gap: 1rem; }
+    .strength { display: flex; align-items: flex-start; gap: 1rem; background: var(--white); border-radius: 10px; padding: 1rem 1.2rem; border: 1px solid var(--border); }
+    .strength-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .strength-text strong { display: block; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.2rem; }
+    .strength-text span { font-size: 0.84rem; color: var(--muted); }
+
+    /* PROCESS */
+    .process { background: var(--white); }
+    .process-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0; position: relative; }
+    .process-step {
+      text-align: center; padding: 2rem 1.5rem;
+      position: relative;
+    }
+    .process-step:not(:last-child)::after {
+      content: '→';
+      position: absolute; right: -10px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.5rem; color: var(--purple-light);
+    }
+    .step-num {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--purple-dark), var(--purple));
+      color: var(--white); font-weight: 900; font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem;
+    }
+    .process-step h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .process-step p { font-size: 0.82rem; color: var(--muted); }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, var(--purple-dark), var(--purple));
+      color: var(--white); text-align: center;
+    }
+    .cta-section .section-title { color: var(--white); }
+    .cta-section .section-sub { color: rgba(255,255,255,0.75); max-width: 480px; margin: 0 auto 2.5rem; }
+    .contact-cards { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+    .contact-card {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px; padding: 1.2rem 2rem; min-width: 180px;
+    }
+    .contact-card .cc-icon { font-size: 1.6rem; margin-bottom: 0.4rem; }
+    .contact-card .cc-label { font-size: 0.78rem; opacity: 0.7; margin-bottom: 0.2rem; }
+    .contact-card .cc-value { font-size: 1rem; font-weight: 700; }
+    .btn-accent {
+      background: var(--accent); color: var(--white);
+      padding: 0.9rem 2.2rem; border-radius: 10px;
+      font-weight: 700; font-size: 1rem; text-decoration: none;
+      display: inline-block; transition: transform 0.15s, opacity 0.15s;
+    }
+    .btn-accent:hover { transform: translateY(-2px); opacity: 0.9; }
+
+    /* FOOTER */
+    footer { background: #0F172A; color: #94A3B8; text-align: center; padding: 2rem 5%; font-size: 0.85rem; }
+    footer strong { color: var(--white); }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav ul { display: none; }
+      .about-inner { grid-template-columns: 1fr; gap: 2rem; }
+      .about-visual { aspect-ratio: 16/7; font-size: 4rem; }
+      .hero-stats { gap: 1.5rem; }
+      .process-step:not(:last-child)::after { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">🤖 김현수<span>.AI</span></div>
+  <ul>
+    <li><a href="#services">서비스</a></li>
+    <li><a href="#portfolio">포트폴리오</a></li>
+    <li><a href="#about">소개</a></li>
+    <li><a href="#contact" class="nav-cta">문의하기</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">✨ Claude AI 기반 디지털 전환 전문가</div>
+  <h1>당신의 업무를<br /><em>AI로 자동화</em>합니다</h1>
+  <p>홈페이지 제작부터 예약 시스템, 이메일 자동화까지 — Claude AI를 활용해 빠르고 실용적인 디지털 솔루션을 제공합니다.</p>
+  <div class="hero-buttons">
+    <a href="#portfolio" class="btn-primary">포트폴리오 보기</a>
+    <a href="#contact" class="btn-outline">무료 상담 신청</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><span class="num">당일</span><span class="label">결과물 납품</span></div>
+    <div class="hero-stat"><span class="num">100%</span><span class="label">실제 작동 보장</span></div>
+    <div class="hero-stat"><span class="num">AI</span><span class="label">Claude 기반</span></div>
+    <div class="hero-stat"><span class="num">무료</span><span class="label">초기 상담</span></div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <span class="section-tag">SERVICES</span>
+  <h2 class="section-title">제공 서비스</h2>
+  <p class="section-sub">AI를 활용해 중소사업자와 개인의 디지털 업무를 빠르고 효율적으로 해결합니다.</p>
+  <div class="cards">
+    <div class="card">
+      <span class="card-tag tag-web">웹사이트</span>
+      <span class="card-icon">🌐</span>
+      <h3>비즈니스 홈페이지 제작</h3>
+      <p>업종에 맞는 소개 페이지를 당일 제작. HTML 단일 파일로 GitHub Pages에 무료 배포까지 완료.</p>
+    </div>
+    <div class="card">
+      <span class="card-tag tag-auto">자동화</span>
+      <span class="card-icon">📅</span>
+      <h3>예약 시스템 구축</h3>
+      <p>구글 시트 + Apps Script로 예약 접수, 데이터 저장, 이메일 자동 발송까지 한 번에 구현.</p>
+    </div>
+    <div class="card">
+      <span class="card-tag tag-ai">AI 활용</span>
+      <span class="card-icon">🤖</span>
+      <h3>Claude AI 업무 자동화</h3>
+      <p>반복 업무를 Claude AI로 자동화. 문서 작성, 데이터 정리, 이메일 초안 등 업무 효율을 극대화.</p>
+    </div>
+    <div class="card">
+      <span class="card-tag tag-data">데이터</span>
+      <span class="card-icon">📊</span>
+      <h3>구글 시트 연동 시스템</h3>
+      <p>웹폼 → 구글 시트 자동 저장 시스템 구축. 별도 서버 없이 무료로 데이터 관리 가능.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="portfolio" id="portfolio">
+  <span class="section-tag">PORTFOLIO</span>
+  <h2 class="section-title">최근 작업 사례</h2>
+  <p class="section-sub">실제로 배포되어 운영 중인 프로젝트들입니다.</p>
+  <div class="portfolio-grid">
+    <div class="portfolio-card">
+      <div class="portfolio-thumb thumb-tennis">🎾</div>
+      <div class="portfolio-info">
+        <h3>블루테니스장 포항 — 홈페이지</h3>
+        <p>히어로·서비스·소개·연락처 4개 섹션으로 구성된 비즈니스 소개 홈페이지. GitHub Pages 무료 배포.</p>
+        <div class="portfolio-tags">
+          <span class="ptag">HTML</span>
+          <span class="ptag">반응형</span>
+          <span class="ptag">GitHub Pages</span>
+        </div>
+        <a href="https://kimhs1234.github.io/bluetennis-pohang/" target="_blank" class="portfolio-link">🔗 사이트 방문 →</a>
+      </div>
+    </div>
+    <div class="portfolio-card">
+      <div class="portfolio-thumb thumb-sheet">📋</div>
+      <div class="portfolio-info">
+        <h3>블루테니스장 — 코트 예약 시스템</h3>
+        <p>3단계 예약 흐름 + 구글 시트 자동 저장 + 고객·관리자 이메일 자동 발송까지 완전 자동화.</p>
+        <div class="portfolio-tags">
+          <span class="ptag">Google Sheets</span>
+          <span class="ptag">Apps Script</span>
+          <span class="ptag">Gmail API</span>
+        </div>
+      </div>
+    </div>
+    <div class="portfolio-card">
+      <div class="portfolio-thumb thumb-skill">🛠️</div>
+      <div class="portfolio-info">
+        <h3>business-homepage 스킬</h3>
+        <p>Claude AI가 대화로 홈페이지를 자동 생성하는 커스텀 스킬 개발. 어떤 업종이든 즉시 적용 가능.</p>
+        <div class="portfolio-tags">
+          <span class="ptag">Claude AI</span>
+          <span class="ptag">Skill 개발</span>
+          <span class="ptag">자동화</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-inner">
+    <div class="about-visual">🤖</div>
+    <div class="about-text">
+      <span class="section-tag">ABOUT ME</span>
+      <h2 class="section-title">AI로 일하는 방식을<br />바꿉니다</h2>
+      <p class="section-sub">
+        복잡한 개발 없이 Claude AI를 활용해 실용적인 디지털 솔루션을 빠르게 제공합니다.
+        아이디어부터 실제 배포까지 당일 완료를 목표로 합니다.
+      </p>
+      <div class="strengths">
+        <div class="strength">
+          <span class="strength-icon">⚡</span>
+          <div class="strength-text">
+            <strong>당일 납품</strong>
+            <span>대화로 요구사항 파악 후 즉시 제작 — 기다림 없이 바로 사용</span>
+          </div>
+        </div>
+        <div class="strength">
+          <span class="strength-icon">🔧</span>
+          <div class="strength-text">
+            <strong>실제 작동하는 결과물</strong>
+            <span>디자인만이 아니라 예약·이메일·데이터 저장까지 완전히 연동</span>
+          </div>
+        </div>
+        <div class="strength">
+          <span class="strength-icon">💰</span>
+          <div class="strength-text">
+            <strong>합리적인 비용</strong>
+            <span>GitHub Pages·구글 시트 등 무료 인프라 최대 활용으로 운영비 절감</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process">
+  <div style="text-align:center; margin-bottom: 3rem;">
+    <span class="section-tag">PROCESS</span>
+    <h2 class="section-title">작업 진행 방식</h2>
+    <p class="section-sub" style="margin: 0 auto;">상담부터 배포까지 4단계로 진행됩니다.</p>
+  </div>
+  <div class="process-steps">
+    <div class="process-step">
+      <div class="step-num">1</div>
+      <h3>무료 상담</h3>
+      <p>필요한 기능과 목적을 대화로 파악합니다</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">2</div>
+      <h3>즉시 제작</h3>
+      <p>Claude AI로 당일 결과물을 생성합니다</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">3</div>
+      <h3>검토 & 수정</h3>
+      <p>피드백 반영해 원하는 결과물로 완성합니다</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">4</div>
+      <h3>배포 & 운영</h3>
+      <p>GitHub Pages 등에 배포하고 운영을 도와드립니다</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / CONTACT -->
+<section class="cta-section" id="contact">
+  <span class="section-tag" style="background:rgba(255,255,255,0.15);color:#fff;">CONTACT</span>
+  <h2 class="section-title">지금 바로 상담하세요</h2>
+  <p class="section-sub">무료 상담 후 견적을 안내해드립니다. 어떤 아이디어든 환영합니다!</p>
+  <div class="contact-cards">
+    <div class="contact-card">
+      <div class="cc-icon">✉️</div>
+      <div class="cc-label">이메일</div>
+      <div class="cc-value">khsq2011@gmail.com</div>
+    </div>
+    <div class="contact-card">
+      <div class="cc-icon">💬</div>
+      <div class="cc-label">카카오톡</div>
+      <div class="cc-value">오픈채팅 문의</div>
+    </div>
+    <div class="contact-card">
+      <div class="cc-icon">⏱️</div>
+      <div class="cc-label">응답시간</div>
+      <div class="cc-value">24시간 이내</div>
+    </div>
+  </div>
+  <a href="mailto:khsq2011@gmail.com" class="btn-accent">✉️ 이메일로 문의하기</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p><strong>김현수</strong> · AI 디지털 비서 · khsq2011@gmail.com</p>
+  <p style="margin-top:0.4rem;">© 2024 김현수. Powered by Claude AI.</p>
+</footer>
+
+</body>
+</html>
