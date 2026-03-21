@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>🌸 사쿠라 가든</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { width:100%; height:100%; overflow:hidden; background:#0a0005; touch-action:none; }
+  canvas { display:block; width:100%; height:100%; }
+
+  #ui {
+    position:fixed; top:0; left:0; right:0; bottom:0;
+    pointer-events:none;
+    font-family: 'Hiragino Kaku Gothic Pro', 'Noto Sans KR', sans-serif;
+  }
+
+  /* 상단 HUD */
+  #hud-top {
+    position:absolute; top:env(safe-area-inset-top, 12px); left:0; right:0;
+    display:flex; justify-content:space-between; align-items:flex-start;
+    padding:12px 16px 0;
+  }
+  #time-panel {
+    background:rgba(0,0,0,0.45); backdrop-filter:blur(8px);
+    border:1px solid rgba(255,180,200,0.25);
+    border-radius:16px; padding:8px 14px;
+    color:#ffe8f0; font-size:13px; line-height:1.5;
+  }
+  #time-panel .jp { font-size:9px; color:#ffb4c8; letter-spacing:2px; margin-bottom:2px; }
+  #time-panel .time-val { font-size:18px; font-weight:600; color:#fff; }
+
+  #petal-panel {
+    background:rgba(0,0,0,0.45); backdrop-filter:blur(8px);
+    border:1px solid rgba(255,180,200,0.25);
+    border-radius:16px; padding:8px 14px; text-align:right;
+    color:#ffe8f0; font-size:13px;
+  }
+  #petal-panel .jp { font-size:9px; color:#ffb4c8; letter-spacing:2px; margin-bottom:2px; }
+  #petal-count { font-size:22px; font-weight:700; color:#ffb4c8; }
+
+  /* 나침반 */
+  #compass {
+    position:absolute; top:env(safe-area-inset-top, 12px);
+    left:50%; transform:translateX(-50%);
+    margin-top:12px;
+    width:48px; height:48px;
+  }
+  #compass svg { width:100%; height:100%; }
+
+  /* 계절 배지 */
+  #season-badge {
+    position:absolute; top:calc(env(safe-area-inset-top, 12px) + 80px);
+    left:50%; transform:translateX(-50%);
+    background:rgba(255,100,140,0.15); backdrop-filter:blur(8px);
+    border:1px solid rgba(255,150,180,0.3);
+    border-radius:20px; padding:4px 14px;
+    color:#ffccd8; font-size:11px; letter-spacing:3px;
+    white-space:nowrap;
+  }
+
+  /* 하단 조이스틱 + 버튼 */
+  #controls {
+    position:absolute;
+    bottom:calc(env(safe-area-inset-bottom, 16px) + 16px);
+    left:0; right:0;
+    display:flex; justify-content:space-between; align-items:flex-end;
+    padding:0 24px;
+    pointer-events:all;
+  }
+
+  /* 조이스틱 */
+  #joystick-area {
+    width:130px; height:130px; position:relative;
+  }
+  #joystick-bg {
+    width:130px; height:130px;
+    border-radius:50%;
+    background:rgba(0,0,0,0.3);
+    border:2px solid rgba(255,180,200,0.3);
+    backdrop-filter:blur(4px);
+    position:absolute; top:0; left:0;
+  }
+  #joystick-knob {
+    width:52px; height:52px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, rgba(255,200,220,0.9), rgba(220,80,120,0.7));
+    border:2px solid rgba(255,255,255,0.4);
+    box-shadow:0 2px 12px rgba(220,80,120,0.5);
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    transition:transform 0.05s;
+  }
+
+  /* 오른쪽 버튼 그룹 */
+  #btn-group {
+    display:flex; flex-direction:column; gap:12px; align-items:flex-end;
+  }
+  .action-btn {
+    width:60px; height:60px; border-radius:50%;
+    border:2px solid rgba(255,180,200,0.4);
+    backdrop-filter:blur(4px);
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px; cursor:pointer; user-select:none;
+    -webkit-user-select:none;
+    active-scale:0.92;
+  }
+  #btn-jump {
+    background:rgba(255,100,140,0.25);
+    box-shadow:0 0 20px rgba(255,100,140,0.2);
+  }
+  #btn-sprint {
+    width:52px; height:52px;
+    background:rgba(255,160,80,0.2);
+    box-shadow:0 0 16px rgba(255,160,80,0.15);
+  }
+
+  /* 카메라 드래그 힌트 */
+  #look-hint {
+    position:absolute; top:50%; right:24px;
+    transform:translateY(-50%);
+    background:rgba(0,0,0,0.3); border-radius:12px;
+    padding:8px 12px; color:rgba(255,200,220,0.6);
+    font-size:11px; text-align:center; line-height:1.4;
+    pointer-events:none;
+  }
+  #look-hint.fade { opacity:0; transition:opacity 1s; }
+
+  /* 꽃잎 수집 토스트 */
+  #toast {
+    position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%) scale(0);
+    background:rgba(220,60,100,0.9); backdrop-filter:blur(8px);
+    border:1px solid rgba(255,200,220,0.5);
+    border-radius:24px; padding:12px 24px;
+    color:#fff; font-size:16px; font-weight:600;
+    text-align:center; white-space:nowrap;
+    transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+    pointer-events:none;
+  }
+  #toast.show { transform:translate(-50%,-60%) scale(1); }
+  #toast.hide { opacity:0; transform:translate(-50%,-70%) scale(0.9); }
+
+  /* 시작 오버레이 */
+  #start-overlay {
+    position:fixed; inset:0;
+    background:linear-gradient(160deg, #0d0010 0%, #1a0020 50%, #0a0515 100%);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    z-index:100; padding:32px;
+    transition:opacity 0.8s;
+  }
+  #start-overlay.hide { opacity:0; pointer-events:none; }
+
+  .title-jp {
+    font-size:11px; letter-spacing:8px; color:#ff80a0;
+    margin-bottom:16px; text-transform:uppercase;
+  }
+  .title-main {
+    font-size:52px; font-weight:800;
+    background:linear-gradient(135deg, #ffb4c8, #ff6090, #ff90b0);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    margin-bottom:8px; line-height:1;
+  }
+  .title-sub {
+    font-size:16px; color:rgba(255,180,200,0.6);
+    margin-bottom:48px; letter-spacing:1px;
+  }
+  .feature-list {
+    display:flex; flex-direction:column; gap:10px;
+    margin-bottom:48px; width:100%; max-width:280px;
+  }
+  .feature-item {
+    display:flex; align-items:center; gap:12px;
+    color:rgba(255,200,220,0.75); font-size:13px;
+  }
+  .feature-icon {
+    width:32px; height:32px; border-radius:10px;
+    background:rgba(255,100,140,0.15);
+    border:1px solid rgba(255,100,140,0.2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px; flex-shrink:0;
+  }
+  #start-btn {
+    width:100%; max-width:280px; height:56px;
+    border-radius:28px;
+    background:linear-gradient(135deg, #ff6090, #ff9050);
+    border:none; cursor:pointer;
+    color:#fff; font-size:17px; font-weight:700;
+    letter-spacing:1px;
+    box-shadow:0 8px 32px rgba(255,80,120,0.4);
+    transition:transform 0.1s, box-shadow 0.1s;
+    pointer-events:all;
+  }
+  #start-btn:active { transform:scale(0.97); box-shadow:0 4px 16px rgba(255,80,120,0.3); }
+
+  /* 로딩 */
+  #loading {
+    position:fixed; inset:0;
+    background:#0a0005;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    z-index:200; gap:20px;
+  }
+  #loading.done { display:none; }
+  .load-flower { font-size:48px; animation:spin 2s linear infinite; }
+  @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  .load-text { color:#ffb4c8; font-size:14px; letter-spacing:2px; }
+  .load-bar-wrap {
+    width:200px; height:4px; background:rgba(255,180,200,0.15);
+    border-radius:2px; overflow:hidden;
+  }
+  .load-bar {
+    height:100%; background:linear-gradient(90deg,#ff6090,#ff90b0);
+    border-radius:2px; animation:loadprog 1.5s ease-in-out forwards;
+  }
+  @keyframes loadprog { from{width:0} to{width:100%} }
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="load-flower">🌸</div>
+  <div class="load-text">SAKURA GARDEN</div>
+  <div class="load-bar-wrap"><div class="load-bar"></div></div>
+</div>
+
+<canvas id="c"></canvas>
+
+<div id="ui">
+  <div id="hud-top">
+    <div id="time-panel">
+      <div class="jp">時刻</div>
+      <div class="time-val" id="time-display">06:00</div>
+    </div>
+    <div id="compass">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="22" stroke="rgba(255,180,200,0.3)" stroke-width="1.5" fill="rgba(0,0,0,0.4)"/>
+        <text x="24" y="10" text-anchor="middle" fill="rgba(255,180,200,0.6)" font-size="7" font-weight="600">N</text>
+        <text x="24" y="42" text-anchor="middle" fill="rgba(255,180,200,0.4)" font-size="7">S</text>
+        <text x="9"  y="27" text-anchor="middle" fill="rgba(255,180,200,0.4)" font-size="7">W</text>
+        <text x="39" y="27" text-anchor="middle" fill="rgba(255,180,200,0.4)" font-size="7">E</text>
+        <polygon id="compass-needle-n" points="24,6 21,24 24,22 27,24" fill="#ff6090"/>
+        <polygon id="compass-needle-s" points="24,42 21,24 24,26 27,24" fill="rgba(255,180,200,0.3)"/>
+      </svg>
+    </div>
+    <div id="petal-panel">
+      <div class="jp">花びら</div>
+      <span id="petal-count">0</span>
+    </div>
+  </div>
+
+  <div id="season-badge">春 · SPRING · 봄</div>
+
+  <div id="look-hint">👆 드래그하여<br>시점 변경</div>
+
+  <div id="controls">
+    <div id="joystick-area">
+      <div id="joystick-bg"></div>
+      <div id="joystick-knob"></div>
+    </div>
+    <div id="btn-group">
+      <div class="action-btn" id="btn-jump">🌸</div>
+      <div class="action-btn" id="btn-sprint">💨</div>
+    </div>
+  </div>
+
+  <div id="toast">🌸 꽃잎 수집!</div>
+</div>
+
+<div id="start-overlay">
+  <div class="title-jp">SAKURA GARDEN</div>
+  <div class="title-main">🌸</div>
+  <div class="title-main" style="font-size:36px; margin-top:-8px;">사쿠라 가든</div>
+  <div class="title-sub">일본 정원 탐험 게임</div>
+  <div class="feature-list">
+    <div class="feature-item"><div class="feature-icon">🏯</div>3D 일본 정원 자유 탐험</div>
+    <div class="feature-item"><div class="feature-icon">🌸</div>벚꽃 꽃잎 수집 미션</div>
+    <div class="feature-item"><div class="feature-icon">🌅</div>낮/밤 실시간 변화</div>
+    <div class="feature-item"><div class="feature-icon">🎮</div>터치 조이스틱 조작</div>
+  </div>
+  <button id="start-btn">탐험 시작</button>
+</div>
+
+<script>
+// ──────────────────────────────────────────────────────────
+// MOBILE SAKURA GARDEN — WebGL 3D Game
+// ──────────────────────────────────────────────────────────
+
+const canvas = document.getElementById('c');
+const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
+if (!gl) { document.body.innerHTML='<div style="color:white;padding:32px;text-align:center">WebGL을 지원하지 않는 기기입니다</div>'; }
+
+// ─── resize ───────────────────────────────────────────────
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width  = window.innerWidth  * dpr;
+  canvas.height = window.innerHeight * dpr;
+  gl.viewport(0, 0, canvas.width, canvas.height);
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ─── Math ─────────────────────────────────────────────────
+const mat4 = {
+  create(){ return new Float32Array(16); },
+  identity(m){ m.fill(0); m[0]=m[5]=m[10]=m[15]=1; return m; },
+  perspective(m,fov,asp,near,far){
+    const f=1/Math.tan(fov/2), r=1/(near-far);
+    m.fill(0);
+    m[0]=f/asp; m[5]=f; m[10]=(near+far)*r; m[11]=-1; m[14]=2*near*far*r;
+    return m;
+  },
+  multiply(out,a,b){
+    for(let i=0;i<4;i++) for(let j=0;j<4;j++){
+      let s=0; for(let k=0;k<4;k++) s+=a[i*4+k]*b[k*4+j];
+      out[i*4+j]=s;
+    } return out;
+  },
+  translate(m,tx,ty,tz){
+    const t=mat4.identity(mat4.create());
+    t[12]=tx; t[13]=ty; t[14]=tz;
+    return mat4.multiply(mat4.create(),m,t);
+  },
+  rotY(m,a){
+    const c=Math.cos(a), s=Math.sin(a), r=mat4.identity(mat4.create());
+    r[0]=c; r[2]=s; r[8]=-s; r[10]=c;
+    return mat4.multiply(mat4.create(),m,r);
+  },
+  rotX(m,a){
+    const c=Math.cos(a), s=Math.sin(a), r=mat4.identity(mat4.create());
+    r[5]=c; r[6]=-s; r[9]=s; r[10]=c;
+    return mat4.multiply(mat4.create(),m,r);
+  },
+  scale(m,sx,sy,sz){
+    const s=mat4.identity(mat4.create()); s[0]=sx; s[5]=sy; s[10]=sz;
+    return mat4.multiply(mat4.create(),m,s);
+  },
+  lookAt(out, eye, center, up){
+    let fx=center[0]-eye[0], fy=center[1]-eye[1], fz=center[2]-eye[2];
+    let fl=Math.sqrt(fx*fx+fy*fy+fz*fz); fx/=fl; fy/=fl; fz/=fl;
+    let rx=fy*up[2]-fz*up[1], ry=fz*up[0]-fx*up[2], rz=fx*up[1]-fy*up[0];
+    let rl=Math.sqrt(rx*rx+ry*ry+rz*rz); rx/=rl; ry/=rl; rz/=rl;
+    let ux=ry*fz-rz*fy, uy=rz*fx-rx*fz, uz=rx*fy-ry*fx;
+    out[0]=rx; out[1]=ux; out[2]=-fx; out[3]=0;
+    out[4]=ry; out[5]=uy; out[6]=-fy; out[7]=0;
+    out[8]=rz; out[9]=uz; out[10]=-fz; out[11]=0;
+    out[12]=-(rx*eye[0]+ry*eye[1]+rz*eye[2]);
+    out[13]=-(ux*eye[0]+uy*eye[1]+uz*eye[2]);
+    out[14]=(fx*eye[0]+fy*eye[1]+fz*eye[2]);
+    out[15]=1;
+    return out;
+  }
+};
+
+// ─── Shaders ──────────────────────────────────────────────
+const VS_MAIN = `
+attribute vec3 aPos;
+attribute vec3 aNormal;
+attribute vec2 aUV;
+uniform mat4 uMVP;
+uniform mat4 uModel;
+uniform float uTime;
+uniform int uType; // 0=ground 1=tree 2=petal 3=water
+varying vec3 vNormal;
+varying vec3 vWorldPos;
+varying vec2 vUV;
+varying float vType;
+void main(){
+  vec3 pos = aPos;
+  // sway for tree foliage
+  if(uType==1 && pos.y > 1.5){
+    float sw = sin(uTime*1.2 + aPos.x*0.5 + aPos.z*0.3) * 0.04 * (pos.y-1.5);
+    pos.x += sw; pos.z += sw*0.7;
+  }
+  vNormal = (uModel * vec4(aNormal,0.0)).xyz;
+  vWorldPos = (uModel * vec4(pos,1.0)).xyz;
+  vUV = aUV;
+  vType = float(uType);
+  gl_Position = uMVP * vec4(pos,1.0);
+}`;
+
+const FS_MAIN = `
+precision mediump float;
+varying vec3 vNormal;
+varying vec3 vWorldPos;
+varying vec2 vUV;
+varying float vType;
+uniform vec3 uSunDir;
+uniform vec3 uSunColor;
+uniform vec3 uAmbient;
+uniform vec3 uFogColor;
+uniform float uFogDensity;
+uniform float uTime;
+uniform vec3 uBaseColor;
+void main(){
+  vec3 N = normalize(vNormal);
+  float diff = max(dot(N, normalize(uSunDir)), 0.0);
+  vec3 col = uBaseColor;
+
+  if(vType < 0.5){ // ground
+    float gs = sin(vWorldPos.x*2.0)*sin(vWorldPos.z*2.0)*0.05;
+    col = mix(vec3(0.18,0.35,0.14), vec3(0.22,0.42,0.18), gs+0.5);
+    // path
+    float px = abs(vWorldPos.x), pz = abs(vWorldPos.z);
+    float path = step(px, 2.0)*step(abs(vWorldPos.z), 50.0) + step(pz, 2.0)*step(abs(vWorldPos.x), 50.0);
+    col = mix(col, vec3(0.45,0.38,0.32), path*0.7);
+  } else if(vType < 1.5){ // tree/obj
+    col = uBaseColor;
+  } else if(vType < 2.5){ // petal particle — handled in separate pass
+    col = vec3(1.0,0.7,0.8);
+  } else { // water
+    vec2 wUV = vWorldPos.xz * 0.3 + uTime*0.05;
+    float rip = sin(wUV.x*8.0+uTime)*sin(wUV.y*8.0+uTime)*0.04;
+    col = vec3(0.15,0.35,0.55) + rip;
+    diff = max(diff, 0.3);
+  }
+
+  vec3 light = uAmbient + uSunColor * diff * 0.9;
+  col *= light;
+
+  // fog
+  float dist = length(vWorldPos);
+  float fog = 1.0 - exp(-uFogDensity * dist * dist);
+  col = mix(col, uFogColor, clamp(fog,0.0,1.0));
+
+  gl_FragColor = vec4(col, 1.0);
+}`;
+
+const VS_SKY = `
+attribute vec3 aPos;
+varying vec3 vDir;
+uniform mat4 uInvVP;
+void main(){
+  vDir = (uInvVP * vec4(aPos, 1.0)).xyz;
+  gl_Position = vec4(aPos.xy, 1.0, 1.0);
+}`;
+
+const FS_SKY = `
+precision mediump float;
+varying vec3 vDir;
+uniform vec3 uSkyTop;
+uniform vec3 uSkyHorizon;
+uniform vec3 uSunDir;
+uniform vec3 uSunColor;
+void main(){
+  vec3 d = normalize(vDir);
+  float t = clamp(d.y*2.0, 0.0,1.0);
+  vec3 sky = mix(uSkyHorizon, uSkyTop, t);
+  float sun = pow(max(dot(d, normalize(uSunDir)),0.0), 64.0);
+  sky += uSunColor * sun * 2.0;
+  gl_FragColor = vec4(sky,1.0);
+}`;
+
+const VS_PETAL = `
+attribute vec3 aPos;
+attribute vec3 aOffset;
+attribute float aPhase;
+uniform mat4 uVP;
+uniform float uTime;
+uniform vec3 uCamRight;
+uniform vec3 uCamUp;
+varying float vAlpha;
+varying vec2 vUV;
+void main(){
+  float t = uTime * 0.4 + aPhase * 6.283;
+  float fx = sin(t*1.1 + aPhase*3.0) * 3.0;
+  float fy = -mod(t * 1.8, 16.0) + 8.0;
+  float fz = cos(t*0.9 + aPhase*2.0) * 3.0;
+  vec3 center = aOffset + vec3(fx, fy, fz);
+  float rot = t * 2.0;
+  vec2 r2 = vec2(cos(rot)*aPos.x - sin(rot)*aPos.y,
+                 sin(rot)*aPos.x + cos(rot)*aPos.y);
+  vec3 world = center + uCamRight*r2.x + uCamUp*r2.y;
+  vAlpha = 0.7 + 0.3*sin(aPhase*7.0);
+  vUV = aPos.xy + 0.5;
+  gl_Position = uVP * vec4(world,1.0);
+}`;
+
+const FS_PETAL = `
+precision mediump float;
+varying float vAlpha;
+varying vec2 vUV;
+void main(){
+  vec2 uv = vUV - 0.5;
+  // petal shape
+  float r = length(uv);
+  float a = atan(uv.y, uv.x);
+  float petal = 0.5*(1.0+cos(a*2.0));
+  float mask = step(r, petal*0.4);
+  if(mask < 0.5) discard;
+  vec3 col = mix(vec3(1.0,0.75,0.82), vec3(0.98,0.9,0.95), r*2.0);
+  gl_FragColor = vec4(col, vAlpha * mask);
+}`;
+
+function compileShader(type, src){
+  const s = gl.createShader(type);
+  gl.shaderSource(s, src);
+  gl.compileShader(s);
+  if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s));
+  return s;
+}
+function createProgram(vs, fs){
+  const p = gl.createProgram();
+  gl.attachShader(p, compileShader(gl.VERTEX_SHADER, vs));
+  gl.attachShader(p, compileShader(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(p);
+  if(!gl.getProgramParameter(p, gl.LINK_STATUS)) console.error(gl.getProgramInfoLog(p));
+  return p;
+}
+
+const progMain  = createProgram(VS_MAIN, FS_MAIN);
+const progSky   = createProgram(VS_SKY, FS_SKY);
+const progPetal = createProgram(VS_PETAL, FS_PETAL);
+
+function getAttrib(p, name){ return gl.getAttribLocation(p, name); }
+function getUnif(p, name)  { return gl.getUniformLocation(p, name); }
+
+// ─── Geometry builders ────────────────────────────────────
+function cylinder(rx,ry,rz,segs,stacks){
+  const verts=[],norms=[],uvs=[],idxs=[];
+  for(let j=0;j<=stacks;j++){
+    const y=j/stacks;
+    for(let i=0;i<=segs;i++){
+      const a=i/segs*Math.PI*2;
+      const cx=Math.cos(a)*rx, cz=Math.sin(a)*rz;
+      verts.push(cx, y*ry, cz);
+      norms.push(cx/rx, 0, cz/rz);
+      uvs.push(i/segs, y);
+      if(j<stacks && i<segs){
+        const b=j*(segs+1)+i;
+        idxs.push(b,b+1,b+segs+1, b+1,b+segs+2,b+segs+1);
+      }
+    }
+  }
+  return {verts:new Float32Array(verts),norms:new Float32Array(norms),
+          uvs:new Float32Array(uvs),idxs:new Uint16Array(idxs)};
+}
+
+function sphere(r, lat, lon){
+  const verts=[],norms=[],uvs=[],idxs=[];
+  for(let i=0;i<=lat;i++){
+    const phi=i/lat*Math.PI, sp=Math.sin(phi), cp=Math.cos(phi);
+    for(let j=0;j<=lon;j++){
+      const th=j/lon*Math.PI*2, st=Math.sin(th), ct=Math.cos(th);
+      const x=r*sp*ct, y=r*cp, z=r*sp*st;
+      verts.push(x,y,z); norms.push(x/r,y/r,z/r); uvs.push(j/lon,i/lat);
+      if(i<lat && j<lon){
+        const a=i*(lon+1)+j;
+        idxs.push(a,a+lon+1,a+1, a+1,a+lon+1,a+lon+2);
+      }
+    }
+  }
+  return {verts:new Float32Array(verts),norms:new Float32Array(norms),
+          uvs:new Float32Array(uvs),idxs:new Uint16Array(idxs)};
+}
+
+function quad(w,h){ // flat XZ plane
+  const hw=w/2, hh=h/2;
+  return {
+    verts:new Float32Array([-hw,0,-hh, hw,0,-hh, hw,0,hh, -hw,0,hh]),
+    norms:new Float32Array([0,1,0, 0,1,0, 0,1,0, 0,1,0]),
+    uvs:new Float32Array([0,0, 1,0, 1,1, 0,1]),
+    idxs:new Uint16Array([0,1,2, 0,2,3])
+  };
+}
+
+function createVAO(prog, geo){
+  const buf = {
+    v: gl.createBuffer(), n: gl.createBuffer(),
+    u: gl.createBuffer(), i: gl.createBuffer()
+  };
+  const aPos    = getAttrib(prog,'aPos');
+  const aNormal = getAttrib(prog,'aNormal');
+  const aUV     = getAttrib(prog,'aUV');
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf.v);
+  gl.bufferData(gl.ARRAY_BUFFER, geo.verts, gl.STATIC_DRAW);
+  if(aNormal>=0){
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf.n);
+    gl.bufferData(gl.ARRAY_BUFFER, geo.norms, gl.STATIC_DRAW);
+  }
+  if(aUV>=0){
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf.u);
+    gl.bufferData(gl.ARRAY_BUFFER, geo.uvs, gl.STATIC_DRAW);
+  }
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buf.i);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, geo.idxs, gl.STATIC_DRAW);
+
+  return { buf, count: geo.idxs.length, prog,
+    bind(){
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf.v);
+      gl.enableVertexAttribArray(aPos);
+      gl.vertexAttribPointer(aPos,3,gl.FLOAT,false,0,0);
+      if(aNormal>=0){
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf.n);
+        gl.enableVertexAttribArray(aNormal);
+        gl.vertexAttribPointer(aNormal,3,gl.FLOAT,false,0,0);
+      }
+      if(aUV>=0){
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf.u);
+        gl.enableVertexAttribArray(aUV);
+        gl.vertexAttribPointer(aUV,2,gl.FLOAT,false,0,0);
+      }
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buf.i);
+    }
+  };
+}
+
+// ─── Meshes ───────────────────────────────────────────────
+const meshCylSmall = createVAO(progMain, cylinder(0.3,2.0,0.3,8,4));
+const meshCylBig   = createVAO(progMain, cylinder(0.5,3.0,0.5,8,4));
+const meshSphSm    = createVAO(progMain, sphere(1.2,8,12));
+const meshSphMed   = createVAO(progMain, sphere(1.8,8,14));
+const meshSphLg    = createVAO(progMain, sphere(2.5,8,16));
+const meshGround   = createVAO(progMain, quad(200,200));
+const meshWater    = createVAO(progMain, quad(14,10));
+const meshLanternBase = createVAO(progMain, cylinder(0.3,0.15,0.3,6,2));
+const meshLanternBody = createVAO(progMain, cylinder(0.18,0.4,0.18,6,2));
+const meshLanternTop  = createVAO(progMain, cylinder(0.25,0.08,0.25,6,1));
+
+// Sky quad
+const skyBuf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, skyBuf);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,0, 1,-1,0, 1,1,0,-1,1,0]), gl.STATIC_DRAW);
+const skyIdx = gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, skyIdx);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0,1,2,0,2,3]), gl.STATIC_DRAW);
+
+// ─── Seeded random ────────────────────────────────────────
+let seed=42;
+function rng(){ seed=(seed*1664525+1013904223)&0xffffffff; return (seed>>>0)/0xffffffff; }
+function rngR(a,b){ return a+(b-a)*rng(); }
+
+// ─── Scene data ───────────────────────────────────────────
+const trees=[], lanterns=[], collectibles=[];
+const TREE_COUNT=70, LANTERN_COUNT=14, COLLECT_COUNT=30;
+
+for(let i=0;i<TREE_COUNT;i++){
+  const a=rng()*Math.PI*2, r=6+rng()*38;
+  if(r<3) continue;
+  const x=Math.cos(a)*r, z=Math.sin(a)*r;
+  const sc=0.7+rng()*0.7;
+  const type=rng()<0.3?0:rng()<0.5?1:2; // size variants
+  trees.push({x,z,sc,type, rx:rng()*0.1-0.05});
+}
+
+for(let i=0;i<LANTERN_COUNT;i++){
+  const s = (i < LANTERN_COUNT/2) ? 1 : -1;
+  const t = (i % (LANTERN_COUNT/2)) / (LANTERN_COUNT/2);
+  const x = s * (1.8 + 0.2*Math.sin(t*10));
+  const z = (t - 0.5) * 60;
+  lanterns.push({x, z});
+}
+
+for(let i=0;i<COLLECT_COUNT;i++){
+  const a=rng()*Math.PI*2, r=5+rng()*30;
+  collectibles.push({
+    x:Math.cos(a)*r, z:Math.sin(a)*r, y:0.3+rng()*1.5,
+    collected:false, phase:rng()*Math.PI*2
+  });
+}
+
+// ─── Petal particles ──────────────────────────────────────
+const PETAL_COUNT=800;
+const petalOffsets=new Float32Array(PETAL_COUNT*3);
+const petalPhases=new Float32Array(PETAL_COUNT);
+for(let i=0;i<PETAL_COUNT;i++){
+  const a=rng()*Math.PI*2, r=rng()*45;
+  petalOffsets[i*3]=Math.cos(a)*r;
+  petalOffsets[i*3+1]=rng()*8;
+  petalOffsets[i*3+2]=Math.sin(a)*r;
+  petalPhases[i]=rng();
+}
+const petalGeo = { // billboard quad
+  verts:new Float32Array([-0.12,-0.12,0, 0.12,-0.12,0, 0.12,0.12,0, -0.12,0.12,0]),
+  norms:new Float32Array([0,0,1,0,0,1,0,0,1,0,0,1]),
+  uvs:new Float32Array([0,0,1,0,1,1,0,1]),
+  idxs:new Uint16Array([0,1,2,0,2,3])
+};
+const petalMesh = createVAO(progPetal, petalGeo);
+const petalOffsetBuf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, petalOffsetBuf);
+gl.bufferData(gl.ARRAY_BUFFER, petalOffsets, gl.STATIC_DRAW);
+const petalPhaseBuf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, petalPhaseBuf);
+gl.bufferData(gl.ARRAY_BUFFER, petalPhases, gl.STATIC_DRAW);
+
+// ─── Player & Camera ──────────────────────────────────────
+const player = { x:0, y:0, z:5, vy:0, yaw:0, pitch:-0.15, speed:0, sprinting:false };
+let petalScore = 0;
+
+// ─── Joystick state ───────────────────────────────────────
+const joy = { active:false, id:-1, startX:0, startY:0, dx:0, dy:0 };
+const look = { active:false, id:-1, lastX:0, lastY:0 };
+let jumping=false, sprinting=false;
+
+const joystickBg   = document.getElementById('joystick-bg');
+const joystickKnob = document.getElementById('joystick-knob');
+const joystickArea = document.getElementById('joystick-area');
+const btnJump   = document.getElementById('btn-jump');
+const btnSprint = document.getElementById('btn-sprint');
+
+function getJoyRect(){ return joystickArea.getBoundingClientRect(); }
+
+canvas.addEventListener('touchstart', e=>{ e.preventDefault(); handleTouchStart(e); }, {passive:false});
+canvas.addEventListener('touchmove',  e=>{ e.preventDefault(); handleTouchMove(e);  }, {passive:false});
+canvas.addEventListener('touchend',   e=>{ e.preventDefault(); handleTouchEnd(e);   }, {passive:false});
+joystickArea.addEventListener('touchstart', e=>{ e.preventDefault(); handleJoyStart(e); }, {passive:false});
+joystickArea.addEventListener('touchmove',  e=>{ e.preventDefault(); handleJoyMove(e);  }, {passive:false});
+joystickArea.addEventListener('touchend',   e=>{ e.preventDefault(); handleJoyEnd(e);   }, {passive:false});
+
+btnJump.addEventListener('touchstart',   e=>{ e.preventDefault(); jumping=true;    }, {passive:false});
+btnJump.addEventListener('touchend',     e=>{ e.preventDefault(); jumping=false;   }, {passive:false});
+btnSprint.addEventListener('touchstart', e=>{ e.preventDefault(); sprinting=true;  }, {passive:false});
+btnSprint.addEventListener('touchend',   e=>{ e.preventDefault(); sprinting=false; }, {passive:false});
+
+function handleJoyStart(e){
+  const t = e.changedTouches[0];
+  joy.active=true; joy.id=t.identifier;
+  const r=getJoyRect();
+  joy.startX=r.left+r.width/2; joy.startY=r.top+r.height/2;
+  joy.dx=0; joy.dy=0;
+}
+function handleJoyMove(e){
+  if(!joy.active) return;
+  for(const t of e.changedTouches){
+    if(t.identifier!==joy.id) continue;
+    const maxR=45;
+    let dx=t.clientX-joy.startX, dy=t.clientY-joy.startY;
+    const len=Math.sqrt(dx*dx+dy*dy);
+    if(len>maxR){ dx=dx/len*maxR; dy=dy/len*maxR; }
+    joy.dx=dx/maxR; joy.dy=dy/maxR;
+    joystickKnob.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+  }
+}
+function handleJoyEnd(e){
+  for(const t of e.changedTouches){
+    if(t.identifier===joy.id){
+      joy.active=false; joy.dx=0; joy.dy=0;
+      joystickKnob.style.transform='translate(-50%,-50%)';
+    }
+  }
+}
+
+let lookHintShown=false;
+function handleTouchStart(e){
+  for(const t of e.changedTouches){
+    const r=getJoyRect();
+    const inJoy=(t.clientX>=r.left&&t.clientX<=r.right&&t.clientY>=r.top&&t.clientY<=r.bottom);
+    if(!inJoy && !look.active){
+      look.active=true; look.id=t.identifier;
+      look.lastX=t.clientX; look.lastY=t.clientY;
+      if(!lookHintShown){
+        lookHintShown=true;
+        const h=document.getElementById('look-hint');
+        h.classList.add('fade'); setTimeout(()=>h.style.display='none',1000);
+      }
+    }
+  }
+}
+function handleTouchMove(e){
+  for(const t of e.changedTouches){
+    if(t.identifier===look.id){
+      const dx=(t.clientX-look.lastX)*0.004;
+      const dy=(t.clientY-look.lastY)*0.004;
+      player.yaw  -= dx;
+      player.pitch = Math.max(-1.1, Math.min(0.3, player.pitch - dy));
+      look.lastX=t.clientX; look.lastY=t.clientY;
+    }
+  }
+}
+function handleTouchEnd(e){
+  for(const t of e.changedTouches){
+    if(t.identifier===look.id) look.active=false;
+  }
+}
+
+// Mouse (desktop fallback)
+let mouseDown=false, lastMX=0, lastMY=0;
+canvas.addEventListener('mousedown', e=>{ mouseDown=true; lastMX=e.clientX; lastMY=e.clientY; });
+canvas.addEventListener('mousemove', e=>{
+  if(!mouseDown) return;
+  player.yaw   -= (e.clientX-lastMX)*0.004;
+  player.pitch  = Math.max(-1.1, Math.min(0.3, player.pitch-(e.clientY-lastMY)*0.004));
+  lastMX=e.clientX; lastMY=e.clientY;
+});
+canvas.addEventListener('mouseup', ()=>mouseDown=false);
+
+// Keyboard
+const keys={};
+document.addEventListener('keydown', e=>keys[e.code]=true);
+document.addEventListener('keyup',   e=>keys[e.code]=false);
+
+// ─── Toast helper ─────────────────────────────────────────
+let toastTimer=null;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='show'; clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{
+    t.className='hide';
+    setTimeout(()=>t.className='',400);
+  },1200);
+}
+
+// ─── Uniforms helper ──────────────────────────────────────
+const UP = gl.getUniformLocation.bind(gl);
+
+// ─── Render a mesh ────────────────────────────────────────
+function drawMesh(mesh, model, color, type, uniMap){
+  gl.uniformMatrix4fv(uniMap.uMVP, false, mat4.multiply(mat4.create(), uniMap._VP, model));
+  gl.uniformMatrix4fv(uniMap.uModel, false, model);
+  gl.uniform3fv(uniMap.uBaseColor, color);
+  gl.uniform1i(uniMap.uType, type);
+  mesh.bind();
+  gl.drawElements(gl.TRIANGLES, mesh.count, gl.UNSIGNED_SHORT, 0);
+}
+
+// ─── Update ───────────────────────────────────────────────
+let lastT=0, gameStarted=false, gameTime=0;
+
+function update(dt){
+  if(!gameStarted) return;
+  gameTime += dt;
+
+  // Movement
+  const spd = sprinting||keys['ShiftLeft']||keys['ShiftRight'] ? 8 : 4;
+  const cosY=Math.cos(player.yaw), sinY=Math.sin(player.yaw);
+  let moveX=0, moveZ=0;
+
+  // Joystick
+  if(joy.active){
+    moveX += joy.dx * cosY - (-joy.dy) * sinY;
+    moveZ += (-joy.dy) * cosY + joy.dx * sinY;
+  }
+  // Keyboard
+  if(keys['KeyW']||keys['ArrowUp'])   { moveX +=  cosY; moveZ += -sinY; }
+  if(keys['KeyS']||keys['ArrowDown']) { moveX += -cosY; moveZ +=  sinY; }
+  if(keys['KeyA']||keys['ArrowLeft']) { moveX += -sinY; moveZ += -cosY; }
+  if(keys['KeyD']||keys['ArrowRight']){ moveX +=  sinY; moveZ +=  cosY; }
+
+  const mlen=Math.sqrt(moveX*moveX+moveZ*moveZ);
+  if(mlen>0){ moveX/=mlen; moveZ/=mlen; }
+  player.x += moveX * spd * dt;
+  player.z += moveZ * spd * dt;
+
+  // Jump
+  if((jumping||keys['Space']) && player.y<=0.01) player.vy=6;
+  player.vy -= 16*dt;
+  player.y = Math.max(0, player.y + player.vy*dt);
+  if(player.y<=0) player.vy=0;
+
+  // Boundary
+  player.x = Math.max(-80, Math.min(80, player.x));
+  player.z = Math.max(-80, Math.min(80, player.z));
+
+  // Collect petals
+  for(const c of collectibles){
+    if(c.collected) continue;
+    const dy=c.y+0.2-player.y;
+    const dx=c.x-player.x, dz=c.z-player.z;
+    if(Math.sqrt(dx*dx+dz*dz)<1.5 && Math.abs(dy)<2){
+      c.collected=true;
+      petalScore++;
+      document.getElementById('petal-count').textContent=petalScore;
+      showToast('🌸 +1 꽃잎 수집!');
+      if(petalScore===10) showToast('🎉 10개 달성!');
+      if(petalScore===COLLECT_COUNT) showToast('🌸 모두 수집!');
+    }
+  }
+
+  // HUD time
+  const h=Math.floor((gameTime*0.5)%24), m=Math.floor((gameTime*30)%60);
+  document.getElementById('time-display').textContent=
+    `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+
+  // Compass
+  const needleN=document.getElementById('compass-needle-n');
+  if(needleN){
+    const cx=24, cy=24, r1=18, r2=8;
+    const a=player.yaw;
+    needleN.setAttribute('points',
+      `${cx+Math.sin(a)*r1},${cy-Math.cos(a)*r1} `+
+      `${cx-Math.sin(a)*r2},${cy+Math.cos(a)*r2} `+
+      `${cx+Math.cos(a)*4},${cy+Math.sin(a)*4}`);
+  }
+}
+
+// ─── Render ───────────────────────────────────────────────
+function render(t){
+  const dt=Math.min((t-lastT)/1000, 0.05); lastT=t;
+  update(dt);
+
+  gl.enable(gl.DEPTH_TEST);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  gl.clearColor(0,0,0,1);
+  gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+
+  const W=canvas.width, H=canvas.height;
+  const aspect=W/H;
+  const proj=mat4.perspective(mat4.create(), Math.PI/3, aspect, 0.1, 200);
+
+  const eyeX=player.x, eyeY=player.y+1.6, eyeZ=player.z;
+  const lookX=eyeX+Math.sin(player.yaw)*Math.cos(player.pitch);
+  const lookY=eyeY+Math.sin(player.pitch);
+  const lookZ=eyeZ-Math.cos(player.yaw)*Math.cos(player.pitch);
+  const view=mat4.lookAt(mat4.create(),[eyeX,eyeY,eyeZ],[lookX,lookY,lookZ],[0,1,0]);
+  const VP=mat4.multiply(mat4.create(), proj, view);
+
+  // Day cycle
+  const dayT=gameTime*0.05;
+  const sunA=dayT-Math.PI/2;
+  const sunDir=[Math.cos(sunA)*0.8, Math.sin(sunA), 0.4];
+  const slen=Math.sqrt(sunDir[0]**2+sunDir[1]**2+sunDir[2]**2);
+  sunDir[0]/=slen; sunDir[1]/=slen; sunDir[2]/=slen;
+  const sunH=Math.max(sunDir[1],0);
+  const sunCol=[1.0*sunH+0.15, 0.85*sunH+0.05, 0.5*sunH+0.02];
+  const ambient=[0.15+0.2*sunH, 0.12+0.18*sunH, 0.12+0.22*sunH];
+  const fogCol=[0.5*sunH+0.04, 0.4*sunH+0.04, 0.5*sunH+0.06];
+  const skyTop=[0.08+0.25*sunH, 0.05+0.32*sunH, 0.18+0.5*sunH];
+  const skyHorizon=[fogCol[0]*1.2, fogCol[1]*1.1, fogCol[2]*1.3];
+
+  // ── Sky ──
+  gl.depthMask(false);
+  gl.useProgram(progSky);
+  const skyCamRight=[view[0],view[4],view[8]];
+  const skyCamUp   =[view[1],view[5],view[9]];
+  // compute InvVP for sky
+  const skyCamFwd=[-view[2],-view[6],-view[10]];
+  // approximate: use unprojection of screen corners
+  const invVP=(()=>{
+    // simple sky pass: use VP inverse approx via transpose of view
+    // Just pass VP^-1 = (PV)^-1 : precompute manually
+    // for the sky we just need direction vectors—use the cam basis
+    // We'll pass a special matrix to the sky shader encoding cam orientation
+    const m=mat4.identity(mat4.create());
+    const ip=mat4.identity(mat4.create());
+    // unproj: dir = (VP^-1 * ndc).xyz
+    // We pass VP^-1 below
+    const vp=VP;
+    // Use simple 4x4 inverse for sky
+    return vp; // placeholder - shader uses vDir which is approximate
+  })();
+
+  gl.uniform3fv(UP(progSky,'uSkyTop'), skyTop);
+  gl.uniform3fv(UP(progSky,'uSkyHorizon'), skyHorizon);
+  gl.uniform3fv(UP(progSky,'uSunDir'), sunDir);
+  gl.uniform3fv(UP(progSky,'uSunColor'), sunCol);
+  // For the sky shader, pass view-proj inverse as best we can
+  // Actually, we use a simpler approach: pass the inv-view-proj
+  // by just encoding the frustum corners
+  // We'll override: use a simple skybox trick via the prog
+  const aPosSky=getAttrib(progSky,'aPos');
+  gl.bindBuffer(gl.ARRAY_BUFFER, skyBuf);
+  gl.enableVertexAttribArray(aPosSky);
+  gl.vertexAttribPointer(aPosSky,3,gl.FLOAT,false,0,0);
+  // Pass a matrix that unprojects NDC to world dir:
+  // dir = (invProj * ndc).xyz then (invView * dir)
+  // Short: pass camera basis directly
+  const skyMat = new Float32Array(16);
+  // encode cam right/up/fwd in first 3 columns, scale by fov
+  const fovY=Math.PI/3, tanH=Math.tan(fovY/2);
+  skyMat[0]=skyCamRight[0]*tanH*aspect; skyMat[1]=skyCamRight[1]*tanH*aspect; skyMat[2]=skyCamRight[2]*tanH*aspect; skyMat[3]=0;
+  skyMat[4]=skyCamUp[0]*tanH;           skyMat[5]=skyCamUp[1]*tanH;           skyMat[6]=skyCamUp[2]*tanH;           skyMat[7]=0;
+  skyMat[8]=skyCamFwd[0];               skyMat[9]=skyCamFwd[1];               skyMat[10]=skyCamFwd[2];              skyMat[11]=0;
+  skyMat[12]=0; skyMat[13]=0; skyMat[14]=0; skyMat[15]=1;
+  gl.uniformMatrix4fv(UP(progSky,'uInvVP'), false, skyMat);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, skyIdx);
+  gl.drawElements(gl.TRIANGLES,6,gl.UNSIGNED_SHORT,0);
+  gl.depthMask(true);
+
+  // ── Main scene ──
+  gl.useProgram(progMain);
+  const uniM = {
+    uMVP:     UP(progMain,'uMVP'),
+    uModel:   UP(progMain,'uModel'),
+    uBaseColor:UP(progMain,'uBaseColor'),
+    uType:    UP(progMain,'uType'),
+    uTime:    UP(progMain,'uTime'),
+    uSunDir:  UP(progMain,'uSunDir'),
+    uSunColor:UP(progMain,'uSunColor'),
+    uAmbient: UP(progMain,'uAmbient'),
+    uFogColor:UP(progMain,'uFogColor'),
+    uFogDensity:UP(progMain,'uFogDensity'),
+    _VP: VP
+  };
+  gl.uniform1f(uniM.uTime, gameTime);
+  gl.uniform3fv(uniM.uSunDir, sunDir);
+  gl.uniform3fv(uniM.uSunColor, sunCol);
+  gl.uniform3fv(uniM.uAmbient, ambient);
+  gl.uniform3fv(uniM.uFogColor, fogCol);
+  gl.uniform1f(uniM.uFogDensity, 0.0008);
+
+  // Ground
+  const I=mat4.identity(mat4.create());
+  drawMesh(meshGround, I, [0.2,0.38,0.15], 0, uniM);
+
+  // Water pond (near center)
+  const waterM=mat4.translate(I, 5, 0.01, -8);
+  drawMesh(meshWater, waterM, [0.15,0.35,0.55], 3, uniM);
+
+  // Trees
+  for(const tr of trees){
+    const trunkColor=[0.38,0.22,0.12];
+    const blosColor=[1.0,0.7,0.82];
+    const darkBlos=[0.88,0.6,0.72];
+    // trunk
+    let m=mat4.translate(I, tr.x, 0, tr.z);
+    m=mat4.scale(m, tr.sc, tr.sc, tr.sc);
+    drawMesh(meshCylSmall, m, trunkColor, 1, uniM);
+    // blossoms (2-3 spheres per tree)
+    const meshFoliage=[meshSphSm, meshSphMed, meshSphLg][tr.type];
+    let fm=mat4.translate(I, tr.x+tr.rx*2, (tr.type+1)*tr.sc*1.1+tr.sc, tr.z+tr.rx);
+    fm=mat4.scale(fm, tr.sc, tr.sc, tr.sc);
+    drawMesh(meshFoliage, fm, blosColor, 1, uniM);
+    if(tr.type>0){
+      let fm2=mat4.translate(I, tr.x-tr.rx, (tr.type+1)*tr.sc*0.8+tr.sc*0.5, tr.z+tr.rx*1.5);
+      fm2=mat4.scale(fm2, tr.sc*0.7, tr.sc*0.7, tr.sc*0.7);
+      drawMesh(meshSphSm, fm2, darkBlos, 1, uniM);
+    }
+  }
+
+  // Lanterns (stone color)
+  for(const ln of lanterns){
+    const lm=mat4.translate(I, ln.x, 0, ln.z);
+    drawMesh(meshLanternBase, lm, [0.5,0.48,0.44], 1, uniM);
+    const lm2=mat4.translate(I, ln.x, 0.15, ln.z);
+    drawMesh(meshLanternBody, lm2, [0.48,0.45,0.42], 1, uniM);
+    const lm3=mat4.translate(I, ln.x, 0.55, ln.z);
+    drawMesh(meshLanternTop, lm3, [0.52,0.5,0.46], 1, uniM);
+    // glowing top at night
+    if(sunH < 0.3){
+      const glow=[1.0, 0.8+sunH, 0.3+sunH];
+      const gm=mat4.translate(I, ln.x, 0.38, ln.z);
+      drawMesh(meshLanternBody, mat4.scale(gm,0.8,0.8,0.8), glow, 1, uniM);
+    }
+  }
+
+  // Collectible petals (glowing orbs)
+  const orb=meshSphSm;
+  for(const c of collectibles){
+    if(c.collected) continue;
+    const bob=Math.sin(gameTime*2+c.phase)*0.12;
+    const cm=mat4.translate(I, c.x, c.y+bob, c.z);
+    const s=0.12+Math.sin(gameTime*3+c.phase)*0.02;
+    drawMesh(orb, mat4.scale(cm,s,s,s), [1.0,0.8,0.9], 1, uniM);
+  }
+
+  // ── Falling petals ──
+  gl.depthMask(false);
+  gl.useProgram(progPetal);
+  const pVP=UP(progPetal,'uVP');
+  const pTime=UP(progPetal,'uTime');
+  const pRight=UP(progPetal,'uCamRight');
+  const pUp=UP(progPetal,'uCamUp');
+  const pOffset=getAttrib(progPetal,'aOffset');
+  const pPhase=getAttrib(progPetal,'aPhase');
+
+  gl.uniformMatrix4fv(pVP,false,VP);
+  gl.uniform1f(pTime, gameTime);
+  gl.uniform3fv(pRight, skyCamRight);
+  gl.uniform3fv(pUp, skyCamUp);
+
+  petalMesh.bind();
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, petalOffsetBuf);
+  gl.enableVertexAttribArray(pOffset);
+  gl.vertexAttribPointer(pOffset,3,gl.FLOAT,false,0,0);
+  if(gl.vertexAttribDivisor) gl.vertexAttribDivisor(pOffset,1);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, petalPhaseBuf);
+  gl.enableVertexAttribArray(pPhase);
+  gl.vertexAttribPointer(pPhase,1,gl.FLOAT,false,0,0);
+  if(gl.vertexAttribDivisor) gl.vertexAttribDivisor(pPhase,1);
+
+  if(gl.drawElementsInstanced){
+    gl.drawElementsInstanced(gl.TRIANGLES,6,gl.UNSIGNED_SHORT,0,PETAL_COUNT);
+  } else {
+    // fallback: draw subset manually
+    for(let i=0;i<Math.min(PETAL_COUNT,100);i++){
+      gl.uniform1f(pTime, gameTime+petalPhases[i]*2);
+      gl.drawElements(gl.TRIANGLES,6,gl.UNSIGNED_SHORT,0);
+    }
+  }
+  if(gl.vertexAttribDivisor){ gl.vertexAttribDivisor(pOffset,0); gl.vertexAttribDivisor(pPhase,0); }
+
+  gl.depthMask(true);
+  requestAnimationFrame(render);
+}
+
+// ─── Start ────────────────────────────────────────────────
+const startOverlay=document.getElementById('start-overlay');
+const loadingEl=document.getElementById('loading');
+
+setTimeout(()=>loadingEl.classList.add('done'), 1800);
+
+document.getElementById('start-btn').addEventListener('click', ()=>{
+  gameStarted=true;
+  startOverlay.classList.add('hide');
+  setTimeout(()=>startOverlay.style.display='none', 900);
+});
+
+requestAnimationFrame(t=>{ lastT=t; requestAnimationFrame(render); });
+</script>
+</body>
+</html>
