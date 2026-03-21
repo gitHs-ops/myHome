@@ -358,6 +358,7 @@ const mat4 = {
 
 // ─── Shaders ──────────────────────────────────────────────
 const VS_MAIN = `
+precision mediump float;
 attribute vec3 aPos;
 attribute vec3 aNormal;
 attribute vec2 aUV;
@@ -431,6 +432,7 @@ void main(){
 }`;
 
 const VS_SKY = `
+precision mediump float;
 attribute vec3 aPos;
 varying vec3 vDir;
 uniform mat4 uInvVP;
@@ -456,6 +458,7 @@ void main(){
 }`;
 
 const VS_PETAL = `
+precision mediump float;
 attribute vec3 aPos;
 attribute vec3 aOffset;
 attribute float aPhase;
