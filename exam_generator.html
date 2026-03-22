@@ -724,12 +724,10 @@ JSON 형식 (배열):
     let raw = '';
 
     if (EXAM_PROXY_URL && EXAM_PROXY_URL !== 'YOUR_EXAM_PROXY_URL') {
-      // ── Apps Script 프록시 경유 (GitHub Pages / 모바일) ──
-      const res = await fetch(EXAM_PROXY_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: prompt, max_tokens: 5000 })
-      });
+      // ── Apps Script 프록시 경유 GET 방식 (GitHub Pages / 모바일) ──
+      const encodedPrompt = encodeURIComponent(prompt);
+      const url = EXAM_PROXY_URL + '?prompt=' + encodedPrompt + '&max_tokens=5000';
+      const res = await fetch(url, { method: 'GET' });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       raw = data.text || '';
