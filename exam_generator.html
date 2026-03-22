@@ -742,6 +742,7 @@ JSON 형식 (배열):
       if (data.content) data.content.forEach(b => { if (b.type === 'text') raw += b.text; });
     }
 
+    console.log('프록시 응답 raw:', raw.substring(0, 500));
     const m = raw.match(/\[[\s\S]*\]/);
     if (!m) throw new Error('JSON parse error');
     currentQuestions = JSON.parse(m[0]);
