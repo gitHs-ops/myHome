@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>중학교 전과목 시험지 생성기ver1.4</title>
+<title>중학교 전과목 시험지 생성기</title>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -255,7 +255,7 @@ header::before{
 
 <header>
   <div class="hdr-inner">
-    <div class="hdr-label">AI-Powered · 교육부 2015·2022 개정 ver1.4 기준</div>
+    <div class="hdr-label">AI-Powered · 교육부 2015·2022 개정 기준</div>
     <h1 class="hdr-title">중학교 <span>전과목</span> 시험지 생성기</h1>
     <p class="hdr-sub">과목·학년·학기·단원을 선택하면 AI가 맞춤형 시험지를 즉시 생성합니다</p>
     <div class="hdr-stats">
@@ -410,7 +410,7 @@ header::before{
 <script>
 // ── 프록시 URL 설정 ──
 // exam-proxy.gs를 Apps Script에 배포한 후 아래 URL을 입력하세요
-const EXAM_PROXY_URL = "https://script.google.com/macros/library/d/1ItxBe6KYaFA_aQzY0LgqgCKzU3qNdfX5l2BC_TGaJVntJpzCO8lS05g7/5";
+const EXAM_PROXY_URL = "https://script.google.com/macros/s/AKfycbyerp68kb7NQ1N-Gc4X6MIww9gaURnMIZAjDWIW3lvyrJpP07QDvCAK5_SwVQcEmDCu/exec";
 
 // ══════════════════════════════════════════
 //  과목 데이터
@@ -724,30 +724,12 @@ JSON 형식 (배열):
     let raw = '';
 
     if (EXAM_PROXY_URL && EXAM_PROXY_URL !== 'YOUR_EXAM_PROXY_URL') {
-      // ── Apps Script 프록시 경유: prompt를 분할 저장 후 실행 ──
-      // 1단계: 프롬프트를 청크로 나눠 순차 저장
-      const chunkSize = 800;
-      const chunks = [];
-      for (let i = 0; i < prompt.length; i += chunkSize) {
-        chunks.push(prompt.slice(i, i + chunkSize));
-      }
-      const jobId = Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-      for (let i = 0; i < chunks.length; i++) {
-        const u = EXAM_PROXY_URL
-          + '?action=save&job=' + encodeURIComponent(jobId)
-          + '&idx=' + i
-          + '&total=' + chunks.length
-          + '&data=' + encodeURIComponent(chunks[i]);
-        const sr = await fetch(u);  // 반드시 순차 대기
-        const sd = await sr.json();
-        if (!sd.ok) throw new Error('save failed idx=' + i);
-      }
-      // 2단계: 저장 완료 후 실행
-      const runUrl = EXAM_PROXY_URL + '?action=run&job=' + encodeURIComponent(jobId);
-      const runRes = await fetch(runUrl);
-      const runData = await runRes.json();
-      if (runData.error) throw new Error('proxy: ' + runData.error);
-      raw = runData.text || '';
+      // ── Apps Script 프록시 경유 (no-cors 우회용 간소화 방식) ──
+      const encoded = encodeURIComponent(prompt);
+      const res = await fetch(EXAM_PROXY_URL + '?prompt=' + encoded, { redirect: 'follow' });
+      const data = await res.json();
+      if (data.error) throw new Error('proxy: ' + data.error);
+      raw = data.text || '';
       if (!raw) throw new Error('empty response from proxy');
     } else {
       // ── 직접 호출 (로컬 환경) ──
