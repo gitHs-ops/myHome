@@ -118,10 +118,13 @@ header::before{
   padding:6px 12px;border-radius:20px;
   border:1px solid var(--border2);background:var(--bg2);
   cursor:pointer;transition:all .15s;font-size:.78rem;color:var(--muted2);
+  user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
 }
 .qtype-chip:hover{border-color:var(--ac,#fff);color:var(--text);}
 .qtype-chip.active{border-color:var(--ac,#fff);background:var(--acbg);color:var(--ac2,#fff);}
 .qtype-chip input{display:none;}
+.chip-check{font-size:.75rem;width:14px;text-align:center;opacity:.5;}
+.qtype-chip.active .chip-check{opacity:1;}
 
 /* ── 생성 버튼 ── */
 .btn-gen{
@@ -626,9 +629,9 @@ function selectSubject(subj, el) {
   // 문제 유형 칩
   const chips = document.getElementById('qtype-chips');
   chips.innerHTML = s.qtypes.map(q=>`
-    <label class="qtype-chip active c-${subj}">
-      <input type="checkbox" name="qtype" value="${q.v}" checked> ${q.l}
-    </label>`).join('');
+    <div class="qtype-chip active c-${subj}" onclick="toggleChip(this)" data-value="${q.v}">
+      <span class="chip-check">✓</span> ${q.l}
+    </div>`).join('');
 
   // 단원 업데이트
   updateUnits();
@@ -637,6 +640,10 @@ function selectSubject(subj, el) {
 }
 
 // ── 단원 업데이트 ──
+function toggleChip(el){
+  el.classList.toggle('active');
+}
+
 function updateUnits(){
   if (!currentSubj) return;
   const g=document.getElementById('sel-grade').value;
@@ -661,7 +668,7 @@ async function generateExam(){
   const unit  = unitEl.options[unitEl.selectedIndex].text;
   const count = document.getElementById('sel-count').value;
   const level = document.getElementById('sel-level').value;
-  const qtypes= [...document.querySelectorAll('input[name=qtype]:checked')].map(e=>e.value);
+  const qtypes=[...document.querySelectorAll('.qtype-chip.active')].map(e=>e.dataset.value);
   if (!qtypes.length) { alert('문제 유형을 1가지 이상 선택해 주세요.'); return; }
 
   const btn=document.getElementById('btn-gen');
