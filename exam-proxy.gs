@@ -1,80 +1,80 @@
 // ============================================================
-//  시험지 생성 프록시 — Google Apps Script
-//  설정 방법:
-//  1. https://script.google.com 접속 → 새 프로젝트 생성
-//  2. 이 코드 전체 붙여넣기
-//  3. ANTHROPIC_API_KEY 값을 본인 API 키로 교체
-//  4. 배포 → 새 배포 → 웹 앱
-//     - 다음 사용자로 실행: 나(본인)
-//     - 액세스 권한: 모든 사용자(익명 포함)
-//  5. 배포 URL 복사 → exam_generator.html의 EXAM_PROXY_URL에 붙여넣기
+//  시험지 생성 프록시 — Google Apps Script (청크 방식)
+//  ★ Apps Script에 붙여넣고 새 버전으로 재배포
 // ============================================================
 
-// ★ 여기에 Anthropic API 키 입력 ★
 const ANTHROPIC_API_KEY = "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";
 
-// CORS 헤더
-function setCorsHeaders(output) {
-  output.setHeader("Access-Control-Allow-Origin", "*");
-  output.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-  output.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  return output;
-}
-
-// OPTIONS 프리플라이트
-function doOptions(e) {
-  return setCorsHeaders(
-    ContentService.createTextOutput("")
-  ).setMimeType(ContentService.MimeType.TEXT);
-}
-
-// POST 요청 처리 — 클라이언트가 보낸 prompt를 Claude API에 중계
-function doPost(e) {
+function doGet(e) {
   try {
-    const body = JSON.parse(e.postData.contents);
-    const prompt = body.prompt || "";
-    const maxTokens = body.max_tokens || 5000;
+    const action = e.parameter.action || "";
+    const props = PropertiesService.getScriptProperties();
 
-    const response = UrlFetchApp.fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01"
-      },
-      payload: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: maxTokens,
-        messages: [{ role: "user", content: prompt }]
-      }),
-      muteHttpExceptions: true
-    });
-
-    const result = JSON.parse(response.getContentText());
-
-    // content 배열에서 텍스트만 추출
-    let text = "";
-    if (result.content) {
-      result.content.forEach(b => { if (b.type === "text") text += b.text; });
+    // ── save: 프롬프트 청크 저장 ──
+    if (action === "save") {
+      const job   = e.parameter.job   || "";
+      const idx   = e.parameter.idx   || "0";
+      const total = e.parameter.total || "1";
+      const data  = e.parameter.data  || "";
+      props.setProperty("job_" + job + "_" + idx, data);
+      props.setProperty("job_" + job + "_total", total);
+      return ContentService
+        .createTextOutput(JSON.stringify({ ok: true }))
+        .setMimeType(ContentService.MimeType.JSON);
     }
 
-    return setCorsHeaders(
-      ContentService.createTextOutput(JSON.stringify({ text: text }))
-    ).setMimeType(ContentService.MimeType.JSON);
+    // ── run: 청크 조합 후 Claude 호출 ──
+    if (action === "run") {
+      const job   = e.parameter.job || "";
+      const total = parseInt(props.getProperty("job_" + job + "_total") || "0");
+      let prompt  = "";
+      for (let i = 0; i < total; i++) {
+        prompt += props.getProperty("job_" + job + "_" + i) || "";
+        props.deleteProperty("job_" + job + "_" + i);
+      }
+      props.deleteProperty("job_" + job + "_total");
+
+      if (!prompt) {
+        return ContentService
+          .createTextOutput(JSON.stringify({ error: "prompt not found" }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+
+      const response = UrlFetchApp.fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01"
+        },
+        payload: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 5000,
+          messages: [{ role: "user", content: prompt }]
+        }),
+        muteHttpExceptions: true
+      });
+
+      const result = JSON.parse(response.getContentText());
+      let text = "";
+      if (result.content) {
+        result.content.forEach(function(b) {
+          if (b.type === "text") text += b.text;
+        });
+      }
+      return ContentService
+        .createTextOutput(JSON.stringify({ text: text }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // ── 기본: 동작 확인 ──
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: "ok", message: "시험지 프록시 정상 작동 중" }))
+      .setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {
-    return setCorsHeaders(
-      ContentService.createTextOutput(JSON.stringify({ error: err.toString() }))
-    ).setMimeType(ContentService.MimeType.JSON);
+    return ContentService
+      .createTextOutput(JSON.stringify({ error: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
-}
-
-// GET 요청 — 프록시 동작 확인용
-function doGet(e) {
-  return setCorsHeaders(
-    ContentService.createTextOutput(JSON.stringify({
-      status: "ok",
-      message: "시험지 생성 프록시 정상 작동 중"
-    }))
-  ).setMimeType(ContentService.MimeType.JSON);
 }

@@ -255,7 +255,7 @@ header::before{
 
 <header>
   <div class="hdr-inner">
-    <div class="hdr-label">AI-Powered · 교육부 2015·2022 개정 ver1.2 기준</div>
+    <div class="hdr-label">AI-Powered · 교육부 2015·2022 개정 기준</div>
     <h1 class="hdr-title">중학교 <span>전과목</span> 시험지 생성기</h1>
     <p class="hdr-sub">과목·학년·학기·단원을 선택하면 AI가 맞춤형 시험지를 즉시 생성합니다</p>
     <div class="hdr-stats">
@@ -724,13 +724,24 @@ JSON 형식 (배열):
     let raw = '';
 
     if (EXAM_PROXY_URL && EXAM_PROXY_URL !== 'YOUR_EXAM_PROXY_URL') {
-      // ── Apps Script 프록시 경유 GET 방식 (GitHub Pages / 모바일) ──
-      const encodedPrompt = encodeURIComponent(prompt);
-      const url = EXAM_PROXY_URL + '?prompt=' + encodedPrompt + '&max_tokens=5000';
-      const res = await fetch(url, { method: 'GET' });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-      raw = data.text || '';
+      // ── Apps Script 프록시 경유: prompt를 분할 저장 후 실행 ──
+      // 1단계: 프롬프트를 청크로 나눠 저장
+      const chunkSize = 1000;
+      const chunks = [];
+      for (let i = 0; i < prompt.length; i += chunkSize) {
+        chunks.push(prompt.slice(i, i + chunkSize));
+      }
+      const jobId = Date.now().toString(36);
+      for (let i = 0; i < chunks.length; i++) {
+        const u = EXAM_PROXY_URL + '?action=save&job=' + jobId + '&idx=' + i + '&total=' + chunks.length + '&data=' + encodeURIComponent(chunks[i]);
+        await fetch(u);
+      }
+      // 2단계: 실행
+      const runUrl = EXAM_PROXY_URL + '?action=run&job=' + jobId;
+      const runRes = await fetch(runUrl);
+      const runData = await runRes.json();
+      if (runData.error) throw new Error(runData.error);
+      raw = runData.text || '';
     } else {
       // ── 직접 호출 (로컬 환경) ──
       const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -742,14 +753,9 @@ JSON 형식 (배열):
       if (data.content) data.content.forEach(b => { if (b.type === 'text') raw += b.text; });
     }
 
-    // JSON 배열 추출 (```json 코드블록 포함 대응)
-    let m = raw.match(/```json\s*([\s\S]*?)```/);
-    if (m) raw = m[1].trim();
-    m = raw.match(/\[[\s\S]*\]/);
-    if (!m) {
-      console.error('파싱 실패 raw:', raw.substring(0, 300));
-      throw new Error('JSON parse error: ' + raw.substring(0, 100));
-    }
+    console.log('프록시 응답 raw:', raw.substring(0, 500));
+    const m = raw.match(/\[[\s\S]*\]/);
+    if (!m) throw new Error('JSON parse error');
     currentQuestions = JSON.parse(m[0]);
     renderExam({s, grade, sem, pub, unit, count, level});
   } catch(err) {
