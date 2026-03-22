@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중학교 한문 시험지</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1209;
+    --rice: #fdf8f0;
+    --gold: #b8860b;
+    --gold-lt: #e8c84a;
+    --red: #9b2335;
+    --brush: #2c3e50;
+    --soft: #f0e8d8;
+    --gray: #7f8c8d;
+    --green: #1e7e44;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Noto Sans KR',sans-serif; background:var(--rice); color:var(--ink); min-height:100vh; }
+
+  /* ════ HERO ════ */
+  #hero {
+    min-height:100vh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; padding:40px 20px;
+    background:
+      radial-gradient(ellipse at 10% 15%, rgba(184,134,11,.10) 0%, transparent 55%),
+      radial-gradient(ellipse at 88% 80%, rgba(155,35,53,.08) 0%, transparent 50%),
+      var(--rice);
+    position:relative; overflow:hidden;
+  }
+  #hero::before {
+    content:"明 心 寶 鑑";
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    font-family:'Noto Serif KR',serif; font-size:clamp(60px,16vw,200px);
+    font-weight:900; color:rgba(184,134,11,.05); letter-spacing:.2em;
+    white-space:nowrap; pointer-events:none; user-select:none;
+  }
+  .hero-badge {
+    background:var(--red); color:#fff;
+    font-family:'Noto Serif KR',serif; font-size:13px; font-weight:600;
+    letter-spacing:.15em; padding:6px 18px; border-radius:2px;
+    margin-bottom:22px; box-shadow:2px 2px 0 rgba(0,0,0,.2);
+  }
+  .hero-title {
+    font-family:'Noto Serif KR',serif; font-size:clamp(34px,7vw,70px);
+    font-weight:900; text-align:center; line-height:1.15; margin-bottom:10px;
+  }
+  .hero-title span { color:var(--gold); }
+  .hero-sub { font-size:15px; color:var(--gray); font-weight:300; text-align:center; margin-bottom:44px; letter-spacing:.05em; }
+
+  /* 유형 뱃지 설명 */
+  .type-row {
+    display:flex; gap:8px; flex-wrap:wrap; justify-content:center;
+    margin-bottom:36px; max-width:520px;
+  }
+  .type-tag {
+    background:white; border:1px solid #e0d8c8;
+    font-size:12px; padding:5px 12px; border-radius:20px; color:var(--gray);
+    display:flex; align-items:center; gap:5px;
+  }
+  .type-tag .dot { width:7px; height:7px; border-radius:50%; }
+
+  /* 선택 카드 */
+  .selector-wrapper {
+    background:white; border:1px solid rgba(184,134,11,.2); border-radius:12px;
+    padding:36px 40px; width:100%; max-width:520px;
+    box-shadow:0 8px 40px rgba(0,0,0,.08), 0 2px 8px rgba(184,134,11,.1);
+    position:relative; z-index:1;
+  }
+  .selector-wrapper::before {
+    content:''; position:absolute; top:-1px; left:20px; right:20px;
+    height:3px; background:linear-gradient(90deg,var(--gold),var(--red));
+    border-radius:0 0 2px 2px;
+  }
+  .select-group { margin-bottom:26px; }
+  .select-label {
+    font-family:'Noto Serif KR',serif; font-size:15px; font-weight:600;
+    color:var(--ink); margin-bottom:12px; display:flex; align-items:center; gap:8px;
+  }
+  .select-label::before {
+    content:''; display:inline-block; width:4px; height:16px;
+    background:var(--gold); border-radius:2px;
+  }
+  .btn-group { display:flex; gap:10px; flex-wrap:wrap; }
+  .opt-btn {
+    flex:1; min-width:90px; padding:12px 16px; border:2px solid #e8e0d0;
+    background:white; border-radius:8px; font-family:'Noto Serif KR',serif;
+    font-size:16px; font-weight:600; color:var(--gray);
+    cursor:pointer; transition:all .18s;
+  }
+  .opt-btn:hover { border-color:var(--gold); color:var(--gold); background:#fffbf0; transform:translateY(-1px); }
+  .opt-btn.active {
+    border-color:var(--gold); background:var(--gold); color:white;
+    box-shadow:0 3px 12px rgba(184,134,11,.4); transform:translateY(-1px);
+  }
+  .start-btn {
+    width:100%; padding:16px; background:linear-gradient(135deg,var(--ink),var(--brush));
+    color:white; border:none; border-radius:8px; font-family:'Noto Serif KR',serif;
+    font-size:18px; font-weight:700; letter-spacing:.1em;
+    cursor:pointer; transition:all .2s; margin-top:8px; position:relative; overflow:hidden;
+  }
+  .start-btn::after { content:'→'; position:absolute; right:20px; top:50%; transform:translateY(-50%); transition:right .2s; }
+  .start-btn:hover { background:linear-gradient(135deg,#000,#1a252f); box-shadow:0 6px 24px rgba(0,0,0,.3); transform:translateY(-1px); }
+  .start-btn:hover::after { right:14px; }
+
+  /* ════ QUIZ PAGE ════ */
+  #quiz-page { display:none; min-height:100vh; background:var(--rice); }
+  .quiz-header {
+    background:var(--ink); color:white; position:sticky; top:0; z-index:100;
+    box-shadow:0 2px 20px rgba(0,0,0,.3);
+  }
+  .quiz-header-inner {
+    max-width:960px; margin:0 auto; padding:14px 24px;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+  }
+  .quiz-title-bar { font-family:'Noto Serif KR',serif; font-size:18px; font-weight:700; letter-spacing:.05em; }
+  .quiz-title-bar span { color:var(--gold-lt); }
+  .quiz-meta { display:flex; align-items:center; gap:12px; font-size:13px; flex-wrap:wrap; }
+  .meta-badge { background:rgba(255,255,255,.12); padding:4px 12px; border-radius:20px; font-weight:500; }
+  .timer-badge {
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+    padding:4px 14px; border-radius:20px; font-size:14px; font-family:monospace;
+    color:#ffd; letter-spacing:.1em;
+  }
+  .btn-back {
+    background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2);
+    color:white; padding:7px 16px; border-radius:6px; font-size:13px; cursor:pointer;
+    transition:background .15s;
+  }
+  .btn-back:hover { background:rgba(255,255,255,.2); }
+  .progress-bar-wrap { background:rgba(255,255,255,.1); height:4px; width:100%; }
+  .progress-bar-fill { height:100%; background:var(--gold-lt); transition:width .3s; }
+
+  /* 시험지 */
+  .exam-sheet { max-width:960px; margin:0 auto; padding:32px 24px 80px; }
+  .exam-top {
+    display:flex; align-items:center; justify-content:space-between;
+    border-bottom:2px solid var(--ink); padding-bottom:16px; margin-bottom:32px;
+    flex-wrap:wrap; gap:12px;
+  }
+  .exam-school { font-family:'Noto Serif KR',serif; font-size:22px; font-weight:700; }
+  .exam-info-box { display:flex; gap:24px; font-size:13px; color:var(--gray); }
+  .exam-info-box strong { color:var(--ink); }
+
+  /* 섹션 헤더 */
+  .section-header {
+    display:flex; align-items:center; gap:12px;
+    padding:10px 16px; margin:32px 0 14px;
+    border-left:4px solid var(--gold); background:rgba(184,134,11,.06);
+    border-radius:0 6px 6px 0;
+  }
+  .sec-icon { font-size:20px; }
+  .sec-title { font-family:'Noto Serif KR',serif; font-size:15px; font-weight:700; }
+  .sec-desc { font-size:12px; color:var(--gray); margin-left:auto; }
+
+  /* 문제 그리드 */
+  .questions-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+  @media(max-width:640px) {
+    .questions-grid { grid-template-columns:1fr; }
+    .selector-wrapper { padding:28px 20px; }
+  }
+
+  /* 문제 카드 */
+  .q-card {
+    background:white; border:1px solid #e8e0d0; border-radius:10px;
+    padding:16px 18px; display:flex; align-items:flex-start; gap:14px;
+    transition:box-shadow .15s; position:relative;
+  }
+  .q-card:hover { box-shadow:0 3px 16px rgba(0,0,0,.08); }
+  .q-card.graded-correct { border:2px solid var(--green); }
+  .q-card.graded-wrong   { border:2px solid var(--red); }
+  .q-num {
+    font-family:'Noto Serif KR',serif; font-size:11px; font-weight:700;
+    color:white; background:var(--ink); width:26px; height:26px;
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; margin-top:2px;
+  }
+  .q-content { flex:1; }
+  .q-type-chip {
+    display:inline-block; font-size:10px; font-weight:700; letter-spacing:.06em;
+    padding:2px 8px; border-radius:10px; margin-bottom:8px;
+    color:white;
+  }
+  .chip-A { background:#5b6abf; }  /* 단문해석 */
+  .chip-B { background:#b8400b; }  /* 사자성어 */
+  .chip-C { background:#1e7e44; }  /* 명심보감/논어 */
+  .chip-D { background:#7b3fa0; }  /* 허사 */
+
+  /* 지문 */
+  .q-passage {
+    font-family:'Noto Serif KR',serif; font-size:18px; font-weight:700;
+    color:var(--ink); line-height:1.5; margin-bottom:4px;
+    letter-spacing:.05em;
+  }
+  .q-passage.sm { font-size:15px; }
+  .q-prompt { font-size:12px; color:var(--gray); margin-bottom:10px; }
+  .q-source { font-size:11px; color:#aaa; margin-bottom:8px; font-style:italic; }
+
+  /* 보기 */
+  .choices { display:flex; flex-direction:column; gap:5px; }
+  .choice-item {
+    display:flex; align-items:center; gap:8px; padding:7px 10px;
+    border:1px solid #ece7df; border-radius:6px;
+    cursor:pointer; transition:all .12s; font-size:14px;
+  }
+  .choice-item:hover { background:#fffbf0; border-color:var(--gold); }
+  .choice-item.selected { background:var(--gold); border-color:var(--gold); color:white; }
+  .choice-item.correct  { background:var(--green); border-color:var(--green); color:white; }
+  .choice-item.wrong    { background:var(--red); border-color:var(--red); color:white; text-decoration:line-through; opacity:.7; }
+  .choice-num { font-weight:700; font-size:12px; opacity:.7; min-width:14px; }
+  .choice-hanja { font-family:'Noto Serif KR',serif; font-size:15px; font-weight:600; }
+
+  /* 답안 마크 */
+  .answer-mark { position:absolute; top:10px; right:12px; font-size:16px; display:none; }
+  .q-card.graded-correct .answer-mark,
+  .q-card.graded-wrong   .answer-mark { display:block; }
+
+  /* 제출 */
+  .submit-area { margin-top:40px; text-align:center; }
+  .submit-btn {
+    padding:16px 52px; background:linear-gradient(135deg,var(--red),#7a1b28);
+    color:white; border:none; border-radius:8px; font-family:'Noto Serif KR',serif;
+    font-size:17px; font-weight:700; letter-spacing:.1em;
+    cursor:pointer; transition:all .2s; box-shadow:0 4px 16px rgba(155,35,53,.35);
+  }
+  .submit-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(155,35,53,.4); }
+
+  /* 결과 모달 */
+  .result-overlay {
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.72);
+    z-index:200; align-items:center; justify-content:center; padding:20px;
+  }
+  .result-overlay.show { display:flex; }
+  .result-card {
+    background:white; border-radius:16px; padding:48px 36px;
+    max-width:420px; width:100%; text-align:center;
+    animation:popIn .3s cubic-bezier(.175,.885,.32,1.275);
+  }
+  @keyframes popIn { from{transform:scale(.8);opacity:0} to{transform:scale(1);opacity:1} }
+  .result-emoji { font-size:52px; margin-bottom:10px; }
+  .result-score { font-family:'Noto Serif KR',serif; font-size:52px; font-weight:900; line-height:1; margin-bottom:4px; }
+  .result-score span { font-size:22px; color:var(--gray); font-weight:400; }
+  .result-grade { font-family:'Noto Serif KR',serif; font-size:20px; font-weight:700; margin:10px 0 4px; }
+  .result-desc { font-size:13px; color:var(--gray); margin-bottom:24px; }
+  .score-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:16px 0; padding:16px 0; border-top:1px solid #eee; border-bottom:1px solid #eee; }
+  .stat-item { text-align:center; }
+  .stat-num { font-family:'Noto Serif KR',serif; font-size:24px; font-weight:700; }
+  .stat-label { font-size:11px; color:var(--gray); margin-top:2px; }
+  .stat-item.co .stat-num { color:var(--green); }
+  .stat-item.wr .stat-num { color:var(--red); }
+  .result-btns { display:flex; gap:12px; }
+  .result-btn { flex:1; padding:12px; border-radius:8px; font-family:'Noto Serif KR',serif; font-size:15px; font-weight:700; cursor:pointer; transition:all .15s; border:2px solid; }
+  .result-btn.primary { background:var(--ink); color:white; border-color:var(--ink); }
+  .result-btn.secondary { background:white; color:var(--ink); border-color:#ddd; }
+  .result-btn:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,.15); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section id="hero">
+  <div class="hero-badge">📖 교육부 2022 개정 한문과 교육과정 기반</div>
+  <h1 class="hero-title">중학교 <span>한문</span><br>시험 연습</h1>
+  <p class="hero-sub">단문 해석 · 사자성어 · 명심보감 · 허사 — 4가지 유형 랜덤 출제</p>
+
+  <div class="type-row">
+    <div class="type-tag"><span class="dot" style="background:#5b6abf"></span>단문 해석</div>
+    <div class="type-tag"><span class="dot" style="background:#b8400b"></span>사자성어</div>
+    <div class="type-tag"><span class="dot" style="background:#1e7e44"></span>명심보감·논어</div>
+    <div class="type-tag"><span class="dot" style="background:#7b3fa0"></span>허사(어조사)</div>
+  </div>
+
+  <div class="selector-wrapper">
+    <div class="select-group">
+      <div class="select-label">학습 레벨 선택</div>
+      <div class="btn-group">
+        <button class="opt-btn" onclick="selectOpt('level','1',this)">중 1</button>
+        <button class="opt-btn active" onclick="selectOpt('level','2',this)">중 2</button>
+        <button class="opt-btn" onclick="selectOpt('level','3',this)">중 3</button>
+      </div>
+    </div>
+    <div class="select-group">
+      <div class="select-label">문항 수 선택</div>
+      <div class="btn-group">
+        <button class="opt-btn" onclick="selectOpt('count','10',this)">10 문항</button>
+        <button class="opt-btn active" onclick="selectOpt('count','20',this)">20 문항</button>
+        <button class="opt-btn" onclick="selectOpt('count','30',this)">30 문항</button>
+      </div>
+    </div>
+    <button class="start-btn" onclick="startQuiz()">시험 시작하기</button>
+  </div>
+</section>
+
+<!-- ═══════════════ QUIZ PAGE ═══════════════ -->
+<div id="quiz-page">
+  <div class="quiz-header">
+    <div class="quiz-header-inner">
+      <div class="quiz-title-bar">중학교 <span>한문</span> 시험지</div>
+      <div class="quiz-meta">
+        <div class="meta-badge" id="level-badge">중2</div>
+        <div class="meta-badge" id="count-badge">20문항</div>
+        <div class="timer-badge" id="timer">00:00</div>
+        <button class="btn-back" onclick="goBack()">← 처음으로</button>
+      </div>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="exam-sheet">
+    <div class="exam-top">
+      <div class="exam-school">漢文 試驗紙</div>
+      <div class="exam-info-box">
+        <div>학년: <strong id="info-grade">중2</strong></div>
+        <div>문항: <strong id="info-count">20</strong>문항</div>
+        <div>점수: <strong id="info-score">각 5점</strong></div>
+      </div>
+    </div>
+    <div id="sections-container"></div>
+    <div class="submit-area">
+      <button class="submit-btn" onclick="submitQuiz()">✓ 채점하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 결과 모달 -->
+<div class="result-overlay" id="result-overlay">
+  <div class="result-card">
+    <div class="result-emoji" id="result-emoji">🎉</div>
+    <div class="result-score" id="result-score">80<span>점</span></div>
+    <div class="result-grade" id="result-grade">잘했어요!</div>
+    <div class="result-desc" id="result-desc">계속 연습하면 만점도 가능해요</div>
+    <div class="score-stats">
+      <div class="stat-item co"><div class="stat-num" id="st-co">0</div><div class="stat-label">정답</div></div>
+      <div class="stat-item wr"><div class="stat-num" id="st-wr">0</div><div class="stat-label">오답</div></div>
+      <div class="stat-item"><div class="stat-num" id="st-un">0</div><div class="stat-label">미응답</div></div>
+    </div>
+    <div class="result-btns">
+      <button class="result-btn secondary" onclick="reviewAnswers()">오답 확인</button>
+      <button class="result-btn primary" onclick="retryQuiz()">다시 풀기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  한문 문제 데이터베이스
+//  유형 A: 단문 해석  B: 사자성어  C: 명심보감·논어  D: 허사
+// ════════════════════════════════════════════════════════════
+
+const DB = {
+
+// ── 중1 ──────────────────────────────────────────────────
+1: [
+  // A 단문해석
+  {type:'A', passage:'父母在 不遠遊', source:'논어 里仁', prompt:'밑줄 친 부분의 뜻으로 알맞은 것을 고르시오.',
+   q:'「不遠遊」의 뜻은?', answer:'멀리 떠나지 않는다',
+   choices:['멀리 떠나지 않는다','먼 곳에서 논다','遠은 멀 원이다','부모님께 효도한다']},
+  {type:'A', passage:'學而時習之', source:'논어 學而', prompt:'이 구절의 뜻으로 알맞은 것은?',
+   q:'「學而時習之」의 해석은?', answer:'배우고 때때로 익힌다',
+   choices:['배우고 때때로 익힌다','배울 때 스스로 묻는다','학문은 시간이 필요하다','배워서 남을 가르친다']},
+  {type:'A', passage:'己所不欲 勿施於人', source:'논어 顔淵', prompt:'이 문장의 핵심 교훈은?',
+   q:'「己所不欲 勿施於人」의 뜻은?', answer:'자기가 하기 싫은 것을 남에게 베풀지 마라',
+   choices:['자기가 하기 싫은 것을 남에게 베풀지 마라','하고 싶은 일을 남에게도 권하라','욕심을 버리면 사람이 된다','남에게 친절하면 복이 온다']},
+  {type:'A', passage:'溫故而知新', source:'논어 爲政', prompt:'이 구절의 뜻으로 알맞은 것은?',
+   q:'「溫故而知新」의 해석은?', answer:'옛것을 익히고 새것을 안다',
+   choices:['옛것을 익히고 새것을 안다','따뜻하게 대하면 새로 태어난다','옛날을 그리워한다','고전을 읽어야 한다']},
+  {type:'A', passage:'三人行 必有我師焉', source:'논어 述而', prompt:'이 문장의 의미로 알맞은 것은?',
+   q:'「三人行 必有我師焉」의 뜻은?', answer:'세 사람이 길을 가면 반드시 내 스승이 있다',
+   choices:['세 사람이 길을 가면 반드시 내 스승이 있다','셋이서 가면 길을 잃지 않는다','많은 사람 중에 악인이 있다','세 사람은 항상 의견이 다르다']},
+  // B 사자성어
+  {type:'B', q:'刻舟求劍의 뜻으로 알맞은 것은?', answer:'융통성 없이 낡은 방법만 고집함',
+   choices:['융통성 없이 낡은 방법만 고집함','칼로 배를 타고 강을 건넌다','세월이 흘러도 변하지 않는다','위기에서 지혜를 발휘함'],
+   note:'배에 칼자국을 새기고 물에 빠진 검을 찾는 어리석음'},
+  {type:'B', q:'結草報恩의 뜻으로 알맞은 것은?', answer:'은혜를 잊지 않고 반드시 갚음',
+   choices:['은혜를 잊지 않고 반드시 갚음','풀을 묶어 덫을 만든다','죽어서도 은혜를 갚음','감사한 마음을 표현함'],
+   note:'풀을 묶어 은인의 적을 쓰러뜨린 고사'},
+  {type:'B', q:'孤掌難鳴의 뜻으로 알맞은 것은?', answer:'혼자서는 일을 이루기 어려움',
+   choices:['혼자서는 일을 이루기 어려움','소리없이 큰일을 한다','외로운 사람은 소리를 낸다','혼자 가는 길이 빠르다'],
+   note:'손바닥 하나로는 소리가 나지 않는다'},
+  {type:'B', q:'同苦同樂의 뜻으로 알맞은 것은?', answer:'괴로움과 즐거움을 함께 나눔',
+   choices:['괴로움과 즐거움을 함께 나눔','같은 곳에서 함께 즐긴다','고통 뒤에 즐거움이 온다','고락(苦樂)은 번갈아 온다']},
+  {type:'B', q:'一石二鳥의 뜻으로 알맞은 것은?', answer:'하나의 행동으로 두 가지 이익을 얻음',
+   choices:['하나의 행동으로 두 가지 이익을 얻음','돌 하나로 두 마리 새를 잡는다','한 번에 많은 일을 마친다','이익을 위해 새를 잡는다']},
+  // C 명심보감·논어
+  {type:'C', passage:'福生於淸儉 德生於卑退', source:'명심보감 正己篇', prompt:'이 구절의 뜻으로 알맞은 것은?',
+   q:'이 구절에서 복(福)이 생기는 조건은?', answer:'청렴하고 검소함',
+   choices:['청렴하고 검소함','용감하고 진취적임','부지런하고 성실함','지혜롭고 인자함']},
+  {type:'C', passage:'見善如不及 見惡如探湯', source:'명심보감 繼善篇', prompt:'이 구절의 교훈으로 알맞은 것은?',
+   q:'「見惡如探湯」의 의미는?', answer:'악함을 보면 끓는 물에 손을 넣듯 피해야 한다',
+   choices:['악함을 보면 끓는 물에 손을 넣듯 피해야 한다','선을 보면 물처럼 흘러간다','악인은 끓는 탕으로 벌받는다','탕약처럼 나쁜 것도 필요하다']},
+  {type:'C', passage:'過而不改 是謂過矣', source:'논어 衛靈公', prompt:'이 문장의 교훈으로 알맞은 것은?',
+   q:'이 구절의 교훈은?', answer:'잘못을 하고 고치지 않는 것이 진짜 잘못이다',
+   choices:['잘못을 하고 고치지 않는 것이 진짜 잘못이다','지나친 것은 미치지 못한 것과 같다','과거의 잘못은 잊어야 한다','말보다 행동이 중요하다']},
+  // D 허사
+  {type:'D', q:'「不亦樂乎」에서 「乎」의 역할은?', answer:'의문·감탄의 어조사',
+   choices:['의문·감탄의 어조사','부정의 부사','~의 뜻의 조사','주어를 나타내는 조사'],
+   note:'乎는 문장 끝에 쓰여 의문·반어·감탄을 나타내는 어조사'},
+  {type:'D', q:'「君子之道」에서 「之」의 역할은?', answer:'~의(관형격 조사)',
+   choices:['~의(관형격 조사)','그것(지시대명사)','가다(동사)','~하여(접속사)'],
+   note:'之는 관형격 조사(~의), 지시대명사(그것), 동사(가다) 등으로 쓰임'},
+  {type:'D', q:'「吾日三省吾身」에서 「日」의 뜻은?', answer:'날마다(매일)',
+   choices:['날마다(매일)','태양(해)','하루(一日)','낮(日中)'],
+   note:'日은 명사 앞에 쓰여 「날마다」의 부사 역할을 함'},
+],
+
+// ── 중2 ──────────────────────────────────────────────────
+2: [
+  // A 단문해석
+  {type:'A', passage:'知之者 不如好之者 好之者 不如樂之者', source:'논어 雍也', prompt:'이 문장에서 학습의 최고 단계는?',
+   q:'이 문장이 말하는 학습의 최고 경지는?', answer:'즐기는 것(樂之)',
+   choices:['즐기는 것(樂之)','아는 것(知之)','좋아하는 것(好之)','실천하는 것']},
+  {type:'A', passage:'學而不思則罔 思而不學則殆', source:'논어 爲政', prompt:'이 문장의 뜻으로 알맞은 것은?',
+   q:'「思而不學則殆」의 해석은?', answer:'생각만 하고 배우지 않으면 위태롭다',
+   choices:['생각만 하고 배우지 않으면 위태롭다','배우지 않으면 생각할 수 없다','공부는 생각보다 위험하다','생각하는 공부가 최고다']},
+  {type:'A', passage:'人而無信 不知其可也', source:'논어 爲政', prompt:'이 문장의 핵심 덕목은?',
+   q:'이 문장이 강조하는 덕목은?', answer:'신의(信)',
+   choices:['신의(信)','예의(禮)','지혜(智)','용기(勇)']},
+  {type:'A', passage:'吾日三省吾身 爲人謀而不忠乎 與朋友交而不信乎 傳不習乎', source:'논어 學而', prompt:'이 글에서 하루에 세 가지 반성한 것이 아닌 것은?',
+   q:'「三省吾身」에 포함되지 않는 것은?', answer:'부모님께 효도했는가',
+   choices:['부모님께 효도했는가','남을 위해 충성했는가','벗과 사귀며 믿음이 있었는가','배운 것을 익혔는가']},
+  {type:'A', passage:'德不孤 必有隣', source:'논어 里仁', prompt:'이 문장의 뜻으로 알맞은 것은?',
+   q:'「德不孤 必有隣」의 뜻은?', answer:'덕이 있는 사람은 외롭지 않고 반드시 이웃이 생긴다',
+   choices:['덕이 있는 사람은 외롭지 않고 반드시 이웃이 생긴다','덕은 혼자서 쌓는 것이다','이웃과 사이좋게 지내야 한다','덕이 있으면 외롭다']},
+  {type:'A', passage:'巧言令色 鮮矣仁', source:'논어 學而', prompt:'이 문장의 교훈으로 알맞은 것은?',
+   q:'「巧言令色」이 경계하는 것은?', answer:'말을 교묘하게 꾸미고 얼굴빛을 좋게 꾸미는 태도',
+   choices:['말을 교묘하게 꾸미고 얼굴빛을 좋게 꾸미는 태도','교훈이 되는 말을 잘 하는 것','뛰어난 언변으로 사람을 설득하는 것','말과 행동이 일치하는 것']},
+  // B 사자성어
+  {type:'B', q:'守株待兔의 뜻으로 알맞은 것은?', answer:'요행만 바라며 게으름을 피움',
+   choices:['요행만 바라며 게으름을 피움','토끼처럼 빠르게 행동한다','그루터기를 지켜야 한다','한 가지 일에 집중한다'],
+   note:'나무 그루터기를 지키며 토끼가 또 부딪히기를 기다리는 고사'},
+  {type:'B', q:'漁父之利의 뜻으로 알맞은 것은?', answer:'두 사람이 다투는 틈에 제3자가 이익을 취함',
+   choices:['두 사람이 다투는 틈에 제3자가 이익을 취함','어부는 항상 이득을 본다','물고기는 자기 이익만 챙긴다','남의 싸움을 말리면 이득이다'],
+   note:'도요새와 조개가 다투는 사이 어부가 둘 다 잡은 고사'},
+  {type:'B', q:'以心傳心의 뜻으로 알맞은 것은?', answer:'말 없이 마음과 마음이 서로 통함',
+   choices:['말 없이 마음과 마음이 서로 통함','마음을 담아 편지를 쓴다','마음이 있어야 전달된다','진심은 반드시 전해진다']},
+  {type:'B', q:'靑出於藍의 뜻으로 알맞은 것은?', answer:'제자가 스승보다 뛰어남',
+   choices:['제자가 스승보다 뛰어남','푸른빛은 자연에서 나온다','스승의 가르침이 중요하다','남색과 청색은 다르다'],
+   note:'쪽풀에서 나온 청색이 쪽풀보다 더 푸르다는 뜻'},
+  {type:'B', q:'過猶不及의 뜻으로 알맞은 것은?', answer:'지나침은 미치지 못함과 같다',
+   choices:['지나침은 미치지 못함과 같다','모자라는 것보다 넘치는 게 낫다','중용을 지키면 과하지 않다','지나친 것은 미치지 못한 것보다 낫다'],
+   note:'논어에서 공자가 한 말로 중용(中庸)의 중요성을 강조'},
+  {type:'B', q:'近墨者黑의 뜻으로 알맞은 것은?', answer:'나쁜 사람 가까이하면 나쁜 영향을 받는다',
+   choices:['나쁜 사람 가까이하면 나쁜 영향을 받는다','먹을 가까이하면 검어진다','환경은 사람을 바꾸지 못한다','검은 것은 흰 것을 더 밝게 한다'],
+   note:'먹 가까이 있으면 검어지고, 붉은 것 가까이 있으면 붉어진다'},
+  {type:'B', q:'朝三暮四의 뜻으로 알맞은 것은?', answer:'눈앞의 차이만 알고 결과는 같음을 모름',
+   choices:['눈앞의 차이만 알고 결과는 같음을 모름','아침저녁으로 변덕을 부린다','하루에 세 번 네 번 연습한다','계획은 아침에 세워야 한다'],
+   note:'원숭이에게 아침에 셋, 저녁에 넷을 주겠다고 한 고사'},
+  // C 명심보감·논어
+  {type:'C', passage:'禍福無門 惟人自召', source:'명심보감 繼善篇', prompt:'이 구절의 교훈으로 알맞은 것은?',
+   q:'이 구절의 핵심 교훈은?', answer:'화와 복은 자기 행동에 달려 있다',
+   choices:['화와 복은 자기 행동에 달려 있다','운명은 하늘이 결정한다','복은 문을 통해 들어온다','화를 피하려면 문을 닫아라']},
+  {type:'C', passage:'莫道今日不學有來日 莫道今年不學有來年', source:'명심보감 勤學篇', prompt:'이 구절의 교훈으로 알맞은 것은?',
+   q:'이 구절의 핵심 교훈은?', answer:'오늘 배우지 않는 것을 내일이 있다고 미루지 마라',
+   choices:['오늘 배우지 않는 것을 내일이 있다고 미루지 마라','내년에는 더 열심히 공부하자','학문은 평생 계속된다','오늘 최선을 다하라']},
+  {type:'C', passage:'己所不欲 勿施於人', source:'논어 顔淵', prompt:'이 문장의 핵심 정신은?',
+   q:'이 구절이 나타내는 정신은?', answer:'서(恕) — 용서와 배려',
+   choices:['서(恕) — 용서와 배려','인(仁) — 어짊','예(禮) — 예의','의(義) — 의로움']},
+  {type:'C', passage:'吾日三省吾身', source:'논어 學而', prompt:'「省」의 뜻으로 알맞은 것은?',
+   q:'「省」의 훈음은?', answer:'살필 성',
+   choices:['살필 성','성씨 성','성도 성','덜 생']},
+  {type:'C', passage:'貧而無諂 富而無驕', source:'논어 學而', prompt:'이 구절의 뜻으로 알맞은 것은?',
+   q:'「富而無驕」의 해석은?', answer:'부유하더라도 교만하지 않는다',
+   choices:['부유하더라도 교만하지 않는다','부유하면 교만해진다','가난해도 불평하지 않는다','부귀와 겸손은 함께 온다']},
+  // D 허사
+  {type:'D', q:'「學而時習之 不亦說乎」에서 「而」의 역할은?', answer:'순접 접속사(~하고, ~하여)',
+   choices:['순접 접속사(~하고, ~하여)','역접 접속사(~하지만)','~의(관형격 조사)','~에서(장소 전치사)'],
+   note:'而는 순접(~하고) 또는 역접(~하지만) 접속사로 사용됨'},
+  {type:'D', q:'「人而無信 不知其可也」에서 「其」의 뜻은?', answer:'그(것)',
+   choices:['그(것)','심히(부사)','~의(조사)','~하면(가정 접속사)'],
+   note:'其는 지시대명사(그것), 또는 부사(아마도) 등으로 쓰임'},
+  {type:'D', q:'「不亦樂乎」의 「不亦~乎」 구문의 의미는?', answer:'또한 ~하지 않겠는가(반어·강조)',
+   choices:['또한 ~하지 않겠는가(반어·강조)','결코 ~하지 않는다(강한 부정)','만약 ~하지 않으면','~한 것도 아니고']},
+  {type:'D', q:'「於」의 용법으로 알맞지 않은 것은?', answer:'부정의 뜻(~하지 않다)',
+   choices:['부정의 뜻(~하지 않다)','~에서(장소)','~보다(비교)','~에게(대상)'],
+   note:'於는 장소, 비교, 대상을 나타내는 전치사로 쓰임. 부정은 不·未·非가 담당'},
+  {type:'D', q:'「焉」이 어조사로 쓰일 때의 기능은?', answer:'문장 끝에서 완결·감탄을 나타냄',
+   choices:['문장 끝에서 완결·감탄을 나타냄','문장 앞에서 주제를 제시함','~의 뜻으로 관형격을 나타냄','의문을 나타내는 접속사'],
+   note:'焉은 어디(의문대명사), 이에(지시대명사), 문말 어조사 등으로 사용'},
+  {type:'D', q:'「非」와 「不」의 차이로 올바른 것은?', answer:'非는 명사·명사구 앞, 不는 동사·형용사 앞에서 부정',
+   choices:['非는 명사·명사구 앞, 不는 동사·형용사 앞에서 부정','非와 不은 완전히 같은 뜻','不이 더 강한 부정','非는 과거, 不은 현재 부정']},
+],
+
+// ── 중3 ──────────────────────────────────────────────────
+3: [
+  // A 단문해석
+  {type:'A', passage:'知者不惑 仁者不憂 勇者不懼', source:'논어 子罕', prompt:'이 문장에서 용자(勇者)의 특징은?',
+   q:'「勇者不懼」의 해석은?', answer:'용감한 사람은 두려워하지 않는다',
+   choices:['용감한 사람은 두려워하지 않는다','용감한 사람은 근심하지 않는다','용감한 사람은 의혹이 없다','용감해지면 모든 것을 이긴다']},
+  {type:'A', passage:'君君 臣臣 父父 子子', source:'논어 顔淵', prompt:'이 문장의 핵심 사상은?',
+   q:'이 구절이 강조하는 것은?', answer:'각자 자신의 역할과 본분을 다해야 함',
+   choices:['각자 자신의 역할과 본분을 다해야 함','임금과 신하는 평등하다','가족보다 국가가 중요하다','군주는 혼자 나라를 다스린다']},
+  {type:'A', passage:'不患人之不己知 患不知人也', source:'논어 學而', prompt:'이 문장의 교훈으로 알맞은 것은?',
+   q:'이 구절의 교훈은?', answer:'남이 나를 알아주지 않는 것을 걱정하지 말고 내가 남을 알지 못함을 걱정하라',
+   choices:['남이 나를 알아주지 않는 것을 걱정하지 말고 내가 남을 알지 못함을 걱정하라','남에게 인정받는 것이 중요하다','나 자신을 먼저 알아야 한다','남을 알면 나도 성공한다']},
+  {type:'A', passage:'歲月不待人', source:'도연명 雜詩', prompt:'이 시구의 교훈으로 알맞은 것은?',
+   q:'「歲月不待人」의 교훈은?', answer:'세월은 사람을 기다려 주지 않으니 시간을 낭비하지 마라',
+   choices:['세월은 사람을 기다려 주지 않으니 시간을 낭비하지 마라','세월이 지나도 사람은 변하지 않는다','사람은 세월을 이길 수 없다','늙으면 후회한다']},
+  {type:'A', passage:'行有餘力 則以學文', source:'논어 學而', prompt:'이 문장에서 배움의 전제 조건은?',
+   q:'「行有餘力」의 의미는?', answer:'행동(실천)에 여력이 있을 때',
+   choices:['행동(실천)에 여력이 있을 때','글을 읽고 난 다음','학교에 가기 전','힘이 남아돌 때']},
+  // B 사자성어
+  {type:'B', q:'臥薪嘗膽의 뜻으로 알맞은 것은?', answer:'원수를 갚기 위해 온갖 고난을 참고 견딤',
+   choices:['원수를 갚기 위해 온갖 고난을 참고 견딤','나무 위에서 잠을 자는 수양법','쓴 것을 먹어야 강해진다','고난 끝에 성공이 온다'],
+   note:'월왕 구천이 장작 위에 눕고 쓸개를 핥으며 복수를 다짐한 고사'},
+  {type:'B', q:'指鹿爲馬의 뜻으로 알맞은 것은?', answer:'윗사람을 농락하여 옳고 그름을 뒤바꿈',
+   choices:['윗사람을 농락하여 옳고 그름을 뒤바꿈','사슴과 말은 비슷하게 생겼다','거짓 증인을 내세우는 것','사실을 교묘히 감추는 것'],
+   note:'진나라 조고가 사슴을 말이라고 우긴 고사'},
+  {type:'B', q:'矛盾의 뜻으로 알맞은 것은?', answer:'말이나 행동이 앞뒤가 맞지 않음',
+   choices:['말이나 행동이 앞뒤가 맞지 않음','창과 방패로 싸운다','무기를 잘 다루는 사람','강한 것과 강한 것의 충돌']},
+  {type:'B', q:'螢雪之功의 뜻으로 알맞은 것은?', answer:'고난을 이겨내며 열심히 공부한 공적',
+   choices:['고난을 이겨내며 열심히 공부한 공적','반딧불이와 눈으로 만든 작품','추운 겨울에 공부한 성과','반딧불처럼 빛나는 재능'],
+   note:'반딧불과 눈빛으로 공부하여 성공한 車胤·孫康의 고사'},
+  {type:'B', q:'他山之石의 뜻으로 알맞은 것은?', answer:'남의 하찮은 말이나 행동도 자신을 수양하는 데 도움이 됨',
+   choices:['남의 하찮은 말이나 행동도 자신을 수양하는 데 도움이 됨','다른 산의 돌은 쓸모없다','타지의 돌은 가져오지 마라','남의 것은 항상 좋아 보인다'],
+   note:'다른 산의 못난 돌이라도 자기 옥을 가는 데 쓸 수 있다(시경)'},
+  {type:'B', q:'水魚之交의 뜻으로 알맞은 것은?', answer:'아주 친밀하여 떼려야 뗄 수 없는 사이',
+   choices:['아주 친밀하여 떼려야 뗄 수 없는 사이','물고기처럼 자유로운 관계','표면적으로만 친한 척하는 사이','도움을 주고받는 관계'],
+   note:'유비가 제갈량과의 관계를 물과 물고기에 비유한 데서 유래'},
+  // C 명심보감·논어
+  {type:'C', passage:'一日不讀書 口中生荊棘', source:'명심보감 勤學篇', prompt:'이 구절의 교훈으로 알맞은 것은?',
+   q:'이 구절의 핵심 교훈은?', answer:'하루라도 글을 읽지 않으면 입에 가시가 돋는다(부단히 학습해야 한다)',
+   choices:['하루라도 글을 읽지 않으면 입에 가시가 돋는다(부단히 학습해야 한다)','책을 많이 읽으면 입이 강해진다','가시 돋친 말은 배우지 않아서다','독서는 건강에 좋다']},
+  {type:'C', passage:'身有一善 心常樂之', source:'명심보감 存心篇', prompt:'이 구절의 의미로 알맞은 것은?',
+   q:'이 구절의 뜻은?', answer:'몸에 한 가지 선행이 있으면 마음이 항상 즐겁다',
+   choices:['몸에 한 가지 선행이 있으면 마음이 항상 즐겁다','선한 마음은 몸을 건강하게 한다','즐거운 마음이 있어야 선을 행한다','선행은 몸과 마음을 강하게 한다']},
+  {type:'C', passage:'其身正 不令而行 其身不正 雖令不從', source:'논어 子路', prompt:'이 글에서 강조하는 덕목은?',
+   q:'이 구절의 교훈은?', answer:'지도자 자신이 바르면 명령 없이도 따른다(솔선수범)',
+   choices:['지도자 자신이 바르면 명령 없이도 따른다(솔선수범)','엄격한 명령이 중요하다','법령을 잘 만들어야 한다','부하는 항상 따라야 한다']},
+  {type:'C', passage:'人無遠慮 必有近憂', source:'논어 衛靈公', prompt:'이 구절의 뜻으로 알맞은 것은?',
+   q:'「遠慮」의 뜻은?', answer:'먼 앞날을 헤아리는 깊은 생각',
+   choices:['먼 앞날을 헤아리는 깊은 생각','멀리 있는 걱정','가까운 사람의 충고','과거에 대한 반성']},
+  {type:'C', passage:'仁者愛人 知者知人', source:'논어 顔淵', prompt:'이 구절에서 지자(知者)의 특징은?',
+   q:'「知者知人」의 해석은?', answer:'지혜로운 사람은 사람을 잘 안다',
+   choices:['지혜로운 사람은 사람을 잘 안다','어진 사람은 사람을 사랑한다','아는 사람은 가르쳐 준다','지혜로운 자가 사람을 이끈다']},
+  // D 허사
+  {type:'D', q:'「雖」의 뜻으로 알맞은 것은?', answer:'비록 ~하더라도(양보 접속사)',
+   choices:['비록 ~하더라도(양보 접속사)','만약 ~하면(가정 접속사)','~하지 않으면','~이므로(원인 접속사)'],
+   note:'雖는 「비록~라 하더라도」로 양보를 나타내는 접속사'},
+  {type:'D', q:'「乃」의 뜻으로 알맞은 것은?', answer:'이에, 곧 (순서·결과를 나타냄)',
+   choices:['이에, 곧 (순서·결과를 나타냄)','만약(가정)','비록(양보)','~의(관형격)'],
+   note:'乃는 「이에, 그러자, 곧」으로 앞 사건의 결과를 나타내는 부사·접속사'},
+  {type:'D', q:'「則」의 용법으로 알맞은 것은?', answer:'~하면 곧(조건·결과를 연결)',
+   choices:['~하면 곧(조건·결과를 연결)','~의(관형격 조사)','비록~라도(양보)','이유를 나타냄'],
+   note:'則은 「~하면 곧」으로 조건과 결과를 연결하는 접속사'},
+  {type:'D', q:'「以」의 용법이 아닌 것은?', answer:'비록 ~하더라도(양보)',
+   choices:['비록 ~하더라도(양보)','~로써(수단·방법)','~때문에(원인)','~를 가지고(소지)'],
+   note:'以는 수단(~로써), 원인(~때문에), 소지(~를 가지고) 등으로 쓰임. 양보는 雖'},
+  {type:'D', q:'「矣」의 기능으로 알맞은 것은?', answer:'문장 끝에서 단정·완료를 나타내는 어조사',
+   choices:['문장 끝에서 단정·완료를 나타내는 어조사','문장 처음에서 주제를 제시','동사 앞에서 강조','의문을 나타내는 어조사'],
+   note:'矣는 문장 끝에 쓰여 단정·확인·완료의 어조사'},
+]
+};
+
+// ═══════════════ 전역 상태 ═══════════════
+let selectedLevel = 2, selectedCount = 20;
+let currentQuestions = [], userAnswers = {}, isSubmitted = false;
+let timerInterval, timerSeconds = 0;
+
+// ═══════════════ 선택 UI ═══════════════
+function selectOpt(type, val, btn) {
+  btn.parentElement.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (type === 'level') selectedLevel = parseInt(val);
+  else selectedCount = parseInt(val);
+}
+
+// ═══════════════ 시작 ═══════════════
+function startQuiz() {
+  const pool = DB[selectedLevel];
+  // 유형별 균등 분배
+  currentQuestions = pickBalanced(pool, selectedCount);
+  userAnswers = {};
+  isSubmitted = false;
+
+  document.getElementById('level-badge').textContent = `중${selectedLevel}`;
+  document.getElementById('count-badge').textContent = `${selectedCount}문항`;
+  document.getElementById('info-grade').textContent = `중${selectedLevel}`;
+  document.getElementById('info-count').textContent = selectedCount;
+  document.getElementById('info-score').textContent = `각 ${Math.floor(100/selectedCount)}점`;
+
+  renderQuestions();
+  document.getElementById('hero').style.display = 'none';
+  document.getElementById('quiz-page').style.display = 'block';
+  window.scrollTo(0, 0);
+  startTimer();
+}
+
+// 유형 균등 분배 선택
+function pickBalanced(pool, count) {
+  const byType = {A:[], B:[], C:[], D:[]};
+  pool.forEach(q => byType[q.type].push(q));
+
+  const perType = Math.floor(count / 4);
+  const remainder = count % 4;
+  const order = ['A','B','C','D'];
+
+  let result = [];
+  order.forEach((t, i) => {
+    const n = perType + (i < remainder ? 1 : 0);
+    const shuffled = [...byType[t]].sort(() => Math.random() - 0.5);
+    result = result.concat(shuffled.slice(0, Math.min(n, shuffled.length)));
+  });
+
+  // 섞어서 번호 부여
+  result = result.sort(() => Math.random() - 0.5);
+  return result.map((q, i) => ({...q, index: i+1, choices: shuffleChoices(q)}));
+}
+
+function shuffleChoices(q) {
+  // 보기를 섞되 answer 위치를 기억
+  return [...q.choices].sort(() => Math.random() - 0.5);
+}
+
+// ═══════════════ 렌더링 ═══════════════
+const TYPE_META = {
+  A: { label:'단문 해석', chip:'chip-A', icon:'📜', desc:'한문 단문을 읽고 해석하는 문제' },
+  B: { label:'사자성어', chip:'chip-B', icon:'🀄', desc:'사자성어의 뜻과 유래를 묻는 문제' },
+  C: { label:'명심보감·논어', chip:'chip-C', icon:'📖', desc:'고전 구절의 해석과 교훈을 묻는 문제' },
+  D: { label:'허사(어조사)', chip:'chip-D', icon:'🔤', desc:'한문의 허사·어조사 용법을 묻는 문제' },
+};
+
+function renderQuestions() {
+  const container = document.getElementById('sections-container');
+
+  // 유형 묶기
+  const groups = {A:[], B:[], C:[], D:[]};
+  currentQuestions.forEach(q => groups[q.type].push(q));
+
+  let html = '';
+  ['A','B','C','D'].forEach(t => {
+    const qs = groups[t];
+    if (!qs.length) return;
+    const m = TYPE_META[t];
+    html += `
+      <div class="section-header">
+        <span class="sec-icon">${m.icon}</span>
+        <span class="sec-title">[${t}형] ${m.label}</span>
+        <span class="sec-desc">${m.desc}</span>
+      </div>
+      <div class="questions-grid">
+        ${qs.map(q => renderCard(q)).join('')}
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+const NUMS = ['①','②','③','④'];
+function renderCard(q) {
+  const m = TYPE_META[q.type];
+  const isPassage = q.passage;
+  return `
+    <div class="q-card" id="qcard-${q.index}">
+      <div class="q-num">${q.index}</div>
+      <div class="q-content">
+        <span class="q-type-chip ${m.chip}">${m.label}</span>
+        ${isPassage ? `<div class="q-passage${q.passage.length > 20 ? ' sm' : ''}">${q.passage}</div>` : ''}
+        ${q.source ? `<div class="q-source">출전: ${q.source}</div>` : ''}
+        <div class="q-prompt">${q.q}</div>
+        <div class="choices" id="choices-${q.index}">
+          ${q.choices.map((c, ci) => `
+            <div class="choice-item" id="choice-${q.index}-${ci}"
+              onclick="selectAnswer(${q.index}, ${ci})">
+              <span class="choice-num">${NUMS[ci]}</span>
+              <span>${c}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="answer-mark" id="mark-${q.index}"></div>
+    </div>
+  `;
+}
+
+// ═══════════════ 답안 ═══════════════
+function selectAnswer(qIdx, choiceIdx) {
+  if (isSubmitted) return;
+  userAnswers[qIdx] = choiceIdx;
+
+  const card = document.getElementById(`qcard-${qIdx}`);
+  card.querySelectorAll('.choice-item').forEach((c, i) => {
+    c.classList.toggle('selected', i === choiceIdx);
+  });
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = Object.keys(userAnswers).length / currentQuestions.length * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+// ═══════════════ 타이머 ═══════════════
+function startTimer() {
+  timerSeconds = 0;
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timerSeconds++;
+    const m = String(Math.floor(timerSeconds/60)).padStart(2,'0');
+    const s = String(timerSeconds%60).padStart(2,'0');
+    document.getElementById('timer').textContent = `${m}:${s}`;
+  }, 1000);
+}
+
+// ═══════════════ 채점 ═══════════════
+function submitQuiz() {
+  const answered = Object.keys(userAnswers).length;
+  if (!isSubmitted && answered < currentQuestions.length) {
+    if (!confirm(`아직 ${currentQuestions.length - answered}문항이 미응답입니다.\n채점하시겠습니까?`)) return;
+  }
+  isSubmitted = true;
+  clearInterval(timerInterval);
+
+  let correct = 0;
+  currentQuestions.forEach(q => {
+    const card = document.getElementById(`qcard-${q.index}`);
+    const choices = card.querySelectorAll('.choice-item');
+    const userIdx = userAnswers[q.index];
+    const correctIdx = q.choices.indexOf(q.answer);
+
+    choices.forEach((c, i) => {
+      c.classList.remove('selected');
+      if (i === correctIdx) c.classList.add('correct');
+      else if (i === userIdx && userIdx !== correctIdx) c.classList.add('wrong');
+    });
+
+    const mark = document.getElementById(`mark-${q.index}`);
+    if (userIdx === correctIdx) {
+      correct++;
+      card.classList.add('graded-correct');
+      mark.textContent = '✓'; mark.style.color = 'var(--green)';
+    } else {
+      card.classList.add('graded-wrong');
+      mark.textContent = '✗'; mark.style.color = 'var(--red)';
+    }
+  });
+
+  const total = currentQuestions.length;
+  const wrong = answered - correct;
+  const unanswered = total - answered;
+  const score = Math.round(correct / total * 100);
+
+  document.getElementById('result-score').innerHTML = `${score}<span>점</span>`;
+  document.getElementById('st-co').textContent = correct;
+  document.getElementById('st-wr').textContent = wrong;
+  document.getElementById('st-un').textContent = unanswered;
+
+  let emoji, grade, desc;
+  if (score >= 90) { emoji='🏆'; grade='최우수! 한문 실력이 탁월합니다!'; desc='거의 완벽한 실력이에요. 고전을 자유롭게 읽을 수 있어요.'; }
+  else if (score >= 80) { emoji='🥇'; grade='우수! 잘했어요!'; desc='한문의 핵심을 잘 이해하고 있어요.'; }
+  else if (score >= 70) { emoji='🎯'; grade='양호! 조금만 더!'; desc='오답 위주로 복습하면 금방 올라갈 수 있어요.'; }
+  else if (score >= 60) { emoji='📚'; grade='보통, 더 노력해요!'; desc='명심보감과 논어 구절을 반복해서 읽어 보세요.'; }
+  else { emoji='💪'; grade='분발이 필요해요!'; desc='기초 단문 해석부터 차근차근 시작해 봐요.'; }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-grade').textContent = grade;
+  document.getElementById('result-desc').textContent = desc;
+  document.getElementById('result-overlay').classList.add('show');
+}
+
+function reviewAnswers() {
+  document.getElementById('result-overlay').classList.remove('show');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function retryQuiz() {
+  document.getElementById('result-overlay').classList.remove('show');
+  startQuiz();
+}
+
+function goBack() {
+  clearInterval(timerInterval);
+  document.getElementById('quiz-page').style.display = 'none';
+  document.getElementById('hero').style.display = 'flex';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>

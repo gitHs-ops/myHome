@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중학교 한자 시험지</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1209;
+    --rice: #fdf8f0;
+    --gold: #c9921a;
+    --red-seal: #c0392b;
+    --brush: #2c3e50;
+    --soft: #f0e8d8;
+    --mid-gray: #7f8c8d;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--rice);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(ellipse at 15% 20%, rgba(201,146,26,0.10) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 75%, rgba(192,57,43,0.08) 0%, transparent 50%),
+      var(--rice);
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* 배경 한자 장식 */
+  #hero::before {
+    content: "漢 字 學 習";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(80px, 18vw, 220px);
+    font-weight: 900;
+    color: rgba(201,146,26,0.05);
+    letter-spacing: 0.15em;
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: var(--red-seal);
+    color: white;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    padding: 6px 18px;
+    border-radius: 2px;
+    margin-bottom: 24px;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+  }
+
+  .hero-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(36px, 7vw, 72px);
+    font-weight: 900;
+    color: var(--ink);
+    text-align: center;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .hero-title span {
+    color: var(--gold);
+    position: relative;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    color: var(--mid-gray);
+    font-weight: 300;
+    text-align: center;
+    margin-bottom: 48px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── 선택 카드 ─── */
+  .selector-wrapper {
+    background: white;
+    border: 1px solid rgba(201,146,26,0.2);
+    border-radius: 12px;
+    padding: 36px 40px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.08), 0 2px 8px rgba(201,146,26,0.1);
+    position: relative;
+    z-index: 1;
+  }
+
+  .selector-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 20px; right: 20px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--red-seal));
+    border-radius: 0 0 2px 2px;
+  }
+
+  .select-group {
+    margin-bottom: 28px;
+  }
+
+  .select-label {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .select-label::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 16px;
+    background: var(--gold);
+    border-radius: 2px;
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .opt-btn {
+    flex: 1;
+    min-width: 90px;
+    padding: 12px 16px;
+    border: 2px solid #e8e0d0;
+    background: white;
+    border-radius: 8px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--mid-gray);
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-align: center;
+  }
+
+  .opt-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: #fffbf2;
+    transform: translateY(-1px);
+  }
+
+  .opt-btn.active {
+    border-color: var(--gold);
+    background: var(--gold);
+    color: white;
+    box-shadow: 0 3px 12px rgba(201,146,26,0.35);
+    transform: translateY(-1px);
+  }
+
+  .start-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--ink) 0%, var(--brush) 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .start-btn::after {
+    content: '→';
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: right 0.2s ease;
+  }
+
+  .start-btn:hover {
+    background: linear-gradient(135deg, #000 0%, #1a252f 100%);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+    transform: translateY(-1px);
+  }
+
+  .start-btn:hover::after { right: 14px; }
+
+  .start-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* ─── QUIZ PAGE ─── */
+  #quiz-page {
+    display: none;
+    min-height: 100vh;
+    background: var(--rice);
+  }
+
+  .quiz-header {
+    background: var(--ink);
+    color: white;
+    padding: 0 0 0 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+
+  .quiz-header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .quiz-title-bar {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .quiz-title-bar span {
+    color: var(--gold);
+  }
+
+  .quiz-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+  }
+
+  .meta-badge {
+    background: rgba(255,255,255,0.12);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .btn-back {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 7px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .btn-back:hover { background: rgba(255,255,255,0.2); }
+
+  /* 시험지 본문 */
+  .exam-sheet {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 24px 60px;
+  }
+
+  .exam-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 16px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .exam-school {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .exam-info-box {
+    display: flex;
+    gap: 24px;
+    font-size: 13px;
+    color: var(--mid-gray);
+  }
+
+  .exam-info-box strong {
+    color: var(--ink);
+  }
+
+  /* 섹션 헤더 */
+  .section-header {
+    background: var(--ink);
+    color: white;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px;
+    margin: 28px 0 16px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  /* 문제 그리드 */
+  .questions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  @media (max-width: 600px) {
+    .questions-grid { grid-template-columns: 1fr; }
+    .selector-wrapper { padding: 28px 24px; }
+  }
+
+  /* 문제 카드 */
+  .q-card {
+    background: white;
+    border: 1px solid #e8e0d0;
+    border-radius: 8px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    transition: box-shadow 0.15s;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .q-card:hover {
+    box-shadow: 0 3px 16px rgba(0,0,0,0.08);
+  }
+
+  .q-card.answered {
+    border-color: #bde8c5;
+    background: #f5fff7;
+  }
+
+  .q-num {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    background: var(--ink);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .q-content {
+    flex: 1;
+  }
+
+  .q-type-label {
+    font-size: 10px;
+    color: var(--mid-gray);
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  .q-text {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .q-text.korean {
+    font-size: 16px;
+  }
+
+  .q-prompt {
+    font-size: 12px;
+    color: var(--mid-gray);
+    margin-bottom: 10px;
+  }
+
+  /* 보기 */
+  .choices {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .choice-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border: 1px solid #ece7df;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.12s;
+    font-size: 14px;
+  }
+
+  .choice-item:hover {
+    background: #fffbf2;
+    border-color: var(--gold);
+  }
+
+  .choice-item.selected {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: white;
+  }
+
+  .choice-item.correct {
+    background: #27ae60;
+    border-color: #27ae60;
+    color: white;
+  }
+
+  .choice-item.wrong {
+    background: var(--red-seal);
+    border-color: var(--red-seal);
+    color: white;
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+
+  .choice-num {
+    font-weight: 700;
+    font-size: 12px;
+    opacity: 0.7;
+    min-width: 14px;
+  }
+
+  .choice-hanja {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  /* 진행 상황 바 */
+  .progress-bar-wrap {
+    background: rgba(255,255,255,0.1);
+    height: 4px;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.3s ease;
+  }
+
+  /* 제출 버튼 영역 */
+  .submit-area {
+    margin-top: 40px;
+    text-align: center;
+  }
+
+  .submit-btn {
+    padding: 16px 48px;
+    background: linear-gradient(135deg, var(--red-seal), #962d22);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(192,57,43,0.35);
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(192,57,43,0.4);
+  }
+
+  /* 결과 모달 */
+  .result-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .result-overlay.show {
+    display: flex;
+  }
+
+  .result-card {
+    background: white;
+    border-radius: 16px;
+    padding: 48px 40px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .result-emoji {
+    font-size: 56px;
+    margin-bottom: 12px;
+  }
+
+  .result-score {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 52px;
+    font-weight: 900;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .result-score span {
+    font-size: 24px;
+    color: var(--mid-gray);
+    font-weight: 400;
+  }
+
+  .result-grade {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 12px 0 4px;
+  }
+
+  .result-desc {
+    font-size: 14px;
+    color: var(--mid-gray);
+    margin-bottom: 28px;
+  }
+
+  .result-btns {
+    display: flex;
+    gap: 12px;
+  }
+
+  .result-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 2px solid;
+  }
+
+  .result-btn.primary {
+    background: var(--ink);
+    color: white;
+    border-color: var(--ink);
+  }
+
+  .result-btn.secondary {
+    background: white;
+    color: var(--ink);
+    border-color: #ddd;
+  }
+
+  .result-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  /* 정답 체크 아이콘 */
+  .answer-mark {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-size: 18px;
+    display: none;
+  }
+
+  .q-card.answered .answer-mark {
+    display: block;
+  }
+
+  /* 채점 완료 후 카드 */
+  .q-card.graded-correct {
+    border-color: #27ae60;
+    border-width: 2px;
+  }
+
+  .q-card.graded-wrong {
+    border-color: var(--red-seal);
+    border-width: 2px;
+  }
+
+  /* 점수 통계 */
+  .score-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+    padding: 16px 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+  }
+
+  .stat-item { text-align: center; }
+  .stat-num { font-family: 'Noto Serif KR', serif; font-size: 24px; font-weight: 700; }
+  .stat-label { font-size: 11px; color: var(--mid-gray); margin-top: 2px; }
+  .stat-item.correct .stat-num { color: #27ae60; }
+  .stat-item.wrong .stat-num { color: var(--red-seal); }
+  .stat-item.total .stat-num { color: var(--ink); }
+
+  .timer-badge {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-family: monospace;
+    color: #ffd;
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HERO PAGE ═══════════ -->
+<section id="hero">
+  <div class="hero-badge">📚 교육부 한문 교육용 기초한자 기반</div>
+  <h1 class="hero-title">중학교 <span>한자</span><br>시험 연습</h1>
+  <p class="hero-sub">기출 유형 문제를 랜덤으로 풀어보세요</p>
+
+  <div class="selector-wrapper">
+    <div class="select-group">
+      <div class="select-label">학습 레벨 선택</div>
+      <div class="btn-group" id="level-group">
+        <button class="opt-btn" data-val="1" onclick="selectOpt('level', '1', this)">중 1</button>
+        <button class="opt-btn active" data-val="2" onclick="selectOpt('level', '2', this)">중 2</button>
+        <button class="opt-btn" data-val="3" onclick="selectOpt('level', '3', this)">중 3</button>
+      </div>
+    </div>
+
+    <div class="select-group">
+      <div class="select-label">문항 수 선택</div>
+      <div class="btn-group" id="count-group">
+        <button class="opt-btn" data-val="10" onclick="selectOpt('count', '10', this)">10 문항</button>
+        <button class="opt-btn active" data-val="20" onclick="selectOpt('count', '20', this)">20 문항</button>
+        <button class="opt-btn" data-val="30" onclick="selectOpt('count', '30', this)">30 문항</button>
+      </div>
+    </div>
+
+    <button class="start-btn" id="start-btn" onclick="startQuiz()">시험 시작하기</button>
+  </div>
+</section>
+
+<!-- ═══════════ QUIZ PAGE ═══════════ -->
+<div id="quiz-page">
+  <div class="quiz-header">
+    <div class="quiz-header-inner">
+      <div class="quiz-title-bar">중학교 <span>한자</span> 시험지</div>
+      <div class="quiz-meta">
+        <div class="meta-badge" id="level-badge">중2</div>
+        <div class="meta-badge" id="count-badge">20문항</div>
+        <div class="timer-badge" id="timer">00:00</div>
+        <button class="btn-back" onclick="goBack()">← 처음으로</button>
+      </div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="exam-sheet">
+    <div class="exam-top">
+      <div class="exam-school">漢字 試驗紙</div>
+      <div class="exam-info-box">
+        <div>학년: <strong id="info-grade">중2</strong></div>
+        <div>문항: <strong id="info-count">20</strong>문항</div>
+        <div>점수: <strong id="info-score">각 5점</strong></div>
+      </div>
+    </div>
+
+    <div id="sections-container"></div>
+
+    <div class="submit-area">
+      <button class="submit-btn" onclick="submitQuiz()">✓ 채점하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 결과 모달 ═══════════ -->
+<div class="result-overlay" id="result-overlay">
+  <div class="result-card">
+    <div class="result-emoji" id="result-emoji">🎉</div>
+    <div class="result-score" id="result-score">85<span>점</span></div>
+    <div class="result-grade" id="result-grade">잘했어요!</div>
+    <div class="result-desc" id="result-desc">계속 연습하면 만점도 가능해요</div>
+    <div class="score-stats">
+      <div class="stat-item correct"><div class="stat-num" id="st-correct">0</div><div class="stat-label">정답</div></div>
+      <div class="stat-item wrong"><div class="stat-num" id="st-wrong">0</div><div class="stat-label">오답</div></div>
+      <div class="stat-item total"><div class="stat-num" id="st-unanswered">0</div><div class="stat-label">미응답</div></div>
+    </div>
+    <div class="result-btns">
+      <button class="result-btn secondary" onclick="reviewAnswers()">오답 확인</button>
+      <button class="result-btn primary" onclick="retryQuiz()">다시 풀기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  한자 데이터베이스 (교육부 한문 교육용 기초한자 기반)
+// ═══════════════════════════════════════════════════════
+
+const HANJA_DB = {
+  // ── 중1: 8급~7급 수준 기초 한자 ──
+  1: [
+    {hanja:"山",eum:"산",hun:"메",meaning:"산"},
+    {hanja:"川",eum:"천",hun:"내",meaning:"강, 내"},
+    {hanja:"水",eum:"수",hun:"물",meaning:"물"},
+    {hanja:"火",eum:"화",hun:"불",meaning:"불"},
+    {hanja:"木",eum:"목",hun:"나무",meaning:"나무"},
+    {hanja:"金",eum:"금",hun:"쇠",meaning:"금, 쇠"},
+    {hanja:"土",eum:"토",hun:"흙",meaning:"흙"},
+    {hanja:"日",eum:"일",hun:"날",meaning:"해, 날"},
+    {hanja:"月",eum:"월",hun:"달",meaning:"달, 월"},
+    {hanja:"天",eum:"천",hun:"하늘",meaning:"하늘"},
+    {hanja:"地",eum:"지",hun:"땅",meaning:"땅"},
+    {hanja:"人",eum:"인",hun:"사람",meaning:"사람"},
+    {hanja:"大",eum:"대",hun:"큰",meaning:"크다"},
+    {hanja:"小",eum:"소",hun:"작을",meaning:"작다"},
+    {hanja:"中",eum:"중",hun:"가운데",meaning:"가운데"},
+    {hanja:"上",eum:"상",hun:"위",meaning:"위"},
+    {hanja:"下",eum:"하",hun:"아래",meaning:"아래"},
+    {hanja:"東",eum:"동",hun:"동녘",meaning:"동쪽"},
+    {hanja:"西",eum:"서",hun:"서녘",meaning:"서쪽"},
+    {hanja:"南",eum:"남",hun:"남녘",meaning:"남쪽"},
+    {hanja:"北",eum:"북",hun:"북녘",meaning:"북쪽"},
+    {hanja:"父",eum:"부",hun:"아비",meaning:"아버지"},
+    {hanja:"母",eum:"모",hun:"어미",meaning:"어머니"},
+    {hanja:"兄",eum:"형",hun:"형",meaning:"형, 오빠"},
+    {hanja:"弟",eum:"제",hun:"아우",meaning:"남동생"},
+    {hanja:"子",eum:"자",hun:"아들",meaning:"아들, 자식"},
+    {hanja:"女",eum:"녀",hun:"여자",meaning:"여자, 딸"},
+    {hanja:"男",eum:"남",hun:"사내",meaning:"남자"},
+    {hanja:"學",eum:"학",hun:"배울",meaning:"배우다"},
+    {hanja:"校",eum:"교",hun:"학교",meaning:"학교"},
+    {hanja:"先",eum:"선",hun:"먼저",meaning:"먼저, 앞"},
+    {hanja:"生",eum:"생",hun:"날",meaning:"나다, 살다"},
+    {hanja:"年",eum:"년",hun:"해",meaning:"해, 년"},
+    {hanja:"白",eum:"백",hun:"흰",meaning:"흰, 밝다"},
+    {hanja:"百",eum:"백",hun:"일백",meaning:"백(100)"},
+    {hanja:"千",eum:"천",hun:"일천",meaning:"천(1000)"},
+    {hanja:"萬",eum:"만",hun:"일만",meaning:"만(10000)"},
+    {hanja:"國",eum:"국",hun:"나라",meaning:"나라"},
+    {hanja:"韓",eum:"한",hun:"나라 이름",meaning:"한국"},
+    {hanja:"民",eum:"민",hun:"백성",meaning:"백성, 국민"},
+  ],
+
+  // ── 중2: 6급~5급 수준 ──
+  2: [
+    {hanja:"家",eum:"가",hun:"집",meaning:"집, 가정"},
+    {hanja:"歌",eum:"가",hun:"노래",meaning:"노래"},
+    {hanja:"强",eum:"강",hun:"강할",meaning:"강하다, 굳세다"},
+    {hanja:"江",eum:"강",hun:"강",meaning:"큰 강"},
+    {hanja:"開",eum:"개",hun:"열",meaning:"열다, 시작하다"},
+    {hanja:"古",eum:"고",hun:"예",meaning:"옛날, 오래되다"},
+    {hanja:"高",eum:"고",hun:"높을",meaning:"높다"},
+    {hanja:"工",eum:"공",hun:"장인",meaning:"일, 공사"},
+    {hanja:"空",eum:"공",hun:"빌",meaning:"비다, 하늘"},
+    {hanja:"公",eum:"공",hun:"공평할",meaning:"공평하다, 공공"},
+    {hanja:"科",eum:"과",hun:"과목",meaning:"과목, 과정"},
+    {hanja:"果",eum:"과",hun:"과실",meaning:"열매, 결과"},
+    {hanja:"光",eum:"광",hun:"빛",meaning:"빛, 광채"},
+    {hanja:"敎",eum:"교",hun:"가르칠",meaning:"가르치다"},
+    {hanja:"口",eum:"구",hun:"입",meaning:"입"},
+    {hanja:"根",eum:"근",hun:"뿌리",meaning:"뿌리, 근본"},
+    {hanja:"近",eum:"근",hun:"가까울",meaning:"가깝다"},
+    {hanja:"記",eum:"기",hun:"기록할",meaning:"기록하다"},
+    {hanja:"氣",eum:"기",hun:"기운",meaning:"기운, 기력"},
+    {hanja:"道",eum:"도",hun:"길",meaning:"길, 도리"},
+    {hanja:"讀",eum:"독",hun:"읽을",meaning:"읽다"},
+    {hanja:"動",eum:"동",hun:"움직일",meaning:"움직이다"},
+    {hanja:"力",eum:"력",hun:"힘",meaning:"힘"},
+    {hanja:"立",eum:"립",hun:"설",meaning:"서다, 세우다"},
+    {hanja:"名",eum:"명",hun:"이름",meaning:"이름"},
+    {hanja:"命",eum:"명",hun:"목숨",meaning:"목숨, 생명"},
+    {hanja:"明",eum:"명",hun:"밝을",meaning:"밝다"},
+    {hanja:"問",eum:"문",hun:"물을",meaning:"묻다"},
+    {hanja:"文",eum:"문",hun:"글월",meaning:"글, 문자"},
+    {hanja:"門",eum:"문",hun:"문",meaning:"문, 출입구"},
+    {hanja:"方",eum:"방",hun:"모",meaning:"방향, 방법"},
+    {hanja:"百",eum:"백",hun:"일백",meaning:"백(100)"},
+    {hanja:"兵",eum:"병",hun:"군사",meaning:"군사, 병사"},
+    {hanja:"本",eum:"본",hun:"근본",meaning:"근본, 원본"},
+    {hanja:"事",eum:"사",hun:"일",meaning:"일, 사건"},
+    {hanja:"山",eum:"산",hun:"메",meaning:"산"},
+    {hanja:"思",eum:"사",hun:"생각",meaning:"생각하다"},
+    {hanja:"社",eum:"사",hun:"모일",meaning:"모이다, 회사"},
+    {hanja:"書",eum:"서",hun:"글",meaning:"글, 책"},
+    {hanja:"石",eum:"석",hun:"돌",meaning:"돌"},
+    {hanja:"成",eum:"성",hun:"이룰",meaning:"이루다, 완성"},
+    {hanja:"世",eum:"세",hun:"인간",meaning:"세상, 세대"},
+    {hanja:"手",eum:"수",hun:"손",meaning:"손"},
+    {hanja:"數",eum:"수",hun:"셀",meaning:"수, 숫자"},
+    {hanja:"時",eum:"시",hun:"때",meaning:"때, 시간"},
+    {hanja:"食",eum:"식",hun:"밥",meaning:"먹다, 음식"},
+    {hanja:"室",eum:"실",hun:"집",meaning:"방, 실"},
+    {hanja:"心",eum:"심",hun:"마음",meaning:"마음"},
+    {hanja:"身",eum:"신",hun:"몸",meaning:"몸"},
+    {hanja:"語",eum:"어",hun:"말씀",meaning:"말, 언어"},
+    {hanja:"言",eum:"언",hun:"말씀",meaning:"말하다, 말"},
+    {hanja:"業",eum:"업",hun:"업",meaning:"일, 직업"},
+    {hanja:"然",eum:"연",hun:"그럴",meaning:"그러하다, 자연"},
+    {hanja:"王",eum:"왕",hun:"임금",meaning:"임금, 왕"},
+    {hanja:"外",eum:"외",hun:"바깥",meaning:"밖, 외부"},
+    {hanja:"用",eum:"용",hun:"쓸",meaning:"쓰다, 사용하다"},
+    {hanja:"有",eum:"유",hun:"있을",meaning:"있다, 소유하다"},
+    {hanja:"育",eum:"육",hun:"기를",meaning:"기르다, 교육"},
+    {hanja:"音",eum:"음",hun:"소리",meaning:"소리, 음악"},
+    {hanja:"意",eum:"의",hun:"뜻",meaning:"뜻, 의미"},
+    {hanja:"人",eum:"인",hun:"사람",meaning:"사람"},
+    {hanja:"日",eum:"일",hun:"날",meaning:"날, 해"},
+    {hanja:"自",eum:"자",hun:"스스로",meaning:"스스로, 자기"},
+    {hanja:"作",eum:"작",hun:"지을",meaning:"만들다, 짓다"},
+    {hanja:"場",eum:"장",hun:"마당",meaning:"장소, 마당"},
+    {hanja:"才",eum:"재",hun:"재주",meaning:"재주, 능력"},
+    {hanja:"電",eum:"전",hun:"번개",meaning:"번개, 전기"},
+    {hanja:"前",eum:"전",hun:"앞",meaning:"앞, 이전"},
+    {hanja:"政",eum:"정",hun:"정사",meaning:"정치, 정사"},
+    {hanja:"正",eum:"정",hun:"바를",meaning:"바르다, 정확하다"},
+    {hanja:"朝",eum:"조",hun:"아침",meaning:"아침, 조정"},
+    {hanja:"足",eum:"족",hun:"발",meaning:"발, 충분하다"},
+    {hanja:"種",eum:"종",hun:"씨",meaning:"씨앗, 종류"},
+    {hanja:"主",eum:"주",hun:"주인",meaning:"주인, 주"},
+    {hanja:"重",eum:"중",hun:"무거울",meaning:"무겁다, 중요하다"},
+    {hanja:"地",eum:"지",hun:"땅",meaning:"땅, 지역"},
+    {hanja:"知",eum:"지",hun:"알",meaning:"알다"},
+    {hanja:"直",eum:"직",hun:"곧을",meaning:"곧다, 직접"},
+    {hanja:"真",eum:"진",hun:"참",meaning:"참, 진짜"},
+    {hanja:"天",eum:"천",hun:"하늘",meaning:"하늘"},
+    {hanja:"清",eum:"청",hun:"맑을",meaning:"맑다, 깨끗하다"},
+    {hanja:"體",eum:"체",hun:"몸",meaning:"몸, 형태"},
+    {hanja:"草",eum:"초",hun:"풀",meaning:"풀"},
+    {hanja:"村",eum:"촌",hun:"마을",meaning:"마을"},
+    {hanja:"出",eum:"출",hun:"날",meaning:"나다, 출발"},
+    {hanja:"春",eum:"춘",hun:"봄",meaning:"봄"},
+    {hanja:"夏",eum:"하",hun:"여름",meaning:"여름"},
+    {hanja:"秋",eum:"추",hun:"가을",meaning:"가을"},
+    {hanja:"冬",eum:"동",hun:"겨울",meaning:"겨울"},
+    {hanja:"海",eum:"해",hun:"바다",meaning:"바다"},
+    {hanja:"行",eum:"행",hun:"다닐",meaning:"가다, 행동"},
+    {hanja:"花",eum:"화",hun:"꽃",meaning:"꽃"},
+    {hanja:"話",eum:"화",hun:"말씀",meaning:"말, 이야기"},
+    {hanja:"會",eum:"회",hun:"모일",meaning:"모이다, 회의"},
+    {hanja:"後",eum:"후",hun:"뒤",meaning:"뒤, 나중"},
+    {hanja:"休",eum:"휴",hun:"쉴",meaning:"쉬다, 휴식"},
+  ],
+
+  // ── 중3: 5급~4급 수준 ──
+  3: [
+    {hanja:"感",eum:"감",hun:"느낄",meaning:"느끼다, 감동"},
+    {hanja:"改",eum:"개",hun:"고칠",meaning:"고치다, 개선"},
+    {hanja:"客",eum:"객",hun:"손",meaning:"손님"},
+    {hanja:"格",eum:"격",hun:"격식",meaning:"격식, 자격"},
+    {hanja:"決",eum:"결",hun:"결단할",meaning:"결정하다"},
+    {hanja:"結",eum:"결",hun:"맺을",meaning:"맺다, 결합"},
+    {hanja:"慶",eum:"경",hun:"경사",meaning:"경사, 기쁨"},
+    {hanja:"敬",eum:"경",hun:"공경할",meaning:"공경하다"},
+    {hanja:"競",eum:"경",hun:"다툴",meaning:"다투다, 경쟁"},
+    {hanja:"計",eum:"계",hun:"셀",meaning:"세다, 계획"},
+    {hanja:"告",eum:"고",hun:"고할",meaning:"알리다, 고하다"},
+    {hanja:"苦",eum:"고",hun:"쓸",meaning:"괴롭다, 쓰다"},
+    {hanja:"考",eum:"고",hun:"생각할",meaning:"생각하다, 고찰"},
+    {hanja:"共",eum:"공",hun:"함께",meaning:"함께, 공동"},
+    {hanja:"過",eum:"과",hun:"지날",meaning:"지나다, 실수"},
+    {hanja:"觀",eum:"관",hun:"볼",meaning:"보다, 관찰"},
+    {hanja:"關",eum:"관",hun:"관계할",meaning:"관계하다"},
+    {hanja:"交",eum:"교",hun:"사귈",meaning:"사귀다, 교류"},
+    {hanja:"求",eum:"구",hun:"구할",meaning:"구하다, 요구"},
+    {hanja:"究",eum:"구",hun:"연구할",meaning:"연구하다, 탐구"},
+    {hanja:"軍",eum:"군",hun:"군사",meaning:"군사, 군대"},
+    {hanja:"勤",eum:"근",hun:"부지런할",meaning:"부지런하다"},
+    {hanja:"禁",eum:"금",hun:"금할",meaning:"금지하다"},
+    {hanja:"急",eum:"급",hun:"급할",meaning:"급하다"},
+    {hanja:"技",eum:"기",hun:"재주",meaning:"기술, 재주"},
+    {hanja:"念",eum:"념",hun:"생각",meaning:"생각, 염두"},
+    {hanja:"能",eum:"능",hun:"능할",meaning:"능하다, 능력"},
+    {hanja:"多",eum:"다",hun:"많을",meaning:"많다"},
+    {hanja:"短",eum:"단",hun:"짧을",meaning:"짧다"},
+    {hanja:"達",eum:"달",hun:"통달할",meaning:"통달하다, 도달"},
+    {hanja:"談",eum:"담",hun:"말씀",meaning:"말하다, 이야기"},
+    {hanja:"當",eum:"당",hun:"마땅할",meaning:"마땅하다, 당하다"},
+    {hanja:"待",eum:"대",hun:"기다릴",meaning:"기다리다"},
+    {hanja:"代",eum:"대",hun:"대신할",meaning:"대신하다, 세대"},
+    {hanja:"對",eum:"대",hun:"대할",meaning:"대하다, 반대"},
+    {hanja:"度",eum:"도",hun:"법도",meaning:"정도, 법도"},
+    {hanja:"獨",eum:"독",hun:"홀로",meaning:"홀로, 독립"},
+    {hanja:"同",eum:"동",hun:"한가지",meaning:"같다, 함께"},
+    {hanja:"得",eum:"득",hun:"얻을",meaning:"얻다"},
+    {hanja:"例",eum:"례",hun:"법식",meaning:"예, 예시"},
+    {hanja:"論",eum:"론",hun:"말할",meaning:"말하다, 논하다"},
+    {hanja:"料",eum:"료",hun:"헤아릴",meaning:"헤아리다, 재료"},
+    {hanja:"利",eum:"리",hun:"이로울",meaning:"이롭다, 이익"},
+    {hanja:"理",eum:"리",hun:"다스릴",meaning:"다스리다, 이치"},
+    {hanja:"望",eum:"망",hun:"바랄",meaning:"바라다, 희망"},
+    {hanja:"末",eum:"말",hun:"끝",meaning:"끝, 말단"},
+    {hanja:"無",eum:"무",hun:"없을",meaning:"없다"},
+    {hanja:"務",eum:"무",hun:"힘쓸",meaning:"힘쓰다, 업무"},
+    {hanja:"美",eum:"미",hun:"아름다울",meaning:"아름답다"},
+    {hanja:"反",eum:"반",hun:"돌이킬",meaning:"돌이키다, 반대"},
+    {hanja:"發",eum:"발",hun:"필",meaning:"피다, 발생"},
+    {hanja:"放",eum:"방",hun:"놓을",meaning:"놓다, 방출"},
+    {hanja:"別",eum:"별",hun:"다를",meaning:"다르다, 특별"},
+    {hanja:"報",eum:"보",hun:"갚을",meaning:"갚다, 보고"},
+    {hanja:"福",eum:"복",hun:"복",meaning:"복, 행복"},
+    {hanja:"分",eum:"분",hun:"나눌",meaning:"나누다, 부분"},
+    {hanja:"比",eum:"비",hun:"견줄",meaning:"비교하다"},
+    {hanja:"費",eum:"비",hun:"쓸",meaning:"쓰다, 비용"},
+    {hanja:"私",eum:"사",hun:"사사로울",meaning:"사사롭다, 개인"},
+    {hanja:"産",eum:"산",hun:"낳을",meaning:"낳다, 생산"},
+    {hanja:"象",eum:"상",hun:"코끼리",meaning:"코끼리, 형상"},
+    {hanja:"相",eum:"상",hun:"서로",meaning:"서로, 모습"},
+    {hanja:"色",eum:"색",hun:"빛",meaning:"색, 빛깔"},
+    {hanja:"序",eum:"서",hun:"차례",meaning:"차례, 순서"},
+    {hanja:"選",eum:"선",hun:"가릴",meaning:"가리다, 선택"},
+    {hanja:"速",eum:"속",hun:"빠를",meaning:"빠르다"},
+    {hanja:"損",eum:"손",hun:"덜",meaning:"덜다, 손해"},
+    {hanja:"送",eum:"송",hun:"보낼",meaning:"보내다"},
+    {hanja:"信",eum:"신",hun:"믿을",meaning:"믿다, 신뢰"},
+    {hanja:"新",eum:"신",hun:"새",meaning:"새롭다"},
+    {hanja:"失",eum:"실",hun:"잃을",meaning:"잃다"},
+    {hanja:"實",eum:"실",hun:"열매",meaning:"열매, 실제"},
+    {hanja:"愛",eum:"애",hun:"사랑",meaning:"사랑하다"},
+    {hanja:"約",eum:"약",hun:"맺을",meaning:"맺다, 약속"},
+    {hanja:"弱",eum:"약",hun:"약할",meaning:"약하다"},
+    {hanja:"養",eum:"양",hun:"기를",meaning:"기르다"},
+    {hanja:"勇",eum:"용",hun:"날랠",meaning:"날래다, 용감"},
+    {hanja:"原",eum:"원",hun:"언덕",meaning:"언덕, 근원"},
+    {hanja:"遠",eum:"원",hun:"멀",meaning:"멀다"},
+    {hanja:"危",eum:"위",hun:"위태할",meaning:"위태롭다"},
+    {hanja:"義",eum:"의",hun:"옳을",meaning:"옳다, 의로움"},
+    {hanja:"以",eum:"이",hun:"써",meaning:"써, ~로써"},
+    {hanja:"益",eum:"익",hun:"더할",meaning:"더하다, 이익"},
+    {hanja:"因",eum:"인",hun:"인할",meaning:"인하다, 원인"},
+    {hanja:"仁",eum:"인",hun:"어질",meaning:"어질다, 인자"},
+    {hanja:"任",eum:"임",hun:"맡길",meaning:"맡기다, 임무"},
+    {hanja:"入",eum:"입",hun:"들",meaning:"들다, 입학"},
+    {hanja:"資",eum:"자",hun:"재물",meaning:"재물, 자원"},
+    {hanja:"場",eum:"장",hun:"마당",meaning:"마당, 장소"},
+    {hanja:"低",eum:"저",hun:"낮을",meaning:"낮다"},
+    {hanja:"節",eum:"절",hun:"마디",meaning:"마디, 절약"},
+    {hanja:"展",eum:"전",hun:"펼",meaning:"펼치다"},
+    {hanja:"戰",eum:"전",hun:"싸울",meaning:"싸우다, 전쟁"},
+    {hanja:"制",eum:"제",hun:"절제할",meaning:"절제하다, 제도"},
+    {hanja:"助",eum:"조",hun:"도울",meaning:"돕다"},
+    {hanja:"調",eum:"조",hun:"고를",meaning:"고르다, 조정"},
+    {hanja:"存",eum:"존",hun:"있을",meaning:"있다, 존재"},
+    {hanja:"尊",eum:"존",hun:"높을",meaning:"높다, 존경"},
+    {hanja:"終",eum:"종",hun:"마칠",meaning:"마치다, 끝"},
+    {hanja:"左",eum:"좌",hun:"왼",meaning:"왼쪽"},
+    {hanja:"右",eum:"우",hun:"오른",meaning:"오른쪽"},
+    {hanja:"增",eum:"증",hun:"더할",meaning:"더하다, 증가"},
+    {hanja:"智",eum:"지",hun:"지혜",meaning:"지혜"},
+    {hanja:"止",eum:"지",hun:"그칠",meaning:"그치다, 멈추다"},
+    {hanja:"質",eum:"질",hun:"바탕",meaning:"바탕, 품질"},
+    {hanja:"集",eum:"집",hun:"모을",meaning:"모으다"},
+    {hanja:"次",eum:"차",hun:"버금",meaning:"버금, 다음"},
+    {hanja:"差",eum:"차",hun:"어긋날",meaning:"어긋나다, 차이"},
+    {hanja:"參",eum:"참",hun:"참여할",meaning:"참여하다"},
+    {hanja:"察",eum:"찰",hun:"살필",meaning:"살피다"},
+    {hanja:"責",eum:"책",hun:"꾸짖을",meaning:"꾸짖다, 책임"},
+    {hanja:"初",eum:"초",hun:"처음",meaning:"처음"},
+    {hanja:"最",eum:"최",hun:"가장",meaning:"가장, 최고"},
+    {hanja:"推",eum:"추",hun:"밀",meaning:"밀다, 추진"},
+    {hanja:"取",eum:"취",hun:"취할",meaning:"취하다, 얻다"},
+    {hanja:"親",eum:"친",hun:"친할",meaning:"친하다"},
+    {hanja:"快",eum:"쾌",hun:"쾌할",meaning:"쾌하다, 시원하다"},
+    {hanja:"他",eum:"타",hun:"다를",meaning:"다르다, 남"},
+    {hanja:"統",eum:"통",hun:"거느릴",meaning:"거느리다, 통일"},
+    {hanja:"退",eum:"퇴",hun:"물러날",meaning:"물러나다"},
+    {hanja:"特",eum:"특",hun:"특별할",meaning:"특별하다"},
+    {hanja:"必",eum:"필",hun:"반드시",meaning:"반드시"},
+    {hanja:"害",eum:"해",hun:"해칠",meaning:"해치다, 해악"},
+    {hanja:"現",eum:"현",hun:"나타날",meaning:"나타나다, 현재"},
+    {hanja:"好",eum:"호",hun:"좋을",meaning:"좋다"},
+    {hanja:"患",eum:"환",hun:"근심",meaning:"근심, 환자"},
+    {hanja:"活",eum:"활",hun:"살",meaning:"살다, 활동"},
+    {hanja:"效",eum:"효",hun:"본받을",meaning:"본받다, 효과"},
+    {hanja:"孝",eum:"효",hun:"효도",meaning:"효도하다"},
+  ]
+};
+
+// ─── 전역 상태 ───
+let selectedLevel = 2;
+let selectedCount = 20;
+let currentQuestions = [];
+let userAnswers = {};
+let isSubmitted = false;
+let timerInterval = null;
+let timerSeconds = 0;
+
+// ─── 선택 UI ───
+function selectOpt(type, val, btn) {
+  const group = btn.parentElement;
+  group.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (type === 'level') selectedLevel = parseInt(val);
+  else selectedCount = parseInt(val);
+}
+
+// ─── 퀴즈 시작 ───
+function startQuiz() {
+  const pool = HANJA_DB[selectedLevel];
+  currentQuestions = generateQuestions(pool, selectedCount);
+  userAnswers = {};
+  isSubmitted = false;
+
+  document.getElementById('level-badge').textContent = `중${selectedLevel}`;
+  document.getElementById('count-badge').textContent = `${selectedCount}문항`;
+  document.getElementById('info-grade').textContent = `중${selectedLevel}`;
+  document.getElementById('info-count').textContent = selectedCount;
+  document.getElementById('info-score').textContent = `각 ${Math.floor(100/selectedCount)}점`;
+
+  renderQuestions();
+  document.getElementById('hero').style.display = 'none';
+  document.getElementById('quiz-page').style.display = 'block';
+  window.scrollTo(0,0);
+  startTimer();
+}
+
+// ─── 문제 생성 ───
+function generateQuestions(pool, count) {
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  const selected = shuffled.slice(0, Math.min(count, pool.length));
+
+  return selected.map((item, i) => {
+    const type = i % 3; // 0=한자→훈음, 1=훈음→한자, 2=뜻→한자
+    const distractors = pool.filter(p => p.hanja !== item.hanja)
+      .sort(() => Math.random() - 0.5).slice(0, 3);
+
+    let question, answer, choices;
+
+    if (type === 0) {
+      // 한자 제시 → 음+훈 선택
+      question = { type: 0, prompt: '다음 한자의 훈(訓)과 음(音)으로 알맞은 것을 고르시오.', main: item.hanja };
+      answer = `${item.hun} ${item.eum}`;
+      choices = [answer, ...distractors.map(d => `${d.hun} ${d.eum}`)].sort(() => Math.random() - 0.5);
+    } else if (type === 1) {
+      // 훈+음 제시 → 한자 선택
+      question = { type: 1, prompt: '다음 훈(訓)과 음(音)에 해당하는 한자를 고르시오.', main: `${item.hun} ${item.eum}` };
+      answer = item.hanja;
+      choices = [answer, ...distractors.map(d => d.hanja)].sort(() => Math.random() - 0.5);
+    } else {
+      // 뜻 제시 → 한자 선택
+      question = { type: 2, prompt: '다음 뜻에 해당하는 한자를 고르시오.', main: item.meaning };
+      answer = item.hanja;
+      choices = [answer, ...distractors.map(d => d.hanja)].sort(() => Math.random() - 0.5);
+    }
+
+    return { ...item, question, answer, choices, index: i + 1 };
+  });
+}
+
+// ─── 렌더링 ───
+function renderQuestions() {
+  const container = document.getElementById('sections-container');
+
+  // 섹션 분할
+  const sections = [];
+  const sectionSize = 10;
+  for (let i = 0; i < currentQuestions.length; i += sectionSize) {
+    sections.push(currentQuestions.slice(i, i + sectionSize));
+  }
+
+  const typeLabels = ['한자 → 훈음', '훈음 → 한자', '뜻 → 한자'];
+
+  container.innerHTML = sections.map((sec, si) => `
+    <div class="section-header">
+      제${si+1}부 | ${si === 0 ? '한자의 훈음 찾기' : si === 1 ? '훈음으로 한자 찾기' : '뜻으로 한자 찾기'}
+      &nbsp;(${sec[0].index}번 ~ ${sec[sec.length-1].index}번)
+    </div>
+    <div class="questions-grid">
+      ${sec.map(q => renderCard(q)).join('')}
+    </div>
+  `).join('');
+}
+
+function renderCard(q) {
+  const isHanja = (q.question.type === 0);
+  return `
+    <div class="q-card" id="qcard-${q.index}">
+      <div class="q-num">${q.index}</div>
+      <div class="q-content">
+        <div class="q-type-label">${['한자 → 훈음','훈음 → 한자','뜻 → 한자'][q.question.type]}</div>
+        <div class="q-text ${isHanja ? '' : 'korean'}">${q.question.main}</div>
+        <div class="q-prompt">${q.question.prompt}</div>
+        <div class="choices" id="choices-${q.index}">
+          ${q.choices.map((c, ci) => `
+            <div class="choice-item" id="choice-${q.index}-${ci}" onclick="selectAnswer(${q.index}, '${c.replace(/'/g,"\\'")}', ${ci})">
+              <span class="choice-num">①②③④"[ci]"`.replace('"[ci]"', ['①','②','③','④'][ci]) + `</span>
+              <span class="${q.question.type === 0 ? '' : 'choice-hanja'}">${c}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="answer-mark" id="mark-${q.index}">✓</div>
+    </div>
+  `;
+}
+
+// 선택지 번호 수정된 렌더
+function renderCard(q) {
+  const nums = ['①','②','③','④'];
+  const isHanjaChoice = (q.question.type === 1 || q.question.type === 2);
+  return `
+    <div class="q-card" id="qcard-${q.index}">
+      <div class="q-num">${q.index}</div>
+      <div class="q-content">
+        <div class="q-type-label">${['한자 → 훈음','훈음 → 한자','뜻 → 한자'][q.question.type]}</div>
+        <div class="q-text ${q.question.type !== 0 ? 'korean' : ''}">${q.question.main}</div>
+        <div class="q-prompt">${q.question.prompt}</div>
+        <div class="choices" id="choices-${q.index}">
+          ${q.choices.map((c, ci) => `
+            <div class="choice-item" id="choice-${q.index}-${ci}"
+              onclick="selectAnswer(${q.index}, '${c.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}', ${ci})">
+              <span class="choice-num">${nums[ci]}</span>
+              <span class="${isHanjaChoice ? 'choice-hanja' : ''}">${c}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="answer-mark" id="mark-${q.index}">✓</div>
+    </div>
+  `;
+}
+
+// ─── 답안 선택 ───
+function selectAnswer(qIdx, val, choiceIdx) {
+  if (isSubmitted) return;
+
+  userAnswers[qIdx] = val;
+
+  // UI 업데이트
+  const card = document.getElementById(`qcard-${qIdx}`);
+  card.classList.add('answered');
+  const choices = card.querySelectorAll('.choice-item');
+  choices.forEach((c, i) => {
+    c.classList.toggle('selected', i === choiceIdx);
+  });
+
+  updateProgress();
+}
+
+function updateProgress() {
+  const answered = Object.keys(userAnswers).length;
+  const pct = (answered / currentQuestions.length) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+// ─── 타이머 ───
+function startTimer() {
+  timerSeconds = 0;
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timerSeconds++;
+    const m = String(Math.floor(timerSeconds / 60)).padStart(2,'0');
+    const s = String(timerSeconds % 60).padStart(2,'0');
+    document.getElementById('timer').textContent = `${m}:${s}`;
+  }, 1000);
+}
+
+// ─── 채점 ───
+function submitQuiz() {
+  if (!isSubmitted) {
+    const answered = Object.keys(userAnswers).length;
+    if (answered < currentQuestions.length) {
+      if (!confirm(`아직 ${currentQuestions.length - answered}문항이 미응답입니다.\n채점하시겠습니까?`)) return;
+    }
+    isSubmitted = true;
+    clearInterval(timerInterval);
+  }
+
+  let correct = 0;
+  currentQuestions.forEach(q => {
+    const card = document.getElementById(`qcard-${q.index}`);
+    const choices = card.querySelectorAll('.choice-item');
+    const userAns = userAnswers[q.index];
+
+    choices.forEach((c, i) => {
+      const choiceVal = q.choices[i];
+      c.classList.remove('selected');
+      if (choiceVal === q.answer) c.classList.add('correct');
+      else if (choiceVal === userAns && userAns !== q.answer) c.classList.add('wrong');
+    });
+
+    if (userAns === q.answer) {
+      correct++;
+      card.classList.add('graded-correct');
+      document.getElementById(`mark-${q.index}`).textContent = '✓';
+      document.getElementById(`mark-${q.index}`).style.color = '#27ae60';
+    } else {
+      card.classList.add('graded-wrong');
+      document.getElementById(`mark-${q.index}`).textContent = '✗';
+      document.getElementById(`mark-${q.index}`).style.color = '#c0392b';
+    }
+  });
+
+  const total = currentQuestions.length;
+  const wrong = Object.keys(userAnswers).filter(k => userAnswers[k] !== currentQuestions[k-1].answer).length;
+  const unanswered = total - Object.keys(userAnswers).length;
+  const scoreVal = Math.round((correct / total) * 100);
+
+  // 결과 모달
+  const overlay = document.getElementById('result-overlay');
+  document.getElementById('result-score').innerHTML = `${scoreVal}<span>점</span>`;
+  document.getElementById('st-correct').textContent = correct;
+  document.getElementById('st-wrong').textContent = wrong;
+  document.getElementById('st-unanswered').textContent = unanswered;
+
+  let emoji, grade, desc;
+  if (scoreVal >= 90) { emoji='🏆'; grade='최우수! 탁월합니다!'; desc='한자 실력이 매우 뛰어납니다.'; }
+  else if (scoreVal >= 80) { emoji='🥇'; grade='우수! 잘했어요!'; desc='조금만 더 하면 만점도 가능해요!'; }
+  else if (scoreVal >= 70) { emoji='🎯'; grade='양호! 잘 하고 있어요.'; desc='오답 위주로 복습해 보세요.'; }
+  else if (scoreVal >= 60) { emoji='📚'; grade='보통, 더 노력해요!'; desc='꾸준한 학습이 필요합니다.'; }
+  else { emoji='💪'; grade='분발이 필요해요!'; desc='기초 한자부터 차근차근 시작해 보세요.'; }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-grade').textContent = grade;
+  document.getElementById('result-desc').textContent = desc;
+
+  overlay.classList.add('show');
+}
+
+function reviewAnswers() {
+  document.getElementById('result-overlay').classList.remove('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function retryQuiz() {
+  document.getElementById('result-overlay').classList.remove('show');
+  startQuiz();
+}
+
+function goBack() {
+  clearInterval(timerInterval);
+  document.getElementById('quiz-page').style.display = 'none';
+  document.getElementById('hero').style.display = 'flex';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
