@@ -7,9 +7,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0d0d0f;--bg2:#13131a;--surface:#1a1a24;--surface2:#22222f;
-  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.12);
-  --text:#e8e4f0;--muted:#7a748a;--muted2:#9992a8;
+  --bg:#f5f7ff;--bg2:#edf0fb;--surface:#ffffff;--surface2:#f0f2fa;
+  --border:rgba(0,0,0,.1);--border2:rgba(0,0,0,.18);
+  --text:#1a1a2e;--muted:#5a5a7a;--muted2:#4a4a6a;
   --radius:14px;--radius-sm:9px;
 }
 /* 과목별 색상 */
@@ -27,25 +27,26 @@ body{background:var(--bg);color:var(--text);font-family:'Pretendard','Noto Sans 
 /* ── 헤더 ── */
 header{
   padding:40px 5% 32px;
-  border-bottom:1px solid var(--border);
+  border-bottom:2px solid rgba(124,58,237,.15);
+  background:linear-gradient(135deg,#fff 0%,#f3f0ff 100%);
   position:relative;overflow:hidden;
 }
 header::before{
   content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 60% 80% at 50% -20%,rgba(168,120,240,.15),transparent 70%);
+  background:radial-gradient(ellipse 60% 80% at 50% -20%,rgba(124,58,237,.08),transparent 70%);
   pointer-events:none;
 }
 .hdr-inner{max-width:980px;margin:0 auto;position:relative;}
-.hdr-label{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted2);margin-bottom:12px;}
-.hdr-title{font-family:'Nanum Myeongjo',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.15;letter-spacing:-.03em;margin-bottom:10px;}
+.hdr-label{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:#7c3aed;margin-bottom:12px;font-weight:600;}
+.hdr-title{font-family:'Nanum Myeongjo',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.15;letter-spacing:-.03em;margin-bottom:10px;color:#1a1630;}
 .hdr-title span{
   background:linear-gradient(135deg,#a878f0,#4a9eff,#40c888);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
 }
-.hdr-sub{font-size:.9rem;color:var(--muted2);line-height:1.6;}
+.hdr-sub{font-size:.9rem;color:#4a3f6e;line-height:1.6;}
 .hdr-stats{display:flex;gap:24px;margin-top:20px;flex-wrap:wrap;}
-.hdr-stat{font-size:.78rem;color:var(--muted);display:flex;align-items:center;gap:6px;}
-.hdr-stat span{color:var(--text);font-weight:600;}
+.hdr-stat{font-size:.78rem;color:#6b5f8a;display:flex;align-items:center;gap:6px;}
+.hdr-stat span{color:#1a1630;font-weight:600;}
 
 /* ── 메인 ── */
 .wrap{max-width:980px;margin:0 auto;padding:36px 5% 100px;}
@@ -55,10 +56,11 @@ header::before{
 .subject-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px;}
 @media(max-width:600px){.subject-grid{grid-template-columns:repeat(2,1fr);}}
 .subj-card{
-  background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);
+  background:#ffffff;border:1.5px solid rgba(124,58,237,.15);border-radius:var(--radius);
   padding:18px 16px;cursor:pointer;transition:all .2s;
   display:flex;flex-direction:column;align-items:center;gap:10px;
   position:relative;overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
 }
 .subj-card::before{
   content:'';position:absolute;inset:0;
@@ -66,12 +68,12 @@ header::before{
   opacity:0;transition:opacity .2s;
 }
 .subj-card:hover::before{opacity:1;}
-.subj-card:hover{border-color:rgba(255,255,255,.18);transform:translateY(-2px);}
+.subj-card:hover{border-color:rgba(0,0,0,.2);transform:translateY(-2px);}
 .subj-card.active{border-color:var(--ac,#fff);background:var(--acbg);}
 .subj-card.active::before{opacity:1;}
 .subj-icon{font-size:1.8rem;line-height:1;}
-.subj-name{font-size:.88rem;font-weight:700;color:var(--text);}
-.subj-en{font-size:.7rem;color:var(--muted);letter-spacing:.06em;}
+.subj-name{font-size:.88rem;font-weight:700;color:#1a1630;}
+.subj-en{font-size:.7rem;color:#6b5f8a;letter-spacing:.06em;}
 .subj-check{
   position:absolute;top:8px;right:8px;
   width:18px;height:18px;border-radius:50%;
@@ -83,9 +85,10 @@ header::before{
 
 /* ── 설정 패널 ── */
 .config-panel{
-  background:var(--surface);border:1px solid var(--border);
+  background:#ffffff;border:1px solid rgba(124,58,237,.15);
   border-radius:var(--radius);padding:24px;margin-bottom:24px;
   display:none;
+  box-shadow:0 2px 12px rgba(0,0,0,.06);
 }
 .config-panel.show{display:block;}
 .config-header{
@@ -96,11 +99,11 @@ header::before{
 .config-header .icon{font-size:1.2rem;}
 .config-header h3{font-size:.95rem;font-weight:700;}
 .config-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;}
-.cfg-item label{display:block;font-size:.72rem;color:var(--muted2);margin-bottom:6px;font-weight:500;letter-spacing:.04em;}
+.cfg-item label{display:block;font-size:.72rem;color:#4a3f6e;margin-bottom:6px;font-weight:600;letter-spacing:.04em;}
 .cfg-item select{
   width:100%;padding:8px 30px 8px 11px;
-  background:var(--bg2);border:1px solid var(--border2);
-  border-radius:var(--radius-sm);color:var(--text);
+  background:#f8f7ff;border:1px solid rgba(124,58,237,.2);
+  border-radius:var(--radius-sm);color:#1a1630;
   font-family:'Pretendard',sans-serif;font-size:.84rem;
   appearance:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a748a'/%3E%3C/svg%3E");
@@ -111,20 +114,11 @@ header::before{
 
 /* 문제 유형 */
 .qtype-section{margin-top:18px;}
-.qtype-label{font-size:.72rem;color:var(--muted2);font-weight:500;letter-spacing:.04em;margin-bottom:10px;display:block;}
-.qtype-chips{display:flex;flex-wrap:wrap;gap:8px;}
-.qtype-chip{
-  display:flex;align-items:center;gap:6px;
-  padding:6px 12px;border-radius:20px;
-  border:1px solid var(--border2);background:var(--bg2);
-  cursor:pointer;transition:all .15s;font-size:.78rem;color:var(--muted2);
-  user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
-}
-.qtype-chip:hover{border-color:var(--ac,#fff);color:var(--text);}
-.qtype-chip.active{border-color:var(--ac,#fff);background:var(--acbg);color:var(--ac2,#fff);}
-.qtype-chip input{display:none;}
-.chip-check{font-size:.75rem;width:14px;text-align:center;opacity:.5;}
-.qtype-chip.active .chip-check{opacity:1;}
+.qtype-label{font-size:.78rem;color:#4a3f6e;font-weight:700;letter-spacing:.04em;margin-bottom:10px;display:block;}
+.qtype-chips{display:flex;flex-direction:column;gap:8px;}
+.qtype-check-item{display:flex;align-items:center;gap:10px;padding:8px 4px;cursor:pointer;font-size:.88rem;color:#1a1630;}
+.qtype-check-item input[type=checkbox]{width:17px;height:17px;accent-color:#7c3aed;cursor:pointer;flex-shrink:0;}
+.qtype-check-item:hover{color:#7c3aed;}
 
 /* ── 생성 버튼 ── */
 .btn-gen{
@@ -145,12 +139,13 @@ header::before{
 /* ── 로딩 ── */
 .loading-wrap{
   text-align:center;padding:60px 20px;
-  background:var(--surface);border:1px solid var(--border);
+  background:#ffffff;border:1px solid rgba(124,58,237,.15);
   border-radius:var(--radius);display:none;
+  box-shadow:0 2px 12px rgba(0,0,0,.06);
 }
 .loading-icons{font-size:2.5rem;animation:fadeInOut 1.4s ease-in-out infinite;}
 @keyframes fadeInOut{0%,100%{opacity:.2;}50%{opacity:1;}}
-.loading-msg{margin-top:14px;color:var(--muted2);font-size:.88rem;}
+.loading-msg{margin-top:14px;color:#4a3f6e;font-size:.88rem;}
 .loading-bar{height:2px;background:var(--border);border-radius:1px;margin:16px auto 0;width:200px;overflow:hidden;}
 .loading-progress{height:100%;background:linear-gradient(90deg,var(--ac,#888),var(--ac2,#aaa));border-radius:1px;animation:progress 2s ease-in-out infinite;}
 @keyframes progress{0%{width:0;margin-left:0;}50%{width:60%;margin-left:20%;}100%{width:0;margin-left:100%;};}
@@ -162,20 +157,21 @@ header::before{
   padding:9px 18px;border-radius:var(--radius-sm);font-size:.82rem;font-weight:600;
   cursor:pointer;border:1px solid var(--border2);transition:all .15s;
   font-family:'Pretendard',sans-serif;display:flex;align-items:center;gap:6px;
-  background:var(--surface);color:var(--text);
+  background:#ffffff;color:#1a1630;
 }
 .btn-act:hover{border-color:var(--ac,#fff);color:var(--ac2,#fff);}
 .btn-act.primary{background:var(--ac,#888);border-color:var(--ac,#888);color:#fff;}
 .btn-act.primary:hover{opacity:.85;}
 
 .score-card{
-  background:var(--surface);border:1px solid var(--border);
+  background:#ffffff;border:1px solid rgba(124,58,237,.15);
   border-radius:var(--radius);padding:20px 24px;
   display:none;align-items:center;gap:24px;flex-wrap:wrap;
   margin-bottom:16px;
+  box-shadow:0 2px 12px rgba(0,0,0,.06);
 }
 .sc-num{font-family:'Nanum Myeongjo',serif;font-size:2.2rem;font-weight:800;line-height:1;}
-.sc-lbl{font-size:.72rem;color:var(--muted);margin-top:4px;}
+.sc-lbl{font-size:.72rem;color:#6b5f8a;margin-top:4px;}
 
 /* ── 시험지 본체 ── */
 .exam-paper{
@@ -258,7 +254,7 @@ header::before{
 
 <header>
   <div class="hdr-inner">
-    <div class="hdr-label">AI-Powered · 교육부 2015·2022 개정 기준ver1.4</div>
+    <div class="hdr-label">AI-Powered · 교육부 2015·2022 개정 기준</div>
     <h1 class="hdr-title">중학교 <span>전과목</span> 시험지 생성기</h1>
     <p class="hdr-sub">과목·학년·학기·단원을 선택하면 AI가 맞춤형 시험지를 즉시 생성합니다</p>
     <div class="hdr-stats">
@@ -629,9 +625,9 @@ function selectSubject(subj, el) {
   // 문제 유형 칩
   const chips = document.getElementById('qtype-chips');
   chips.innerHTML = s.qtypes.map(q=>`
-    <div class="qtype-chip active c-${subj}" onclick="toggleChip(this)" data-value="${q.v}">
-      <span class="chip-check">✓</span> ${q.l}
-    </div>`).join('');
+    <label class="qtype-check-item">
+      <input type="checkbox" name="qtype" value="${q.v}" checked> ${q.l}
+    </label>`).join(('');
 
   // 단원 업데이트
   updateUnits();
@@ -640,10 +636,6 @@ function selectSubject(subj, el) {
 }
 
 // ── 단원 업데이트 ──
-function toggleChip(el){
-  el.classList.toggle('active');
-}
-
 function updateUnits(){
   if (!currentSubj) return;
   const g=document.getElementById('sel-grade').value;
@@ -668,7 +660,7 @@ async function generateExam(){
   const unit  = unitEl.options[unitEl.selectedIndex].text;
   const count = document.getElementById('sel-count').value;
   const level = document.getElementById('sel-level').value;
-  const qtypes=[...document.querySelectorAll('.qtype-chip.active')].map(e=>e.dataset.value);
+  const qtypes=[...document.querySelectorAll('input[name=qtype]:checked')].map(e=>e.value);
   if (!qtypes.length) { alert('문제 유형을 1가지 이상 선택해 주세요.'); return; }
 
   const btn=document.getElementById('btn-gen');
