@@ -11,7 +11,7 @@
 // ============================================================
 
 // ★ 여기에 Anthropic API 키 입력 ★
-const ANTHROPIC_API_KEY = "sk-ant-여기에_키_입력";
+const ANTHROPIC_API_KEY = "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";
 
 // CORS 헤더
 function setCorsHeaders(output) {
