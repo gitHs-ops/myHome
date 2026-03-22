@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>중학교 한문 교재별 단원별 시험지</title>
+<title>중학교 과목별 단원 시험지</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -279,9 +279,129 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--rice);color:var(--in
 </head>
 <body>
 
+
+<!-- ══════════════ 과목 선택 화면 ══════════════ -->
+<section id="subject-page" style="
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:48px 20px 60px;
+  background:linear-gradient(160deg,#fdf8ef 0%,#f5ead8 100%);
+  position:relative; overflow:hidden;
+">
+  <div style="
+    position:fixed; bottom:-60px; right:-40px;
+    font-family:'Noto Serif KR',serif;
+    font-size:clamp(160px,22vw,320px); font-weight:900;
+    color:rgba(184,134,11,.055); pointer-events:none;
+    letter-spacing:.1em; z-index:0;
+  ">學 習</div>
+
+  <div style="position:relative;z-index:1;width:100%;max-width:680px;text-align:center;">
+    <div style="
+      display:inline-block; background:#8b1a2a; color:#fff;
+      font-size:11px; font-weight:700; letter-spacing:.18em;
+      padding:5px 16px; border-radius:2px; margin-bottom:18px;
+    ">2022 개정 교육과정</div>
+
+    <h1 style="
+      font-family:'Noto Serif KR',serif;
+      font-size:clamp(28px,6vw,52px); font-weight:900; line-height:1.2;
+      margin-bottom:10px; color:#1a1209;
+    ">중학교 <em style="color:#b8860b;font-style:normal;">과목 선택</em></h1>
+    <p style="font-size:14px;color:#64748b;font-weight:300;margin-bottom:40px;letter-spacing:.05em;">
+      공부할 과목을 먼저 선택해 주세요
+    </p>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:12px;">
+
+      <!-- 한문 (활성) -->
+      <button onclick="selectSubject('hanja')" style="
+        display:flex;flex-direction:column;align-items:center;gap:10px;
+        padding:28px 16px 22px; border:2px solid #e2d8c8; border-radius:16px;
+        background:white; cursor:pointer; transition:all .18s;
+        box-shadow:0 2px 12px rgba(0,0,0,.06);
+      "
+      onmouseover="this.style.borderColor='#b8860b';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(184,134,11,.2)'"
+      onmouseout="this.style.borderColor='#e2d8c8';this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,.06)'">
+        <span style="font-size:40px;">漢</span>
+        <span style="font-size:15px;font-weight:800;color:#1a1209;font-family:'Noto Serif KR',serif;">한 문</span>
+        <span style="font-size:11px;color:#64748b;font-weight:400;">교재별 단원 시험</span>
+        <span style="display:inline-block;background:#b8860b;color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:999px;">이용 가능</span>
+      </button>
+
+      <!-- 국어 (준비중) -->
+      <button disabled style="
+        display:flex;flex-direction:column;align-items:center;gap:10px;
+        padding:28px 16px 22px; border:2px solid #f1f5f9; border-radius:16px;
+        background:#f8fafc; cursor:not-allowed; opacity:.6;
+      ">
+        <span style="font-size:40px;">📖</span>
+        <span style="font-size:15px;font-weight:800;color:#64748b;font-family:'Noto Serif KR',serif;">국 어</span>
+        <span style="font-size:11px;color:#94a3b8;font-weight:400;">단원 시험</span>
+        <span style="display:inline-block;background:#e2e8f0;color:#94a3b8;font-size:10px;font-weight:700;padding:2px 10px;border-radius:999px;">준비 중</span>
+      </button>
+
+      <!-- 수학 (준비중) -->
+      <button disabled style="
+        display:flex;flex-direction:column;align-items:center;gap:10px;
+        padding:28px 16px 22px; border:2px solid #f1f5f9; border-radius:16px;
+        background:#f8fafc; cursor:not-allowed; opacity:.6;
+      ">
+        <span style="font-size:40px;">📐</span>
+        <span style="font-size:15px;font-weight:800;color:#64748b;font-family:'Noto Serif KR',serif;">수 학</span>
+        <span style="font-size:11px;color:#94a3b8;font-weight:400;">단원 시험</span>
+        <span style="display:inline-block;background:#e2e8f0;color:#94a3b8;font-size:10px;font-weight:700;padding:2px 10px;border-radius:999px;">준비 중</span>
+      </button>
+
+      <!-- 영어 (준비중) -->
+      <button disabled style="
+        display:flex;flex-direction:column;align-items:center;gap:10px;
+        padding:28px 16px 22px; border:2px solid #f1f5f9; border-radius:16px;
+        background:#f8fafc; cursor:not-allowed; opacity:.6;
+      ">
+        <span style="font-size:40px;">🔤</span>
+        <span style="font-size:15px;font-weight:800;color:#64748b;font-family:'Noto Serif KR',serif;">영 어</span>
+        <span style="font-size:11px;color:#94a3b8;font-weight:400;">단원 시험</span>
+        <span style="display:inline-block;background:#e2e8f0;color:#94a3b8;font-size:10px;font-weight:700;padding:2px 10px;border-radius:999px;">준비 중</span>
+      </button>
+
+      <!-- 사회 (준비중) -->
+      <button disabled style="
+        display:flex;flex-direction:column;align-items:center;gap:10px;
+        padding:28px 16px 22px; border:2px solid #f1f5f9; border-radius:16px;
+        background:#f8fafc; cursor:not-allowed; opacity:.6;
+      ">
+        <span style="font-size:40px;">🌏</span>
+        <span style="font-size:15px;font-weight:800;color:#64748b;font-family:'Noto Serif KR',serif;">사 회</span>
+        <span style="font-size:11px;color:#94a3b8;font-weight:400;">단원 시험</span>
+        <span style="display:inline-block;background:#e2e8f0;color:#94a3b8;font-size:10px;font-weight:700;padding:2px 10px;border-radius:999px;">준비 중</span>
+      </button>
+
+      <!-- 과학 (준비중) -->
+      <button disabled style="
+        display:flex;flex-direction:column;align-items:center;gap:10px;
+        padding:28px 16px 22px; border:2px solid #f1f5f9; border-radius:16px;
+        background:#f8fafc; cursor:not-allowed; opacity:.6;
+      ">
+        <span style="font-size:40px;">🔬</span>
+        <span style="font-size:15px;font-weight:800;color:#64748b;font-family:'Noto Serif KR',serif;">과 학</span>
+        <span style="font-size:11px;color:#94a3b8;font-weight:400;">단원 시험</span>
+        <span style="display:inline-block;background:#e2e8f0;color:#94a3b8;font-size:10px;font-weight:700;padding:2px 10px;border-radius:999px;">준비 중</span>
+      </button>
+
+    </div>
+    <p style="font-size:11px;color:#94a3b8;margin-top:8px;">* 한문 외 과목은 순차적으로 추가될 예정입니다</p>
+  </div>
+</section>
+
+
 <!-- ══════════════ HERO ══════════════ -->
-<section id="hero">
+<section id="hero" style="display:none;">
 <div class="hero-inner">
+
+  <div style="margin-bottom:16px;">
+    <button onclick="goBackToSubjectFromHero()" style="background:rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.1);border-radius:8px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;color:#64748b;transition:all .15s;" onmouseover="this.style.background='rgba(0,0,0,.1)'" onmouseout="this.style.background='rgba(0,0,0,.06)'">← 과목 선택으로</button>
+  </div>
 
   <div class="hero-top">
     <div class="site-tag">2022 개정 교육과정</div>
@@ -1097,6 +1217,30 @@ function goBack(){
   document.getElementById('hero').style.display='flex';
   window.scrollTo(0,0);
 }
+function goBackToSubjectFromHero(){
+  document.getElementById('hero').style.display='none';
+  document.getElementById('subject-page').style.display='flex';
+  window.scrollTo(0,0);
+}
+function goBackToSubject(){
+  clearInterval(timerInterval);
+  document.getElementById('quiz-page').style.display='none';
+  document.getElementById('hero').style.display='none';
+  document.getElementById('subject-page').style.display='flex';
+  window.scrollTo(0,0);
+}
+
+// ════════════════════════════════════════════════════════════
+//  과목 선택
+// ════════════════════════════════════════════════════════════
+function selectSubject(subject) {
+  if (subject === 'hanja') {
+    document.getElementById('subject-page').style.display = 'none';
+    document.getElementById('hero').style.display = 'flex';
+    window.scrollTo(0, 0);
+  }
+}
+
 </script>
 </body>
 </html>
