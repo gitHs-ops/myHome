@@ -5,1110 +5,1820 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<title>🌸 사쿠라 가든</title>
+<title>벚꽃 정원 — Ver 1.5 2026.03.21</title>
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html,body { width:100%; height:100%; overflow:hidden; background:#0a0005; touch-action:none; }
-  canvas { display:block; width:100%; height:100%; }
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;700&family=Shippori+Mincho:wght@300;400&display=swap');
+
+  :root {
+    --sakura: #f4a7b9;
+    --sakura-deep: #d4607a;
+    --matcha: #5c7a4e;
+    --matcha-light: #8aad6e;
+    --sky: #c8dff5;
+    --sky-deep: #7aa8d4;
+    --wood: #8b6543;
+    --fog: rgba(240,230,220,0.18);
+    --gold: #d4a843;
+    --ink: #1a1208;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    overflow: hidden;
+    font-family: 'Shippori Mincho', serif;
+    cursor: none;
+  }
+
+  #canvas { display: block; width: 100vw; height: 100vh; }
 
   #ui {
-    position:fixed; top:0; left:0; right:0; bottom:0;
-    pointer-events:none;
-    font-family: 'Hiragino Kaku Gothic Pro', 'Noto Sans KR', sans-serif;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 10;
   }
 
-  /* 상단 HUD */
-  #hud-top {
-    position:absolute; top:env(safe-area-inset-top, 12px); left:0; right:0;
-    display:flex; justify-content:space-between; align-items:flex-start;
-    padding:12px 16px 0;
-  }
-  #time-panel {
-    background:rgba(0,0,0,0.45); backdrop-filter:blur(8px);
-    border:1px solid rgba(255,180,200,0.25);
-    border-radius:16px; padding:8px 14px;
-    color:#ffe8f0; font-size:13px; line-height:1.5;
-  }
-  #time-panel .jp { font-size:9px; color:#ffb4c8; letter-spacing:2px; margin-bottom:2px; }
-  #time-panel .time-val { font-size:18px; font-weight:600; color:#fff; }
-
-  #petal-panel {
-    background:rgba(0,0,0,0.45); backdrop-filter:blur(8px);
-    border:1px solid rgba(255,180,200,0.25);
-    border-radius:16px; padding:8px 14px; text-align:right;
-    color:#ffe8f0; font-size:13px;
-  }
-  #petal-panel .jp { font-size:9px; color:#ffb4c8; letter-spacing:2px; margin-bottom:2px; }
-  #petal-count { font-size:22px; font-weight:700; color:#ffb4c8; }
-
-  /* 나침반 */
   #compass {
-    position:absolute; top:env(safe-area-inset-top, 12px);
-    left:50%; transform:translateX(-50%);
-    margin-top:12px;
-    width:48px; height:48px;
+    position: fixed;
+    top: 24px; right: 28px;
+    width: 64px; height: 64px;
+    border: 1.5px solid rgba(244,167,185,0.5);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(10,8,6,0.55);
+    backdrop-filter: blur(6px);
   }
-  #compass svg { width:100%; height:100%; }
-
-  /* 계절 배지 */
-  #season-badge {
-    position:absolute; top:calc(env(safe-area-inset-top, 12px) + 80px);
-    left:50%; transform:translateX(-50%);
-    background:rgba(255,100,140,0.15); backdrop-filter:blur(8px);
-    border:1px solid rgba(255,150,180,0.3);
-    border-radius:20px; padding:4px 14px;
-    color:#ffccd8; font-size:11px; letter-spacing:3px;
-    white-space:nowrap;
+  #compass-needle {
+    width: 2px; height: 28px;
+    background: linear-gradient(to bottom, var(--sakura-deep) 50%, rgba(255,255,255,0.3) 50%);
+    border-radius: 2px;
+    transform-origin: 50% 50%;
+    transition: transform 0.3s ease;
   }
 
-  /* 하단 조이스틱 + 버튼 */
-  #controls {
-    position:absolute;
-    bottom:calc(env(safe-area-inset-bottom, 16px) + 16px);
-    left:0; right:0;
-    display:flex; justify-content:space-between; align-items:flex-end;
-    padding:0 24px;
-    pointer-events:all;
+  #season-panel {
+    position: fixed;
+    top: 24px; left: 28px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  #season-label {
+    font-size: 11px;
+    color: rgba(244,167,185,0.7);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  #season-name {
+    font-size: 22px;
+    color: var(--sakura);
+    font-weight: 300;
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(244,167,185,0.4);
+  }
+  #petal-count {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 2px;
+    margin-top: 2px;
+  }
+
+  #controls-hint {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 20px;
+    align-items: center;
+    opacity: 0.5;
+    transition: opacity 0.5s;
+  }
+  @media (pointer: coarse) {
+    #controls-hint { display: none !important; }
+  }
+  #controls-hint:hover { opacity: 0.85; }
+  .hint-key {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 10px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 1.5px;
+  }
+
+  #loading {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #0a0608;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 100;
+    transition: opacity 1.5s ease;
+  }
+  #loading-kanji {
+    font-size: 80px;
+    color: var(--sakura);
+    opacity: 0;
+    animation: fadeIn 1.2s forwards 0.3s;
+    text-shadow: 0 0 60px rgba(244,167,185,0.3);
+  }
+  #loading-sub {
+    font-size: 13px;
+    color: rgba(244,167,185,0.5);
+    letter-spacing: 6px;
+    margin-top: 16px;
+    opacity: 0;
+    animation: fadeIn 1s forwards 0.8s;
+  }
+  #loading-bar-wrap {
+    width: 180px;
+    height: 1px;
+    background: rgba(255,255,255,0.1);
+    margin-top: 40px;
+    opacity: 0;
+    animation: fadeIn 0.8s forwards 1s;
+    overflow: hidden;
+  }
+  #loading-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(to right, transparent, var(--sakura), transparent);
+    animation: loadBar 1.8s ease forwards 1.2s;
+  }
+  @keyframes loadBar { to { width: 100%; } }
+  @keyframes fadeIn { to { opacity: 1; } }
+
+  #cursor {
+    position: fixed;
+    width: 18px; height: 18px;
+    border: 1.5px solid rgba(244,167,185,0.7);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.08s, width 0.15s, height 0.15s, border-color 0.2s;
+    mix-blend-mode: screen;
+  }
+  #cursor.active {
+    width: 8px; height: 8px;
+    border-color: rgba(244,167,185,1);
+  }
+
+  #time-bar {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 5px;
+  }
+  #time-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 2px;
+  }
+  #sun-track {
+    width: 100px;
+    height: 3px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    position: relative;
+    overflow: visible;
+  }
+  #sun-dot {
+    position: absolute;
+    top: 50%;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px var(--gold);
+    transition: left 1s linear;
+  }
+
+  /* ═══════════════════════════════
+     MOBILE TOUCH CONTROLS
+  ═══════════════════════════════ */
+  * { -webkit-tap-highlight-color: transparent; }
+  body { touch-action: none; }
+
+  #mobile-controls {
+    display: none; /* JS로 모바일에서만 표시 */
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    bottom: env(safe-area-inset-bottom, 0);
+    pointer-events: none;
+    z-index: 100;
+    padding: 0 20px 20px;
+  }
+  @media (pointer: coarse) {
+    #mobile-controls { display: block; }
+    #cursor { display: none !important; }
   }
 
   /* 조이스틱 */
-  #joystick-area {
-    width:130px; height:130px; position:relative;
+  #joy-wrap {
+    position: absolute;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+    left: 20px;
+    pointer-events: all;
   }
-  #joystick-bg {
-    width:130px; height:130px;
-    border-radius:50%;
-    background:rgba(0,0,0,0.3);
-    border:2px solid rgba(255,180,200,0.3);
-    backdrop-filter:blur(4px);
-    position:absolute; top:0; left:0;
+  #joy-bg {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(10,8,6,0.45);
+    border: 1.5px solid rgba(244,167,185,0.35);
+    backdrop-filter: blur(6px);
+    position: relative;
   }
-  #joystick-knob {
-    width:52px; height:52px;
-    border-radius:50%;
-    background:radial-gradient(circle at 35% 35%, rgba(255,200,220,0.9), rgba(220,80,120,0.7));
-    border:2px solid rgba(255,255,255,0.4);
-    box-shadow:0 2px 12px rgba(220,80,120,0.5);
-    position:absolute;
-    top:50%; left:50%;
-    transform:translate(-50%,-50%);
-    transition:transform 0.05s;
-  }
-
-  /* 오른쪽 버튼 그룹 */
-  #btn-group {
-    display:flex; flex-direction:column; gap:12px; align-items:flex-end;
-  }
-  .action-btn {
-    width:60px; height:60px; border-radius:50%;
-    border:2px solid rgba(255,180,200,0.4);
-    backdrop-filter:blur(4px);
-    display:flex; align-items:center; justify-content:center;
-    font-size:22px; cursor:pointer; user-select:none;
-    -webkit-user-select:none;
-    active-scale:0.92;
-  }
-  #btn-jump {
-    background:rgba(255,100,140,0.25);
-    box-shadow:0 0 20px rgba(255,100,140,0.2);
-  }
-  #btn-sprint {
-    width:52px; height:52px;
-    background:rgba(255,160,80,0.2);
-    box-shadow:0 0 16px rgba(255,160,80,0.15);
+  #joy-knob {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, rgba(244,167,185,0.95), rgba(212,96,122,0.8));
+    border: 1.5px solid rgba(255,255,255,0.3);
+    box-shadow: 0 2px 12px rgba(212,96,122,0.5);
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    pointer-events: none;
   }
 
-  /* 카메라 드래그 힌트 */
+  /* 오른쪽 버튼 */
+  #btn-wrap {
+    position: absolute;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    pointer-events: all;
+  }
+  .m-btn {
+    width: 58px; height: 58px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(244,167,185,0.4);
+    backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    user-select: none; -webkit-user-select: none;
+    transition: transform 0.1s;
+    background: rgba(10,8,6,0.45);
+  }
+  .m-btn:active { transform: scale(0.92); }
+  #btn-jump   { box-shadow: 0 0 16px rgba(244,167,185,0.3); }
+  #btn-sprint { width: 48px; height: 48px; font-size: 17px;
+                box-shadow: 0 0 12px rgba(212,168,67,0.3);
+                border-color: rgba(212,168,67,0.4); }
+
+  /* 시점 드래그 힌트 */
   #look-hint {
-    position:absolute; top:50%; right:24px;
-    transform:translateY(-50%);
-    background:rgba(0,0,0,0.3); border-radius:12px;
-    padding:8px 12px; color:rgba(255,200,220,0.6);
-    font-size:11px; text-align:center; line-height:1.4;
-    pointer-events:none;
+    position: fixed;
+    top: 50%; right: 16px;
+    transform: translateY(-50%);
+    background: rgba(10,8,6,0.55);
+    border: 1px solid rgba(244,167,185,0.25);
+    border-radius: 10px;
+    padding: 8px 10px;
+    color: rgba(244,167,185,0.7);
+    font-size: 10px;
+    text-align: center;
+    line-height: 1.5;
+    pointer-events: none;
+    z-index: 100;
+    transition: opacity 0.8s;
+    font-family: 'Shippori Mincho', serif;
   }
-  #look-hint.fade { opacity:0; transition:opacity 1s; }
-
-  /* 꽃잎 수집 토스트 */
-  #toast {
-    position:absolute; top:50%; left:50%;
-    transform:translate(-50%,-50%) scale(0);
-    background:rgba(220,60,100,0.9); backdrop-filter:blur(8px);
-    border:1px solid rgba(255,200,220,0.5);
-    border-radius:24px; padding:12px 24px;
-    color:#fff; font-size:16px; font-weight:600;
-    text-align:center; white-space:nowrap;
-    transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
-    pointer-events:none;
-  }
-  #toast.show { transform:translate(-50%,-60%) scale(1); }
-  #toast.hide { opacity:0; transform:translate(-50%,-70%) scale(0.9); }
-
-  /* 시작 오버레이 */
-  #start-overlay {
-    position:fixed; inset:0;
-    background:linear-gradient(160deg, #0d0010 0%, #1a0020 50%, #0a0515 100%);
-    display:flex; flex-direction:column;
-    align-items:center; justify-content:center;
-    z-index:100; padding:32px;
-    transition:opacity 0.8s;
-  }
-  #start-overlay.hide { opacity:0; pointer-events:none; }
-
-  .title-jp {
-    font-size:11px; letter-spacing:8px; color:#ff80a0;
-    margin-bottom:16px; text-transform:uppercase;
-  }
-  .title-main {
-    font-size:52px; font-weight:800;
-    background:linear-gradient(135deg, #ffb4c8, #ff6090, #ff90b0);
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    margin-bottom:8px; line-height:1;
-  }
-  .title-sub {
-    font-size:16px; color:rgba(255,180,200,0.6);
-    margin-bottom:48px; letter-spacing:1px;
-  }
-  .feature-list {
-    display:flex; flex-direction:column; gap:10px;
-    margin-bottom:48px; width:100%; max-width:280px;
-  }
-  .feature-item {
-    display:flex; align-items:center; gap:12px;
-    color:rgba(255,200,220,0.75); font-size:13px;
-  }
-  .feature-icon {
-    width:32px; height:32px; border-radius:10px;
-    background:rgba(255,100,140,0.15);
-    border:1px solid rgba(255,100,140,0.2);
-    display:flex; align-items:center; justify-content:center;
-    font-size:16px; flex-shrink:0;
-  }
-  #start-btn {
-    width:100%; max-width:280px; height:56px;
-    border-radius:28px;
-    background:linear-gradient(135deg, #ff6090, #ff9050);
-    border:none; cursor:pointer;
-    color:#fff; font-size:17px; font-weight:700;
-    letter-spacing:1px;
-    box-shadow:0 8px 32px rgba(255,80,120,0.4);
-    transition:transform 0.1s, box-shadow 0.1s;
-    pointer-events:all;
-  }
-  #start-btn:active { transform:scale(0.97); box-shadow:0 4px 16px rgba(255,80,120,0.3); }
-
-  /* 로딩 */
-  #loading {
-    position:fixed; inset:0;
-    background:#0a0005;
-    display:flex; flex-direction:column;
-    align-items:center; justify-content:center;
-    z-index:200; gap:20px;
-  }
-  #loading.done { display:none; }
-  .load-flower { font-size:48px; animation:spin 2s linear infinite; }
-  @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-  .load-text { color:#ffb4c8; font-size:14px; letter-spacing:2px; }
-  .load-bar-wrap {
-    width:200px; height:4px; background:rgba(255,180,200,0.15);
-    border-radius:2px; overflow:hidden;
-  }
-  .load-bar {
-    height:100%; background:linear-gradient(90deg,#ff6090,#ff90b0);
-    border-radius:2px; animation:loadprog 1.5s ease-in-out forwards;
-  }
-  @keyframes loadprog { from{width:0} to{width:100%} }
 </style>
 </head>
 <body>
 
-<div id="loading">
-  <div class="load-flower">🌸</div>
-  <div class="load-text">SAKURA GARDEN</div>
-  <div class="load-bar-wrap"><div class="load-bar"></div></div>
-</div>
-
-<canvas id="c"></canvas>
+<canvas id="canvas"></canvas>
 
 <div id="ui">
-  <div id="hud-top">
-    <div id="time-panel">
-      <div class="jp">時刻</div>
-      <div class="time-val" id="time-display">06:00</div>
-    </div>
-    <div id="compass">
-      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="24" cy="24" r="22" stroke="rgba(255,180,200,0.3)" stroke-width="1.5" fill="rgba(0,0,0,0.4)"/>
-        <text x="24" y="10" text-anchor="middle" fill="rgba(255,180,200,0.6)" font-size="7" font-weight="600">N</text>
-        <text x="24" y="42" text-anchor="middle" fill="rgba(255,180,200,0.4)" font-size="7">S</text>
-        <text x="9"  y="27" text-anchor="middle" fill="rgba(255,180,200,0.4)" font-size="7">W</text>
-        <text x="39" y="27" text-anchor="middle" fill="rgba(255,180,200,0.4)" font-size="7">E</text>
-        <polygon id="compass-needle-n" points="24,6 21,24 24,22 27,24" fill="#ff6090"/>
-        <polygon id="compass-needle-s" points="24,42 21,24 24,26 27,24" fill="rgba(255,180,200,0.3)"/>
-      </svg>
-    </div>
-    <div id="petal-panel">
-      <div class="jp">花びら</div>
-      <span id="petal-count">0</span>
+  <div id="season-panel">
+    <div id="season-label">현재 계절</div>
+    <div id="season-name">봄 · 春</div>
+    <div id="petal-count">꽃잎 0개 수집</div>
+  </div>
+
+  <div id="compass">
+    <div id="compass-needle"></div>
+  </div>
+
+  <div id="time-bar">
+    <div id="time-label">시각</div>
+    <div id="sun-track">
+      <div id="sun-dot" style="left:30%"></div>
     </div>
   </div>
 
-  <div id="season-badge">春 · SPRING · 봄</div>
-
-  <div id="look-hint">👆 드래그하여<br>시점 변경</div>
-
-  <div id="controls">
-    <div id="joystick-area">
-      <div id="joystick-bg"></div>
-      <div id="joystick-knob"></div>
-    </div>
-    <div id="btn-group">
-      <div class="action-btn" id="btn-jump">🌸</div>
-      <div class="action-btn" id="btn-sprint">💨</div>
-    </div>
+  <div id="controls-hint">
+    <span class="hint-key">W A S D · 이동</span>
+    <span class="hint-key">마우스 · 시선</span>
+    <span class="hint-key">SHIFT · 달리기</span>
+    <span class="hint-key">SPACE · 점프</span>
   </div>
-
-  <div id="toast">🌸 꽃잎 수집!</div>
 </div>
 
-<div id="start-overlay">
-  <div class="title-jp">SAKURA GARDEN</div>
-  <div class="title-main">🌸</div>
-  <div class="title-main" style="font-size:36px; margin-top:-8px;">사쿠라 가든</div>
-  <div class="title-sub">일본 정원 탐험 게임</div>
-  <div class="feature-list">
-    <div class="feature-item"><div class="feature-icon">🏯</div>3D 일본 정원 자유 탐험</div>
-    <div class="feature-item"><div class="feature-icon">🌸</div>벚꽃 꽃잎 수집 미션</div>
-    <div class="feature-item"><div class="feature-icon">🌅</div>낮/밤 실시간 변화</div>
-    <div class="feature-item"><div class="feature-icon">🎮</div>터치 조이스틱 조작</div>
-  </div>
-  <button id="start-btn">탐험 시작</button>
+<div id="loading">
+  <div id="loading-kanji">桜</div>
+  <div id="loading-sub">벚꽃 다원을 준비하는 중</div>
+  <div id="loading-bar-wrap"><div id="loading-bar"></div></div>
 </div>
+
+<div id="cursor"></div>
 
 <script>
-// ──────────────────────────────────────────────────────────
-// MOBILE SAKURA GARDEN — WebGL 3D Game
-// ──────────────────────────────────────────────────────────
+// ──────────────────────────────────────────────
+// SAKURA GARDEN — 3D Infinite Cherry Blossom Tea Garden
+// ──────────────────────────────────────────────
 
-const canvas = document.getElementById('c');
+const canvas = document.getElementById('canvas');
 const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
-if (!gl) { document.body.innerHTML='<div style="color:white;padding:32px;text-align:center">WebGL을 지원하지 않는 기기입니다</div>'; }
+if (!gl) { alert('WebGL을 지원하지 않는 브라우저입니다.'); }
 
-// ─── resize ───────────────────────────────────────────────
+// ── Resize ──────────────────────────────────────
 function resize() {
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  canvas.width  = window.innerWidth  * dpr;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = window.innerWidth * dpr;
   canvas.height = window.innerHeight * dpr;
+  canvas.style.width  = window.innerWidth  + 'px';
+  canvas.style.height = window.innerHeight + 'px';
   gl.viewport(0, 0, canvas.width, canvas.height);
 }
-resize();
 window.addEventListener('resize', resize);
+resize();
 
-// ─── Math ─────────────────────────────────────────────────
+// ── Math helpers ────────────────────────────────
 const mat4 = {
-  create(){ return new Float32Array(16); },
-  identity(m){ m.fill(0); m[0]=m[5]=m[10]=m[15]=1; return m; },
-  perspective(m,fov,asp,near,far){
-    const f=1/Math.tan(fov/2), r=1/(near-far);
-    m.fill(0);
-    m[0]=f/asp; m[5]=f; m[10]=(near+far)*r; m[11]=-1; m[14]=2*near*far*r;
+  create() { return new Float32Array(16); },
+  identity(m) {
+    m.fill(0); m[0]=m[5]=m[10]=m[15]=1; return m;
+  },
+  perspective(m, fov, aspect, near, far) {
+    const f = 1/Math.tan(fov/2), nf = 1/(near-far);
+    m[0]=f/aspect; m[1]=0; m[2]=0; m[3]=0;
+    m[4]=0; m[5]=f; m[6]=0; m[7]=0;
+    m[8]=0; m[9]=0; m[10]=(far+near)*nf; m[11]=-1;
+    m[12]=0; m[13]=0; m[14]=2*far*near*nf; m[15]=0;
     return m;
   },
-  multiply(out,a,b){
-    for(let i=0;i<4;i++) for(let j=0;j<4;j++){
-      let s=0; for(let k=0;k<4;k++) s+=a[i*4+k]*b[k*4+j];
-      out[i*4+j]=s;
-    } return out;
+  multiply(out, a, b) {
+    for(let i=0;i<4;i++) for(let j=0;j<4;j++) {
+      out[j*4+i]=0;
+      for(let k=0;k<4;k++) out[j*4+i]+=a[k*4+i]*b[j*4+k];
+    }
+    return out;
   },
-  translate(m,tx,ty,tz){
-    const t=mat4.identity(mat4.create());
-    t[12]=tx; t[13]=ty; t[14]=tz;
-    return mat4.multiply(mat4.create(),m,t);
+  translate(out, a, v) {
+    const [x,y,z]=v;
+    if(a===out) {
+      out[12]=a[0]*x+a[4]*y+a[8]*z+a[12];
+      out[13]=a[1]*x+a[5]*y+a[9]*z+a[13];
+      out[14]=a[2]*x+a[6]*y+a[10]*z+a[14];
+      out[15]=a[3]*x+a[7]*y+a[11]*z+a[15];
+    } else {
+      out.set(a);
+      out[12]=a[0]*x+a[4]*y+a[8]*z+a[12];
+      out[13]=a[1]*x+a[5]*y+a[9]*z+a[13];
+      out[14]=a[2]*x+a[6]*y+a[10]*z+a[14];
+      out[15]=a[3]*x+a[7]*y+a[11]*z+a[15];
+    }
+    return out;
   },
-  rotY(m,a){
-    const c=Math.cos(a), s=Math.sin(a), r=mat4.identity(mat4.create());
-    r[0]=c; r[2]=s; r[8]=-s; r[10]=c;
-    return mat4.multiply(mat4.create(),m,r);
+  rotateY(out, a, rad) {
+    const s=Math.sin(rad), c=Math.cos(rad);
+    const a00=a[0],a01=a[1],a02=a[2],a03=a[3];
+    const a20=a[8],a21=a[9],a22=a[10],a23=a[11];
+    out.set(a);
+    out[0]=a00*c-a20*s; out[1]=a01*c-a21*s;
+    out[2]=a02*c-a22*s; out[3]=a03*c-a23*s;
+    out[8]=a00*s+a20*c; out[9]=a01*s+a21*c;
+    out[10]=a02*s+a22*c; out[11]=a03*s+a23*c;
+    return out;
   },
-  rotX(m,a){
-    const c=Math.cos(a), s=Math.sin(a), r=mat4.identity(mat4.create());
-    r[5]=c; r[6]=-s; r[9]=s; r[10]=c;
-    return mat4.multiply(mat4.create(),m,r);
+  rotateX(out, a, rad) {
+    const s=Math.sin(rad), c=Math.cos(rad);
+    const a10=a[4],a11=a[5],a12=a[6],a13=a[7];
+    const a20=a[8],a21=a[9],a22=a[10],a23=a[11];
+    out.set(a);
+    out[4]=a10*c+a20*s; out[5]=a11*c+a21*s;
+    out[6]=a12*c+a22*s; out[7]=a13*c+a23*s;
+    out[8]=a20*c-a10*s; out[9]=a21*c-a11*s;
+    out[10]=a22*c-a12*s; out[11]=a23*c-a13*s;
+    return out;
   },
-  scale(m,sx,sy,sz){
-    const s=mat4.identity(mat4.create()); s[0]=sx; s[5]=sy; s[10]=sz;
-    return mat4.multiply(mat4.create(),m,s);
+  scale(out, a, v) {
+    out.set(a);
+    out[0]*=v[0]; out[1]*=v[0]; out[2]*=v[0]; out[3]*=v[0];
+    out[4]*=v[1]; out[5]*=v[1]; out[6]*=v[1]; out[7]*=v[1];
+    out[8]*=v[2]; out[9]*=v[2]; out[10]*=v[2]; out[11]*=v[2];
+    return out;
   },
-  lookAt(out, eye, center, up){
+  lookAt(out, eye, center, up) {
     let fx=center[0]-eye[0], fy=center[1]-eye[1], fz=center[2]-eye[2];
     let fl=Math.sqrt(fx*fx+fy*fy+fz*fz); fx/=fl; fy/=fl; fz/=fl;
-    let rx=fy*up[2]-fz*up[1], ry=fz*up[0]-fx*up[2], rz=fx*up[1]-fy*up[0];
-    let rl=Math.sqrt(rx*rx+ry*ry+rz*rz); rx/=rl; ry/=rl; rz/=rl;
-    let ux=ry*fz-rz*fy, uy=rz*fx-rx*fz, uz=rx*fy-ry*fx;
-    out[0]=rx; out[1]=ux; out[2]=-fx; out[3]=0;
-    out[4]=ry; out[5]=uy; out[6]=-fy; out[7]=0;
-    out[8]=rz; out[9]=uz; out[10]=-fz; out[11]=0;
-    out[12]=-(rx*eye[0]+ry*eye[1]+rz*eye[2]);
+    let sx=fy*up[2]-fz*up[1], sy=fz*up[0]-fx*up[2], sz=fx*up[1]-fy*up[0];
+    let sl=Math.sqrt(sx*sx+sy*sy+sz*sz); if(sl>0){sx/=sl;sy/=sl;sz/=sl;}
+    let ux=sy*fz-sz*fy, uy=sz*fx-sx*fz, uz=sx*fy-sy*fx;
+    out[0]=sx; out[1]=ux; out[2]=-fx; out[3]=0;
+    out[4]=sy; out[5]=uy; out[6]=-fy; out[7]=0;
+    out[8]=sz; out[9]=uz; out[10]=-fz; out[11]=0;
+    out[12]=-(sx*eye[0]+sy*eye[1]+sz*eye[2]);
     out[13]=-(ux*eye[0]+uy*eye[1]+uz*eye[2]);
-    out[14]=(fx*eye[0]+fy*eye[1]+fz*eye[2]);
+    out[14]= (fx*eye[0]+fy*eye[1]+fz*eye[2]);
     out[15]=1;
+    return out;
+  },
+  invert(out, a) {
+    const a00=a[0],a01=a[1],a02=a[2],a03=a[3];
+    const a10=a[4],a11=a[5],a12=a[6],a13=a[7];
+    const a20=a[8],a21=a[9],a22=a[10],a23=a[11];
+    const a30=a[12],a31=a[13],a32=a[14],a33=a[15];
+    const b00=a00*a11-a01*a10, b01=a00*a12-a02*a10;
+    const b02=a00*a13-a03*a10, b03=a01*a12-a02*a11;
+    const b04=a01*a13-a03*a11, b05=a02*a13-a03*a12;
+    const b06=a20*a31-a21*a30, b07=a20*a32-a22*a30;
+    const b08=a20*a33-a23*a30, b09=a21*a32-a22*a31;
+    const b10=a21*a33-a23*a31, b11=a22*a33-a23*a32;
+    let det=b00*b11-b01*b10+b02*b09+b03*b08-b04*b07+b05*b06;
+    if(!det) return null;
+    det=1/det;
+    out[0]=(a11*b11-a12*b10+a13*b09)*det;
+    out[1]=(a02*b10-a01*b11-a03*b09)*det;
+    out[2]=(a31*b05-a32*b04+a33*b03)*det;
+    out[3]=(a22*b04-a21*b05-a23*b03)*det;
+    out[4]=(a12*b08-a10*b11-a13*b07)*det;
+    out[5]=(a00*b11-a02*b08+a03*b07)*det;
+    out[6]=(a32*b02-a30*b05-a33*b01)*det;
+    out[7]=(a20*b05-a22*b02+a23*b01)*det;
+    out[8]=(a10*b10-a11*b08+a13*b06)*det;
+    out[9]=(a02*b06-a00*b10+a03*b08)*det; // fixed sign
+    out[10]=(a30*b04-a31*b02+a33*b00)*det;
+    out[11]=(a21*b02-a20*b04-a23*b00)*det;
+    out[12]=(a11*b07-a10*b09-a12*b06)*det;
+    out[13]=(a00*b09-a01*b07+a02*b06)*det;
+    out[14]=(a31*b01-a30*b03-a32*b00)*det;
+    out[15]=(a20*b03-a21*b01+a22*b00)*det;
+    return out;
+  },
+  transpose(out, a) {
+    if(out===a){
+      let t;
+      t=a[1]; out[1]=a[4]; out[4]=t;
+      t=a[2]; out[2]=a[8]; out[8]=t;
+      t=a[6]; out[6]=a[9]; out[9]=t;
+      t=a[3]; out[3]=a[12]; out[12]=t;
+      t=a[7]; out[7]=a[13]; out[13]=t;
+      t=a[11]; out[11]=a[14]; out[14]=t;
+    } else {
+      out[0]=a[0]; out[1]=a[4]; out[2]=a[8]; out[3]=a[12];
+      out[4]=a[1]; out[5]=a[5]; out[6]=a[9]; out[7]=a[13];
+      out[8]=a[2]; out[9]=a[6]; out[10]=a[10]; out[11]=a[14];
+      out[12]=a[3]; out[13]=a[7]; out[14]=a[11]; out[15]=a[15];
+    }
     return out;
   }
 };
 
-// ─── Shaders ──────────────────────────────────────────────
-const VS_MAIN = `
-precision mediump float;
-attribute vec3 aPos;
-attribute vec3 aNormal;
-attribute vec2 aUV;
-uniform mat4 uMVP;
-uniform mat4 uModel;
-uniform float uTime;
-uniform int uType; // 0=ground 1=tree 2=petal 3=water
-varying vec3 vNormal;
-varying vec3 vWorldPos;
-varying vec2 vUV;
-varying float vType;
-void main(){
-  vec3 pos = aPos;
-  // sway for tree foliage
-  if(uType==1 && pos.y > 1.5){
-    float sw = sin(uTime*1.2 + aPos.x*0.5 + aPos.z*0.3) * 0.04 * (pos.y-1.5);
-    pos.x += sw; pos.z += sw*0.7;
-  }
-  vNormal = (uModel * vec4(aNormal,0.0)).xyz;
-  vWorldPos = (uModel * vec4(pos,1.0)).xyz;
-  vUV = aUV;
-  vType = float(uType);
-  gl_Position = uMVP * vec4(pos,1.0);
-}`;
-
-const FS_MAIN = `
-precision mediump float;
-varying vec3 vNormal;
-varying vec3 vWorldPos;
-varying vec2 vUV;
-varying float vType;
-uniform vec3 uSunDir;
-uniform vec3 uSunColor;
-uniform vec3 uAmbient;
-uniform vec3 uFogColor;
-uniform float uFogDensity;
-uniform float uTime;
-uniform vec3 uBaseColor;
-void main(){
-  vec3 N = normalize(vNormal);
-  float diff = max(dot(N, normalize(uSunDir)), 0.0);
-  vec3 col = uBaseColor;
-
-  if(vType < 0.5){ // ground
-    float gs = sin(vWorldPos.x*2.0)*sin(vWorldPos.z*2.0)*0.05;
-    col = mix(vec3(0.18,0.35,0.14), vec3(0.22,0.42,0.18), gs+0.5);
-    // path
-    float px = abs(vWorldPos.x), pz = abs(vWorldPos.z);
-    float path = step(px, 2.0)*step(abs(vWorldPos.z), 50.0) + step(pz, 2.0)*step(abs(vWorldPos.x), 50.0);
-    col = mix(col, vec3(0.45,0.38,0.32), path*0.7);
-  } else if(vType < 1.5){ // tree/obj
-    col = uBaseColor;
-  } else if(vType < 2.5){ // petal particle — handled in separate pass
-    col = vec3(1.0,0.7,0.8);
-  } else { // water
-    vec2 wUV = vWorldPos.xz * 0.3 + uTime*0.05;
-    float rip = sin(wUV.x*8.0+uTime)*sin(wUV.y*8.0+uTime)*0.04;
-    col = vec3(0.15,0.35,0.55) + rip;
-    diff = max(diff, 0.3);
-  }
-
-  vec3 light = uAmbient + uSunColor * diff * 0.9;
-  col *= light;
-
-  // fog
-  float dist = length(vWorldPos);
-  float fog = 1.0 - exp(-uFogDensity * dist * dist);
-  col = mix(col, uFogColor, clamp(fog,0.0,1.0));
-
-  gl_FragColor = vec4(col, 1.0);
-}`;
-
-const VS_SKY = `
-precision mediump float;
-attribute vec3 aPos;
-varying vec3 vDir;
-uniform mat4 uInvVP;
-void main(){
-  vDir = (uInvVP * vec4(aPos, 1.0)).xyz;
-  gl_Position = vec4(aPos.xy, 1.0, 1.0);
-}`;
-
-const FS_SKY = `
-precision mediump float;
-varying vec3 vDir;
-uniform vec3 uSkyTop;
-uniform vec3 uSkyHorizon;
-uniform vec3 uSunDir;
-uniform vec3 uSunColor;
-void main(){
-  vec3 d = normalize(vDir);
-  float t = clamp(d.y*2.0, 0.0,1.0);
-  vec3 sky = mix(uSkyHorizon, uSkyTop, t);
-  float sun = pow(max(dot(d, normalize(uSunDir)),0.0), 64.0);
-  sky += uSunColor * sun * 2.0;
-  gl_FragColor = vec4(sky,1.0);
-}`;
-
-const VS_PETAL = `
-precision mediump float;
-attribute vec3 aPos;
-attribute vec3 aOffset;
-attribute float aPhase;
-uniform mat4 uVP;
-uniform float uTime;
-uniform vec3 uCamRight;
-uniform vec3 uCamUp;
-varying float vAlpha;
-varying vec2 vUV;
-void main(){
-  float t = uTime * 0.4 + aPhase * 6.283;
-  float fx = sin(t*1.1 + aPhase*3.0) * 3.0;
-  float fy = -mod(t * 1.8, 16.0) + 8.0;
-  float fz = cos(t*0.9 + aPhase*2.0) * 3.0;
-  vec3 center = aOffset + vec3(fx, fy, fz);
-  float rot = t * 2.0;
-  vec2 r2 = vec2(cos(rot)*aPos.x - sin(rot)*aPos.y,
-                 sin(rot)*aPos.x + cos(rot)*aPos.y);
-  vec3 world = center + uCamRight*r2.x + uCamUp*r2.y;
-  vAlpha = 0.7 + 0.3*sin(aPhase*7.0);
-  vUV = aPos.xy + 0.5;
-  gl_Position = uVP * vec4(world,1.0);
-}`;
-
-const FS_PETAL = `
-precision mediump float;
-varying float vAlpha;
-varying vec2 vUV;
-void main(){
-  vec2 uv = vUV - 0.5;
-  // petal shape
-  float r = length(uv);
-  float a = atan(uv.y, uv.x);
-  float petal = 0.5*(1.0+cos(a*2.0));
-  float mask = step(r, petal*0.4);
-  if(mask < 0.5) discard;
-  vec3 col = mix(vec3(1.0,0.75,0.82), vec3(0.98,0.9,0.95), r*2.0);
-  gl_FragColor = vec4(col, vAlpha * mask);
-}`;
-
-function compileShader(type, src){
-  const s = gl.createShader(type);
-  gl.shaderSource(s, src);
-  gl.compileShader(s);
-  if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s));
-  return s;
+// ── Shader compile ───────────────────────────────
+function compileShader(type, src) {
+  const sh = gl.createShader(type);
+  gl.shaderSource(sh, src);
+  gl.compileShader(sh);
+  if(!gl.getShaderParameter(sh, gl.COMPILE_STATUS))
+    console.error(gl.getShaderInfoLog(sh));
+  return sh;
 }
-function createProgram(vs, fs){
+function createProgram(vs, fs) {
   const p = gl.createProgram();
   gl.attachShader(p, compileShader(gl.VERTEX_SHADER, vs));
   gl.attachShader(p, compileShader(gl.FRAGMENT_SHADER, fs));
   gl.linkProgram(p);
-  if(!gl.getProgramParameter(p, gl.LINK_STATUS)) console.error(gl.getProgramInfoLog(p));
+  if(!gl.getProgramParameter(p, gl.LINK_STATUS))
+    console.error(gl.getProgramInfoLog(p));
   return p;
 }
 
-const progMain  = createProgram(VS_MAIN, FS_MAIN);
-const progSky   = createProgram(VS_SKY, FS_SKY);
-const progPetal = createProgram(VS_PETAL, FS_PETAL);
+// ══════════════════════════════════════════════════
+// SHADERS
+// ══════════════════════════════════════════════════
 
-function getAttrib(p, name){ return gl.getAttribLocation(p, name); }
-function getUnif(p, name)  { return gl.getUniformLocation(p, name); }
+// ── Ground shader ──
+const groundVS = `
+precision mediump float;
+attribute vec3 aPos;
+attribute vec2 aUV;
+attribute vec3 aNormal;
+uniform mat4 uProj, uView, uModel;
+varying vec2 vUV;
+varying vec3 vNormal;
+varying vec3 vWorldPos;
+void main() {
+  vec4 wp = uModel * vec4(aPos,1.0);
+  vWorldPos = wp.xyz;
+  vUV = aUV;
+  vNormal = normalize(mat3(uModel)*aNormal);
+  gl_Position = uProj * uView * wp;
+}`;
 
-// ─── Geometry builders ────────────────────────────────────
-function cylinder(rx,ry,rz,segs,stacks){
-  const verts=[],norms=[],uvs=[],idxs=[];
-  for(let j=0;j<=stacks;j++){
-    const y=j/stacks;
-    for(let i=0;i<=segs;i++){
-      const a=i/segs*Math.PI*2;
-      const cx=Math.cos(a)*rx, cz=Math.sin(a)*rz;
-      verts.push(cx, y*ry, cz);
-      norms.push(cx/rx, 0, cz/rz);
-      uvs.push(i/segs, y);
-      if(j<stacks && i<segs){
-        const b=j*(segs+1)+i;
-        idxs.push(b,b+1,b+segs+1, b+1,b+segs+2,b+segs+1);
-      }
-    }
-  }
-  return {verts:new Float32Array(verts),norms:new Float32Array(norms),
-          uvs:new Float32Array(uvs),idxs:new Uint16Array(idxs)};
+const groundFS = `
+precision mediump float;
+varying vec2 vUV;
+varying vec3 vNormal;
+varying vec3 vWorldPos;
+uniform vec3 uSunDir;
+uniform vec3 uSunColor;
+uniform vec3 uAmbient;
+uniform float uTime;
+uniform float uFogDist;
+
+float hash(vec2 p) {
+  return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);
+}
+float noise(vec2 p) {
+  vec2 i=floor(p), f=fract(p);
+  f=f*f*(3.0-2.0*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),
+             mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);
 }
 
-function sphere(r, lat, lon){
-  const verts=[],norms=[],uvs=[],idxs=[];
-  for(let i=0;i<=lat;i++){
-    const phi=i/lat*Math.PI, sp=Math.sin(phi), cp=Math.cos(phi);
-    for(let j=0;j<=lon;j++){
-      const th=j/lon*Math.PI*2, st=Math.sin(th), ct=Math.cos(th);
-      const x=r*sp*ct, y=r*cp, z=r*sp*st;
-      verts.push(x,y,z); norms.push(x/r,y/r,z/r); uvs.push(j/lon,i/lat);
-      if(i<lat && j<lon){
-        const a=i*(lon+1)+j;
-        idxs.push(a,a+lon+1,a+1, a+1,a+lon+1,a+lon+2);
-      }
-    }
+void main() {
+  // Grass / moss base
+  float n1=noise(vUV*8.0);
+  float n2=noise(vUV*24.0+vec2(uTime*0.01));
+  float n3=noise(vUV*60.0);
+  
+  vec3 grassDark = vec3(0.18,0.30,0.12);
+  vec3 grassLight = vec3(0.38,0.55,0.22);
+  vec3 mossGreen = vec3(0.24,0.42,0.17);
+  vec3 dirt = vec3(0.35,0.25,0.15);
+  
+  vec3 col = mix(grassDark, grassLight, n1);
+  col = mix(col, mossGreen, n2*0.4);
+  col = mix(col, dirt, smoothstep(0.7,0.9,n3)*0.3);
+  
+  // Tea rows pattern
+  float row = fract(vWorldPos.z * 0.25);
+  float teaRow = smoothstep(0.1,0.2,row)*smoothstep(0.9,0.8,row);
+  vec3 teaGreen = vec3(0.22,0.48,0.18);
+  col = mix(col, teaGreen, teaRow * 0.7);
+  
+  // Path (gravel)
+  float pathX = abs(fract(vWorldPos.x * 0.1 + 0.5)-0.5)*2.0;
+  float pathZ = abs(fract(vWorldPos.z * 0.1 + 0.5)-0.5)*2.0;
+  float path = max(0.0, 1.0 - max(pathX,pathZ)*8.0);
+  vec3 gravel = vec3(0.65,0.58,0.48) + noise(vWorldPos.xz*12.0)*0.1;
+  col = mix(col, gravel, path * 0.8);
+
+  // Lighting
+  float diff = max(0.0, dot(vNormal, uSunDir));
+  vec3 lit = col * (uAmbient + uSunColor * diff);
+  
+  // Fog
+  float dist = length(vWorldPos.xz);
+  float fog = smoothstep(uFogDist*0.4, uFogDist, dist);
+  vec3 fogColor = vec3(0.78,0.72,0.68);
+  lit = mix(lit, fogColor, fog);
+
+  gl_FragColor = vec4(lit, 1.0);
+}`;
+
+// ── Tree shader ──
+const treeVS = `
+precision mediump float;
+attribute vec3 aPos;
+attribute vec3 aNormal;
+attribute vec3 aColor;
+attribute float aWave;
+uniform mat4 uProj, uView, uModel;
+uniform float uTime;
+varying vec3 vColor;
+varying vec3 vNormal;
+varying vec3 vWorldPos;
+void main() {
+  vec3 p = aPos;
+  // Gentle wind sway for foliage
+  if(aWave > 0.5) {
+    float wave = sin(uTime*1.2 + p.x*0.5 + p.z*0.3) * 0.05 * aWave;
+    float wave2 = cos(uTime*0.9 + p.z*0.4) * 0.03 * aWave;
+    p.x += wave;
+    p.z += wave2;
   }
-  return {verts:new Float32Array(verts),norms:new Float32Array(norms),
-          uvs:new Float32Array(uvs),idxs:new Uint16Array(idxs)};
+  vec4 wp = uModel * vec4(p,1.0);
+  vWorldPos = wp.xyz;
+  vColor = aColor;
+  vNormal = normalize(mat3(uModel)*aNormal);
+  gl_Position = uProj * uView * wp;
+}`;
+
+const treeFS = `
+precision mediump float;
+varying vec3 vColor;
+varying vec3 vNormal;
+varying vec3 vWorldPos;
+uniform vec3 uSunDir;
+uniform vec3 uSunColor;
+uniform vec3 uAmbient;
+uniform float uFogDist;
+uniform vec3 uCamPos;
+
+void main() {
+  float diff = max(0.0, dot(vNormal, uSunDir)) * 0.8 + 0.2;
+  vec3 lit = vColor * (uAmbient + uSunColor * diff);
+  
+  float dist = length(vWorldPos - uCamPos);
+  float fog = smoothstep(uFogDist*0.5, uFogDist, dist);
+  vec3 fogColor = vec3(0.82,0.76,0.73);
+  lit = mix(lit, fogColor, fog);
+  
+  gl_FragColor = vec4(lit, 1.0);
+}`;
+
+// ── Petal particle shader ──
+const petalVS = `
+precision mediump float;
+attribute vec3 aPos;
+attribute vec2 aUV;
+attribute vec4 aPetalData; // x=size, y=phase, z=rotSpeed, w=type
+uniform mat4 uProj, uView;
+uniform float uTime;
+uniform vec3 uCamPos;
+varying vec2 vUV;
+varying float vAlpha;
+varying float vType;
+
+void main() {
+  float t = uTime * 0.3 + aPetalData.y;
+  
+  // Drift downward with swirl
+  float x = aPos.x + sin(t*1.3 + aPetalData.y*2.0)*1.5;
+  float y = mod(aPos.y - t*1.2, 12.0);
+  float z = aPos.z + cos(t*1.1 + aPetalData.y*1.7)*1.2;
+  
+  vec3 pos = vec3(x, y, z);
+  float dist = length(pos - uCamPos);
+  
+  vAlpha = smoothstep(30.0, 8.0, dist) * smoothstep(0.0, 1.0, y);
+  vType = aPetalData.w;
+  
+  // Billboard
+  vec4 mvPos = uView * vec4(pos, 1.0);
+  float s = aPetalData.x * (0.8 + sin(t*aPetalData.z)*0.2);
+  
+  vec2 offset = (aUV - 0.5) * s;
+  mvPos.xy += offset;
+  
+  vUV = aUV;
+  gl_Position = uProj * mvPos;
+}`;
+
+const petalFS = `
+precision mediump float;
+varying vec2 vUV;
+varying float vAlpha;
+varying float vType;
+uniform float uTime;
+
+void main() {
+  vec2 uv = vUV - 0.5;
+  
+  // Petal shape
+  float r = length(uv);
+  float angle = atan(uv.y, uv.x);
+  
+  // Heart/petal shape
+  float petal = 1.0 - smoothstep(0.3, 0.5, r + sin(angle*2.0+uTime*0.5)*0.08);
+  if(petal < 0.01) discard;
+  
+  // Sakura pink gradient
+  vec3 col1 = vec3(0.98, 0.82, 0.88);
+  vec3 col2 = vec3(0.92, 0.60, 0.72);
+  vec3 col3 = vec3(0.85, 0.40, 0.55);
+  
+  float t = length(uv)*2.0;
+  vec3 col = mix(col1, col2, t);
+  col = mix(col, col3, t*t*0.5);
+  
+  // Vein
+  float vein = abs(uv.x) < 0.015 ? 0.15 : 0.0;
+  col -= vein;
+  
+  float alpha = petal * vAlpha;
+  if(alpha < 0.02) discard;
+  
+  gl_FragColor = vec4(col, alpha);
+}`;
+
+// ── Sky/Fog shader ──
+const skyVS = `
+precision mediump float;
+attribute vec2 aPos;
+varying vec2 vNDC;
+void main() {
+  vNDC = aPos; // -1 ~ +1
+  gl_Position = vec4(aPos, 0.999, 1.0); }`;
+
+const skyFS = `
+precision mediump float;
+varying vec2 vNDC;
+uniform vec3 uSunDir;
+uniform float uTime;
+uniform vec3 uSkyTop;
+uniform vec3 uSkyBottom;
+uniform float uHorizon; // 0~1, NDC 기준 지평선 위치
+
+float noise(vec2 p){
+  return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);
+}
+float fbm(vec2 p){
+  float v=0.0, a=0.5;
+  for(int i=0;i<4;i++){v+=a*noise(p);p*=2.1;a*=0.5;}
+  return v;
 }
 
-function quad(w,h){ // flat XZ plane
-  const hw=w/2, hh=h/2;
+void main() {
+  // vNDC.y: -1(하단) ~ +1(상단) → 0~1로 변환
+  vec2 uv = vNDC * 0.5 + 0.5; // uv.y=0 하단, 1 상단
+
+  float horizon = uHorizon;
+  float t = (uv.y - horizon) / (1.0 - horizon);
+  t = clamp(t, 0.0, 1.0);
+
+  // Sky gradient
+  vec3 sky = mix(uSkyBottom, uSkyTop, pow(t, 0.7));
+
+  // Sun glow
+  vec2 sunScreen = vec2(0.5 + uSunDir.x*0.3, horizon + uSunDir.y*0.4);
+  float sunDist = length(uv - sunScreen);
+  float sun = exp(-sunDist*sunDist*60.0);
+  float halo = exp(-sunDist*sunDist*6.0) * 0.4;
+  vec3 sunColor = vec3(1.0, 0.92, 0.72);
+  sky += sunColor * sun * 1.5;
+  sky += vec3(1.0,0.8,0.6)*halo;
+
+  // Cloud wisps
+  float cloud = fbm(uv*3.0 + vec2(uTime*0.008, 0.0));
+  cloud = smoothstep(0.55, 0.75, cloud) * smoothstep(horizon+0.1, horizon+0.4, uv.y) * 0.4;
+  sky = mix(sky, vec3(1.0,0.96,0.94), cloud);
+
+  // Below horizon — fog
+  float belowT = clamp((horizon - uv.y) / horizon, 0.0, 1.0);
+  vec3 fog = vec3(0.82, 0.76, 0.72);
+  sky = mix(sky, fog, belowT);
+
+  gl_FragColor = vec4(sky, 1.0);
+}`;
+
+// ── Water (pond) shader ──
+const waterVS = `
+precision mediump float;
+attribute vec3 aPos;
+attribute vec2 aUV;
+uniform mat4 uProj, uView, uModel;
+uniform float uTime;
+varying vec2 vUV;
+varying vec3 vWorldPos;
+void main() {
+  vec3 p = aPos;
+  p.y += sin(p.x*2.0+uTime)*0.03 + cos(p.z*1.8+uTime*0.7)*0.03;
+  vUV = aUV;
+  vec4 wp = uModel*vec4(p,1.0);
+  vWorldPos = wp.xyz;
+  gl_Position = uProj*uView*wp;
+}`;
+
+const waterFS = `
+precision mediump float;
+varying vec2 vUV;
+varying vec3 vWorldPos;
+uniform float uTime;
+uniform vec3 uSkyTop;
+uniform vec3 uSkyBottom;
+
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float noise(vec2 p){
+  vec2 i=floor(p),f=fract(p);
+  f=f*f*(3.0-2.0*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);
+}
+
+void main() {
+  vec2 uv = vUV;
+  
+  // Ripple normals
+  float r1 = noise(uv*8.0 + vec2(uTime*0.4, 0.0));
+  float r2 = noise(uv*12.0 + vec2(0.0, uTime*0.3));
+  
+  // Reflection color
+  vec3 waterDeep = mix(uSkyBottom, uSkyTop, 0.3) * 0.6;
+  vec3 waterShallow = vec3(0.45, 0.68, 0.62);
+  
+  vec3 col = mix(waterDeep, waterShallow, r1*0.3);
+  
+  // Specular shimmer
+  float spec = pow(max(0.0, r2-0.4)*2.5, 3.0) * 0.8;
+  col += vec3(1.0,0.97,0.9) * spec;
+  
+  // Sakura petals on water
+  float petal = noise(uv*20.0 + vec2(uTime*0.05))*noise(uv*35.0);
+  petal = smoothstep(0.65, 0.75, petal) * 0.6;
+  col = mix(col, vec3(0.98,0.82,0.86), petal);
+  
+  // Edge transparency
+  float edge = min(min(uv.x, 1.0-uv.x), min(uv.y, 1.0-uv.y));
+  float alpha = smoothstep(0.0, 0.08, edge) * 0.85;
+  
+  gl_FragColor = vec4(col, alpha);
+}`;
+
+// ══════════════════════════════════════════════════
+// GEOMETRY BUILDERS
+// ══════════════════════════════════════════════════
+
+function createBuffer(data, type=gl.ARRAY_BUFFER, usage=gl.STATIC_DRAW) {
+  const buf = gl.createBuffer();
+  gl.bindBuffer(type, buf);
+  gl.bufferData(type, data instanceof Float32Array ? data : new Float32Array(data), usage);
+  return buf;
+}
+function createIndexBuffer(data) {
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(data), gl.STATIC_DRAW);
+  return buf;
+}
+
+// Plane (ground/water)
+function buildPlane(size, segs) {
+  const verts=[], uvs=[], normals=[], indices=[];
+  const step = size/segs, half = size/2;
+  for(let z=0;z<=segs;z++) for(let x=0;x<=segs;x++) {
+    verts.push(x*step-half, 0, z*step-half);
+    uvs.push(x/segs*size, z/segs*size);
+    normals.push(0,1,0);
+  }
+  for(let z=0;z<segs;z++) for(let x=0;x<segs;x++) {
+    const tl=z*(segs+1)+x;
+    indices.push(tl,tl+segs+1,tl+1,tl+1,tl+segs+1,tl+segs+2);
+  }
   return {
-    verts:new Float32Array([-hw,0,-hh, hw,0,-hh, hw,0,hh, -hw,0,hh]),
-    norms:new Float32Array([0,1,0, 0,1,0, 0,1,0, 0,1,0]),
-    uvs:new Float32Array([0,0, 1,0, 1,1, 0,1]),
-    idxs:new Uint16Array([0,1,2, 0,2,3])
+    pos: createBuffer([].concat(...verts.reduce((a,_,i)=>i%3===0?[...a,[verts[i],verts[i+1],verts[i+2]]]:[a],[])).flat().filter((_,i,arr)=>true)),
+    // simpler:
+    posB: createBuffer(new Float32Array(verts)),
+    uvB: createBuffer(new Float32Array(uvs)),
+    normalB: createBuffer(new Float32Array(normals)),
+    idxB: createIndexBuffer(indices),
+    count: indices.length
   };
 }
 
-function createVAO(prog, geo){
-  const buf = {
-    v: gl.createBuffer(), n: gl.createBuffer(),
-    u: gl.createBuffer(), i: gl.createBuffer()
+function makePlane(size, segs) {
+  const verts=[], uvs=[], normals=[], indices=[];
+  const step=size/segs, half=size/2;
+  for(let z=0;z<=segs;z++) for(let x=0;x<=segs;x++) {
+    verts.push(x*step-half, 0, z*step-half);
+    uvs.push(x/segs, z/segs);
+    normals.push(0,1,0);
+  }
+  for(let z=0;z<segs;z++) for(let x=0;x<segs;x++) {
+    const tl=z*(segs+1)+x;
+    indices.push(tl,tl+segs+1,tl+1,tl+1,tl+segs+1,tl+segs+2);
+  }
+  return { verts, uvs, normals, indices, count:indices.length };
+}
+
+// Cherry tree builder (trunk + branches + blossom clusters)
+function buildCherryTree(seed) {
+  const rng = (()=>{let s=seed|0; return ()=>{s=s*1664525+1013904223|0; return (s>>>0)/4294967296;};})();
+  
+  const verts=[], normals=[], colors=[], waves=[], indices=[];
+  let ioff=0;
+  
+  const addCylinder = (x,y,z, dx,dy,dz, r1,r2, segs, col) => {
+    const len = Math.sqrt(dx*dx+dy*dy+dz*dz);
+    const ax = dx/len, ay = dy/len, az = dz/len;
+    let px=0,py=1,pz=0;
+    if(Math.abs(ay)>0.9){px=1;py=0;pz=0;}
+    const rx=ay*pz-az*py, ry=az*px-ax*pz, rz=ax*py-ay*px;
+    const rl=Math.sqrt(rx*rx+ry*ry+rz*rz);
+    const bx=rx/rl,by=ry/rl,bz=rz/rl;
+    const cx2=ay*bz-az*by, cy2=az*bx-ax*bz, cz2=ax*by-ay*bx;
+    
+    const base=ioff;
+    for(let i=0;i<=segs;i++) {
+      const a=i/segs*Math.PI*2;
+      const cs=Math.cos(a),sn=Math.sin(a);
+      // bottom ring
+      const nx1=cs*bx+sn*cx2, ny1=cs*by+sn*cy2, nz1=cs*bz+sn*cz2;
+      verts.push(x+nx1*r1, y, z+nz1*r1);
+      normals.push(nx1,ny1,nz1); colors.push(...col); waves.push(0);
+      // top ring
+      verts.push(x+nx1*r2+dx, y+dy, z+nz1*r2+dz);
+      normals.push(nx1,ny1,nz1); colors.push(...col); waves.push(0);
+    }
+    for(let i=0;i<segs;i++) {
+      const b=base+i*2;
+      indices.push(b,b+1,b+2, b+2,b+1,b+3);
+    }
+    ioff+=2*(segs+1);
   };
-  const aPos    = getAttrib(prog,'aPos');
-  const aNormal = getAttrib(prog,'aNormal');
-  const aUV     = getAttrib(prog,'aUV');
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, buf.v);
-  gl.bufferData(gl.ARRAY_BUFFER, geo.verts, gl.STATIC_DRAW);
-  if(aNormal>=0){
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf.n);
-    gl.bufferData(gl.ARRAY_BUFFER, geo.norms, gl.STATIC_DRAW);
-  }
-  if(aUV>=0){
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf.u);
-    gl.bufferData(gl.ARRAY_BUFFER, geo.uvs, gl.STATIC_DRAW);
-  }
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buf.i);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, geo.idxs, gl.STATIC_DRAW);
-
-  return { buf, count: geo.idxs.length, prog,
-    bind(){
-      gl.bindBuffer(gl.ARRAY_BUFFER, buf.v);
-      gl.enableVertexAttribArray(aPos);
-      gl.vertexAttribPointer(aPos,3,gl.FLOAT,false,0,0);
-      if(aNormal>=0){
-        gl.bindBuffer(gl.ARRAY_BUFFER, buf.n);
-        gl.enableVertexAttribArray(aNormal);
-        gl.vertexAttribPointer(aNormal,3,gl.FLOAT,false,0,0);
+  
+  const addSphere = (x,y,z, r, col, isWave, latSegs=6, lonSegs=8) => {
+    const base=ioff;
+    for(let lat=0;lat<=latSegs;lat++) {
+      const theta=lat/latSegs*Math.PI;
+      for(let lon=0;lon<=lonSegs;lon++) {
+        const phi=lon/lonSegs*Math.PI*2;
+        const nx=Math.sin(theta)*Math.cos(phi);
+        const ny=Math.cos(theta);
+        const nz=Math.sin(theta)*Math.sin(phi);
+        // add slight position randomness for organic feel
+        const jitter=(rng()-0.5)*r*0.3;
+        verts.push(x+nx*(r+jitter), y+ny*(r+jitter), z+nz*(r+jitter));
+        normals.push(nx,ny,nz);
+        colors.push(...col);
+        waves.push(isWave ? 1 : 0);
       }
-      if(aUV>=0){
-        gl.bindBuffer(gl.ARRAY_BUFFER, buf.u);
-        gl.enableVertexAttribArray(aUV);
-        gl.vertexAttribPointer(aUV,2,gl.FLOAT,false,0,0);
+    }
+    for(let lat=0;lat<latSegs;lat++) for(let lon=0;lon<lonSegs;lon++) {
+      const b=base+lat*(lonSegs+1)+lon;
+      indices.push(b,b+lonSegs+1,b+1, b+1,b+lonSegs+1,b+lonSegs+2);
+    }
+    ioff+=(latSegs+1)*(lonSegs+1);
+  };
+  
+  // Trunk
+  const trunkH = 2.5 + rng()*1.5;
+  const trunkR = 0.18 + rng()*0.08;
+  const trunkCol = [0.28,0.18,0.10];
+  addCylinder(0,0,0, 0,trunkH,0, trunkR,trunkR*0.6, 7, trunkCol);
+  
+  // Main branches
+  const numBranch = 3 + Math.floor(rng()*3);
+  for(let b=0;b<numBranch;b++) {
+    const angle = b/numBranch*Math.PI*2 + rng()*0.5;
+    const spread = 0.6 + rng()*0.8;
+    const rise = 0.3 + rng()*0.5;
+    const blen = 1.5 + rng()*1.5;
+    const dx = Math.cos(angle)*spread*blen;
+    const dy = rise*blen;
+    const dz = Math.sin(angle)*spread*blen;
+    const br = trunkR*0.45;
+    addCylinder(0,trunkH*0.6,0, dx,dy,dz, br,br*0.5, 5, trunkCol);
+    
+    // Sub-branches
+    const numSub = 2+Math.floor(rng()*2);
+    for(let s=0;s<numSub;s++) {
+      const sa = angle + (rng()-0.5)*1.2;
+      const sl = 0.8+rng()*0.8;
+      const sdx = Math.cos(sa)*0.5*sl;
+      const sdy = 0.4*sl;
+      const sdz = Math.sin(sa)*0.5*sl;
+      addCylinder(dx,trunkH*0.6+dy, dz, sdx,sdy,sdz, br*0.4,br*0.2, 4, trunkCol);
+      
+      // Blossom clusters
+      const numCluster = 2+Math.floor(rng()*3);
+      for(let c=0;c<numCluster;c++) {
+        const cx = dx+sdx + (rng()-0.5)*0.5;
+        const cy = trunkH*0.6+dy+sdy + rng()*0.3;
+        const cz = dz+sdz + (rng()-0.5)*0.5;
+        const cr = 0.5+rng()*0.5;
+        // Blossom color: white-pink gradient
+        const pink = 0.75+rng()*0.2;
+        const blossomCol = [0.98, pink, pink*0.9];
+        addSphere(cx, cy, cz, cr, blossomCol, true);
       }
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buf.i);
+    }
+    
+    // Top blossoms
+    const numTop = 3+Math.floor(rng()*3);
+    for(let t=0;t<numTop;t++) {
+      const tx = dx + (rng()-0.5)*1.0;
+      const ty = trunkH*0.6+dy + rng()*0.5+0.2;
+      const tz = dz + (rng()-0.5)*1.0;
+      const tr2 = 0.6+rng()*0.7;
+      const pink = 0.70+rng()*0.25;
+      const blossomCol = [0.97, pink, pink*0.88];
+      addSphere(tx, ty, tz, tr2, blossomCol, true);
+    }
+  }
+  
+  // Top canopy
+  const numCanopy = 4+Math.floor(rng()*4);
+  for(let c=0;c<numCanopy;c++) {
+    const ang = rng()*Math.PI*2;
+    const rad = rng()*1.5;
+    const cx = Math.cos(ang)*rad;
+    const cy = trunkH + rng()*0.8;
+    const cz = Math.sin(ang)*rad;
+    const cr = 0.8+rng()*0.8;
+    const pink = 0.65+rng()*0.3;
+    addSphere(cx, cy, cz, cr, [0.97, pink, pink*0.85], true);
+  }
+  
+  return {
+    posB: createBuffer(new Float32Array(verts)),
+    normalB: createBuffer(new Float32Array(normals)),
+    colorB: createBuffer(new Float32Array(colors)),
+    waveB: createBuffer(new Float32Array(waves)),
+    idxB: createIndexBuffer(indices),
+    count: indices.length
+  };
+}
+
+// Tea bush (low rounded green shape)
+function buildTeaBush(seed) {
+  const rng = (()=>{let s=seed|0; return ()=>{s=s*1664525+1013904223|0; return (s>>>0)/4294967296;};})();
+  const verts=[], normals=[], colors=[], waves=[], indices=[];
+  let ioff=0;
+  
+  const addEllipsoid = (x,y,z, rx,ry,rz, col, latS=5, lonS=7) => {
+    const base=ioff;
+    for(let la=0;la<=latS;la++) {
+      const theta=la/latS*Math.PI;
+      for(let lo=0;lo<=lonS;lo++) {
+        const phi=lo/lonS*Math.PI*2;
+        const nx=Math.sin(theta)*Math.cos(phi);
+        const ny=Math.cos(theta);
+        const nz=Math.sin(theta)*Math.sin(phi);
+        verts.push(x+nx*rx, y+ny*ry, z+nz*rz);
+        normals.push(nx,ny,nz);
+        colors.push(...col);
+        waves.push(0.3);
+      }
+    }
+    for(let la=0;la<latS;la++) for(let lo=0;lo<lonS;lo++) {
+      const b=base+la*(lonS+1)+lo;
+      indices.push(b,b+lonS+1,b+1,b+1,b+lonS+1,b+lonS+2);
+    }
+    ioff+=(latS+1)*(lonS+1);
+  };
+  
+  // Row of tea bushes
+  const numBush = 3+Math.floor(rng()*3);
+  for(let i=0;i<numBush;i++) {
+    const x = (i-(numBush-1)/2)*0.7;
+    const green1 = 0.32+rng()*0.1;
+    const green2 = 0.55+rng()*0.1;
+    const col = [0.12+rng()*0.08, green1, 0.08+rng()*0.06];
+    const col2 = [0.18+rng()*0.06, green2, 0.12+rng()*0.05];
+    addEllipsoid(x, 0.3, 0, 0.32+rng()*0.05, 0.28+rng()*0.05, 0.28+rng()*0.05, col);
+    // lighter top
+    addEllipsoid(x, 0.42, 0, 0.25, 0.15, 0.25, col2);
+  }
+  
+  return {
+    posB: createBuffer(new Float32Array(verts)),
+    normalB: createBuffer(new Float32Array(normals)),
+    colorB: createBuffer(new Float32Array(colors)),
+    waveB: createBuffer(new Float32Array(waves)),
+    idxB: createIndexBuffer(indices),
+    count: indices.length
+  };
+}
+
+// Lantern (simple box with sphere top)
+function buildLantern() {
+  const verts=[], normals=[], colors=[], waves=[], indices=[];
+  let ioff=0;
+  
+  const addBox = (x,y,z,w,h,d,col) => {
+    const hw=w/2,hd=d/2;
+    const faces=[
+      [[-hw,0,-hd],[hw,0,-hd],[hw,h,-hd],[-hw,h,-hd],[0,0,-1]],
+      [[hw,0,hd],[-hw,0,hd],[-hw,h,hd],[hw,h,hd],[0,0,1]],
+      [[-hw,0,hd],[-hw,0,-hd],[-hw,h,-hd],[-hw,h,hd],[-1,0,0]],
+      [[hw,0,-hd],[hw,0,hd],[hw,h,hd],[hw,h,-hd],[1,0,0]],
+      [[-hw,h,-hd],[hw,h,-hd],[hw,h,hd],[-hw,h,hd],[0,1,0]],
+      [[-hw,0,hd],[hw,0,hd],[hw,0,-hd],[-hw,0,-hd],[0,-1,0]],
+    ];
+    for(const [v0,v1,v2,v3,n] of faces) {
+      const base=ioff;
+      for(const v of [v0,v1,v2,v3]) {
+        verts.push(x+v[0],y+v[1],z+v[2]);
+        normals.push(...n); colors.push(...col); waves.push(0);
+      }
+      indices.push(base,base+1,base+2,base,base+2,base+3);
+      ioff+=4;
     }
   };
+  
+  const stoneCol=[0.55,0.52,0.48];
+  const woodCol=[0.40,0.28,0.16];
+  const paperCol=[0.85,0.72,0.55];
+  
+  addBox(0,0,0, 0.25,0.08,0.25, stoneCol); // base
+  addBox(0,0.08,0, 0.08,0.5,0.08, stoneCol); // pole
+  addBox(0,0.58,0, 0.22,0.06,0.22, woodCol); // cap1
+  addBox(0,0.64,0, 0.18,0.25,0.18, paperCol); // body (paper)
+  addBox(0,0.89,0, 0.22,0.06,0.22, woodCol); // cap2
+  // glow effect (yellow sphere inside)
+  addBox(0,0.70,0, 0.06,0.12,0.06, [0.95,0.80,0.40]); // inner glow
+  
+  return {
+    posB: createBuffer(new Float32Array(verts)),
+    normalB: createBuffer(new Float32Array(normals)),
+    colorB: createBuffer(new Float32Array(colors)),
+    waveB: createBuffer(new Float32Array(waves)),
+    idxB: createIndexBuffer(indices),
+    count: indices.length
+  };
 }
 
-// ─── Meshes ───────────────────────────────────────────────
-const meshCylSmall = createVAO(progMain, cylinder(0.3,2.0,0.3,8,4));
-const meshCylBig   = createVAO(progMain, cylinder(0.5,3.0,0.5,8,4));
-const meshSphSm    = createVAO(progMain, sphere(1.2,8,12));
-const meshSphMed   = createVAO(progMain, sphere(1.8,8,14));
-const meshSphLg    = createVAO(progMain, sphere(2.5,8,16));
-const meshGround   = createVAO(progMain, quad(200,200));
-const meshWater    = createVAO(progMain, quad(14,10));
-const meshLanternBase = createVAO(progMain, cylinder(0.3,0.15,0.3,6,2));
-const meshLanternBody = createVAO(progMain, cylinder(0.18,0.4,0.18,6,2));
-const meshLanternTop  = createVAO(progMain, cylinder(0.25,0.08,0.25,6,1));
+// Torii gate
+function buildTorii() {
+  const verts=[], normals=[], colors=[], waves=[], indices=[];
+  let ioff=0;
+  
+  const addBox=(x,y,z,w,h,d,col)=>{
+    const hw=w/2,hd=d/2;
+    const faces=[
+      [[-hw,0,-hd],[hw,0,-hd],[hw,h,-hd],[-hw,h,-hd],[0,0,-1]],
+      [[hw,0,hd],[-hw,0,hd],[-hw,h,hd],[hw,h,hd],[0,0,1]],
+      [[-hw,0,hd],[-hw,0,-hd],[-hw,h,-hd],[-hw,h,hd],[-1,0,0]],
+      [[hw,0,-hd],[hw,0,hd],[hw,h,hd],[hw,h,-hd],[1,0,0]],
+      [[-hw,h,-hd],[hw,h,-hd],[hw,h,hd],[-hw,h,hd],[0,1,0]],
+      [[-hw,0,hd],[hw,0,hd],[hw,0,-hd],[-hw,0,-hd],[0,-1,0]],
+    ];
+    for(const[v0,v1,v2,v3,n]of faces){
+      const base=ioff;
+      for(const v of[v0,v1,v2,v3]){
+        verts.push(x+v[0],y+v[1],z+v[2]);
+        normals.push(...n);colors.push(...col);waves.push(0);
+      }
+      indices.push(base,base+1,base+2,base,base+2,base+3);
+      ioff+=4;
+    }
+  };
+  
+  const red=[0.82,0.15,0.10];
+  const dark=[0.55,0.12,0.08];
+  
+  // Two pillars
+  addBox(-1.5,0,0, 0.25,4.5,0.25, red);
+  addBox(1.5,0,0, 0.25,4.5,0.25, red);
+  // Cross beam (kasagi) - slightly curved look with 3 boxes
+  addBox(0,4.3,0, 3.6,0.22,0.3, dark);
+  addBox(0,4.5,0, 3.8,0.22,0.35, red);
+  // Second cross beam (nuki)
+  addBox(0,3.4,0, 3.0,0.2,0.25, red);
+  
+  return {
+    posB: createBuffer(new Float32Array(verts)),
+    normalB: createBuffer(new Float32Array(normals)),
+    colorB: createBuffer(new Float32Array(colors)),
+    waveB: createBuffer(new Float32Array(waves)),
+    idxB: createIndexBuffer(indices),
+    count: indices.length
+  };
+}
+
+// ══════════════════════════════════════════════════
+// SCENE SETUP
+// ══════════════════════════════════════════════════
+
+const programs = {
+  ground: createProgram(groundVS, groundFS),
+  tree: createProgram(treeVS, treeFS),
+  petal: createProgram(petalVS, petalFS),
+  sky: createProgram(skyVS, skyFS),
+  water: createProgram(waterVS, waterFS),
+};
+
+// Ground
+const groundData = makePlane(200, 60);
+const groundMesh = {
+  posB: createBuffer(new Float32Array(groundData.verts)),
+  uvB: createBuffer(new Float32Array(groundData.uvs)),
+  normalB: createBuffer(new Float32Array(groundData.normals)),
+  idxB: createIndexBuffer(groundData.indices),
+  count: groundData.count
+};
 
 // Sky quad
-const skyBuf = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, skyBuf);
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,0, 1,-1,0, 1,1,0,-1,1,0]), gl.STATIC_DRAW);
-const skyIdx = gl.createBuffer();
-gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, skyIdx);
-gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0,1,2,0,2,3]), gl.STATIC_DRAW);
+const skyMesh = {
+  posB: createBuffer(new Float32Array([-1,-1,1,-1,1,1,-1,-1,1,1,1,-1])),
+  count: 6
+};
 
-// ─── Seeded random ────────────────────────────────────────
-let seed=42;
-function rng(){ seed=(seed*1664525+1013904223)&0xffffffff; return (seed>>>0)/0xffffffff; }
-function rngR(a,b){ return a+(b-a)*rng(); }
+// Water/pond
+const pondData = makePlane(12, 10);
+const pondMesh = {
+  posB: createBuffer(new Float32Array(pondData.verts)),
+  uvB: createBuffer(new Float32Array(pondData.uvs)),
+  normalB: createBuffer(new Float32Array(pondData.normals)),
+  idxB: createIndexBuffer(pondData.indices),
+  count: pondData.count
+};
 
-// ─── Scene data ───────────────────────────────────────────
-const trees=[], lanterns=[], collectibles=[];
-const TREE_COUNT=70, LANTERN_COUNT=14, COLLECT_COUNT=30;
-
-for(let i=0;i<TREE_COUNT;i++){
-  const a=rng()*Math.PI*2, r=6+rng()*38;
-  if(r<3) continue;
-  const x=Math.cos(a)*r, z=Math.sin(a)*r;
-  const sc=0.7+rng()*0.7;
-  const type=rng()<0.3?0:rng()<0.5?1:2; // size variants
-  trees.push({x,z,sc,type, rx:rng()*0.1-0.05});
-}
-
-for(let i=0;i<LANTERN_COUNT;i++){
-  const s = (i < LANTERN_COUNT/2) ? 1 : -1;
-  const t = (i % (LANTERN_COUNT/2)) / (LANTERN_COUNT/2);
-  const x = s * (1.8 + 0.2*Math.sin(t*10));
-  const z = (t - 0.5) * 60;
-  lanterns.push({x, z});
-}
-
-for(let i=0;i<COLLECT_COUNT;i++){
-  const a=rng()*Math.PI*2, r=5+rng()*30;
-  collectibles.push({
-    x:Math.cos(a)*r, z:Math.sin(a)*r, y:0.3+rng()*1.5,
-    collected:false, phase:rng()*Math.PI*2
+// Instanced trees — generate a varied forest
+const TREE_COUNT = 80;
+const treeInstances = [];
+for(let i=0;i<TREE_COUNT;i++) {
+  const angle = Math.random()*Math.PI*2;
+  const dist = 8 + Math.random()*80;
+  const x = Math.cos(angle)*dist;
+  const z = Math.sin(angle)*dist;
+  treeInstances.push({
+    x, y:0, z,
+    scale: 0.8+Math.random()*0.6,
+    rotY: Math.random()*Math.PI*2,
+    mesh: buildCherryTree(i*7919+137)
   });
 }
 
-// ─── Petal particles ──────────────────────────────────────
-const PETAL_COUNT=800;
-const petalOffsets=new Float32Array(PETAL_COUNT*3);
-const petalPhases=new Float32Array(PETAL_COUNT);
-for(let i=0;i<PETAL_COUNT;i++){
-  const a=rng()*Math.PI*2, r=rng()*45;
-  petalOffsets[i*3]=Math.cos(a)*r;
-  petalOffsets[i*3+1]=rng()*8;
-  petalOffsets[i*3+2]=Math.sin(a)*r;
-  petalPhases[i]=rng();
+// Tea bushes in rows
+const teaBushMeshProto = buildTeaBush(42);
+const TEA_ROWS = 12;
+const TEA_COLS = 8;
+const teaBushInstances = [];
+for(let r=0;r<TEA_ROWS;r++) for(let c=0;c<TEA_COLS;c++) {
+  const x = (c-TEA_COLS/2)*4.5 + (Math.random()-0.5)*0.5;
+  const z = (r-TEA_ROWS/2)*4.0 + (Math.random()-0.5)*0.5 + 15;
+  teaBushInstances.push({x, y:0, z, rotY: Math.random()*Math.PI*0.5-0.25, mesh: teaBushMeshProto});
 }
-const petalGeo = { // billboard quad
-  verts:new Float32Array([-0.12,-0.12,0, 0.12,-0.12,0, 0.12,0.12,0, -0.12,0.12,0]),
-  norms:new Float32Array([0,0,1,0,0,1,0,0,1,0,0,1]),
-  uvs:new Float32Array([0,0,1,0,1,1,0,1]),
-  idxs:new Uint16Array([0,1,2,0,2,3])
+
+// Lanterns along path
+const lanternMesh = buildLantern();
+const lanternInstances = [];
+for(let i=0;i<16;i++) {
+  const angle = i/16*Math.PI*2;
+  const r = 12 + (i%2)*2;
+  lanternInstances.push({
+    x: Math.cos(angle)*r, y:0, z: Math.sin(angle)*r, rotY:angle
+  });
+}
+
+// Torii gate
+const toriiMesh = buildTorii();
+
+// Petal particles
+const PETAL_COUNT = 1200;
+const petalPos = new Float32Array(PETAL_COUNT*3);
+const petalData = new Float32Array(PETAL_COUNT*4);
+for(let i=0;i<PETAL_COUNT;i++) {
+  const angle = Math.random()*Math.PI*2;
+  const dist = Math.random()*35;
+  petalPos[i*3] = Math.cos(angle)*dist;
+  petalPos[i*3+1] = Math.random()*12;
+  petalPos[i*3+2] = Math.sin(angle)*dist;
+  petalData[i*4] = 0.18+Math.random()*0.22; // size
+  petalData[i*4+1] = Math.random()*Math.PI*2; // phase
+  petalData[i*4+2] = 0.5+Math.random()*2.0; // rot speed
+  petalData[i*4+3] = Math.floor(Math.random()*3); // type
+}
+
+// Build petal billboard quads
+const quadVerts = new Float32Array(PETAL_COUNT*4*3);
+const quadUVs = new Float32Array(PETAL_COUNT*4*2);
+const quadPetalData = new Float32Array(PETAL_COUNT*4*4);
+const quadIndices = new Uint16Array(PETAL_COUNT*6);
+const quadUVTemplate = [0,0, 1,0, 1,1, 0,1];
+
+for(let i=0;i<PETAL_COUNT;i++) {
+  for(let v=0;v<4;v++) {
+    quadVerts[(i*4+v)*3+0] = petalPos[i*3];
+    quadVerts[(i*4+v)*3+1] = petalPos[i*3+1];
+    quadVerts[(i*4+v)*3+2] = petalPos[i*3+2];
+    quadUVs[(i*4+v)*2+0] = quadUVTemplate[v*2];
+    quadUVs[(i*4+v)*2+1] = quadUVTemplate[v*2+1];
+    for(let k=0;k<4;k++) quadPetalData[(i*4+v)*4+k]=petalData[i*4+k];
+  }
+  const base=i*4;
+  quadIndices[i*6+0]=base; quadIndices[i*6+1]=base+1; quadIndices[i*6+2]=base+2;
+  quadIndices[i*6+3]=base; quadIndices[i*6+4]=base+2; quadIndices[i*6+5]=base+3;
+}
+
+const petalMesh = {
+  posB: createBuffer(quadVerts, gl.ARRAY_BUFFER, gl.DYNAMIC_DRAW),
+  uvB: createBuffer(quadUVs),
+  dataB: createBuffer(quadPetalData),
+  idxB: createIndexBuffer(Array.from(quadIndices)),
+  count: PETAL_COUNT*6
 };
-const petalMesh = createVAO(progPetal, petalGeo);
-const petalOffsetBuf = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, petalOffsetBuf);
-gl.bufferData(gl.ARRAY_BUFFER, petalOffsets, gl.STATIC_DRAW);
-const petalPhaseBuf = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, petalPhaseBuf);
-gl.bufferData(gl.ARRAY_BUFFER, petalPhases, gl.STATIC_DRAW);
 
-// ─── Player & Camera ──────────────────────────────────────
-const player = { x:0, y:0, z:5, vy:0, yaw:0, pitch:-0.15, speed:0, sprinting:false };
-let petalScore = 0;
-
-// ─── Joystick state ───────────────────────────────────────
-const joy = { active:false, id:-1, startX:0, startY:0, dx:0, dy:0 };
-const look = { active:false, id:-1, lastX:0, lastY:0 };
-let jumping=false, sprinting=false;
-
-const joystickBg   = document.getElementById('joystick-bg');
-const joystickKnob = document.getElementById('joystick-knob');
-const joystickArea = document.getElementById('joystick-area');
-const btnJump   = document.getElementById('btn-jump');
-const btnSprint = document.getElementById('btn-sprint');
-
-function getJoyRect(){ return joystickArea.getBoundingClientRect(); }
-
-canvas.addEventListener('touchstart', e=>{ e.preventDefault(); handleTouchStart(e); }, {passive:false});
-canvas.addEventListener('touchmove',  e=>{ e.preventDefault(); handleTouchMove(e);  }, {passive:false});
-canvas.addEventListener('touchend',   e=>{ e.preventDefault(); handleTouchEnd(e);   }, {passive:false});
-joystickArea.addEventListener('touchstart', e=>{ e.preventDefault(); handleJoyStart(e); }, {passive:false});
-joystickArea.addEventListener('touchmove',  e=>{ e.preventDefault(); handleJoyMove(e);  }, {passive:false});
-joystickArea.addEventListener('touchend',   e=>{ e.preventDefault(); handleJoyEnd(e);   }, {passive:false});
-
-btnJump.addEventListener('touchstart',   e=>{ e.preventDefault(); jumping=true;    }, {passive:false});
-btnJump.addEventListener('touchend',     e=>{ e.preventDefault(); jumping=false;   }, {passive:false});
-btnSprint.addEventListener('touchstart', e=>{ e.preventDefault(); sprinting=true;  }, {passive:false});
-btnSprint.addEventListener('touchend',   e=>{ e.preventDefault(); sprinting=false; }, {passive:false});
-
-function handleJoyStart(e){
-  const t = e.changedTouches[0];
-  joy.active=true; joy.id=t.identifier;
-  const r=getJoyRect();
-  joy.startX=r.left+r.width/2; joy.startY=r.top+r.height/2;
-  joy.dx=0; joy.dy=0;
-}
-function handleJoyMove(e){
-  if(!joy.active) return;
-  for(const t of e.changedTouches){
-    if(t.identifier!==joy.id) continue;
-    const maxR=45;
-    let dx=t.clientX-joy.startX, dy=t.clientY-joy.startY;
-    const len=Math.sqrt(dx*dx+dy*dy);
-    if(len>maxR){ dx=dx/len*maxR; dy=dy/len*maxR; }
-    joy.dx=dx/maxR; joy.dy=dy/maxR;
-    joystickKnob.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
-  }
-}
-function handleJoyEnd(e){
-  for(const t of e.changedTouches){
-    if(t.identifier===joy.id){
-      joy.active=false; joy.dx=0; joy.dy=0;
-      joystickKnob.style.transform='translate(-50%,-50%)';
+// Update petal positions around camera
+function updatePetals(camX, camZ) {
+  for(let i=0;i<PETAL_COUNT;i++) {
+    // Check if petal is too far from camera, if so relocate
+    const dx = petalPos[i*3]-camX;
+    const dz = petalPos[i*3+2]-camZ;
+    if(dx*dx+dz*dz > 40*40) {
+      const angle = Math.random()*Math.PI*2;
+      const dist = 5+Math.random()*30;
+      petalPos[i*3] = camX+Math.cos(angle)*dist;
+      petalPos[i*3+2] = camZ+Math.sin(angle)*dist;
+    }
+    for(let v=0;v<4;v++) {
+      quadVerts[(i*4+v)*3+0] = petalPos[i*3];
+      quadVerts[(i*4+v)*3+2] = petalPos[i*3+2];
     }
   }
+  gl.bindBuffer(gl.ARRAY_BUFFER, petalMesh.posB);
+  gl.bufferData(gl.ARRAY_BUFFER, quadVerts, gl.DYNAMIC_DRAW);
 }
 
-let lookHintShown=false;
-function handleTouchStart(e){
-  for(const t of e.changedTouches){
-    const r=getJoyRect();
-    const inJoy=(t.clientX>=r.left&&t.clientX<=r.right&&t.clientY>=r.top&&t.clientY<=r.bottom);
-    if(!inJoy && !look.active){
-      look.active=true; look.id=t.identifier;
-      look.lastX=t.clientX; look.lastY=t.clientY;
-      if(!lookHintShown){
-        lookHintShown=true;
-        const h=document.getElementById('look-hint');
-        h.classList.add('fade'); setTimeout(()=>h.style.display='none',1000);
-      }
-    }
-  }
-}
-function handleTouchMove(e){
-  for(const t of e.changedTouches){
-    if(t.identifier===look.id){
-      const dx=(t.clientX-look.lastX)*0.004;
-      const dy=(t.clientY-look.lastY)*0.004;
-      player.yaw  -= dx;
-      player.pitch = Math.max(-1.1, Math.min(0.3, player.pitch - dy));
-      look.lastX=t.clientX; look.lastY=t.clientY;
-    }
-  }
-}
-function handleTouchEnd(e){
-  for(const t of e.changedTouches){
-    if(t.identifier===look.id) look.active=false;
-  }
-}
+// ══════════════════════════════════════════════════
+// CAMERA & INPUT
+// ══════════════════════════════════════════════════
+const cam = {
+  x:0, y:1.7, z:0,
+  yaw:0, pitch:0,
+  velX:0, velY:0, velZ:0
+};
 
-// Mouse (desktop fallback)
-let mouseDown=false, lastMX=0, lastMY=0;
-canvas.addEventListener('mousedown', e=>{ mouseDown=true; lastMX=e.clientX; lastMY=e.clientY; });
-canvas.addEventListener('mousemove', e=>{
-  if(!mouseDown) return;
-  player.yaw   -= (e.clientX-lastMX)*0.004;
-  player.pitch  = Math.max(-1.1, Math.min(0.3, player.pitch-(e.clientY-lastMY)*0.004));
-  lastMX=e.clientX; lastMY=e.clientY;
+const keys = {};
+let isPointerLocked = false;
+let petalCollected = 0;
+
+canvas.addEventListener('click', () => canvas.requestPointerLock());
+document.addEventListener('pointerlockchange', () => {
+  isPointerLocked = document.pointerLockElement === canvas;
 });
-canvas.addEventListener('mouseup', ()=>mouseDown=false);
+document.addEventListener('mousemove', e => {
+  if(!isPointerLocked) return;
+  cam.yaw -= e.movementX * 0.002;
+  cam.pitch -= e.movementY * 0.002;
+  cam.pitch = Math.max(-1.4, Math.min(1.4, cam.pitch));
+  document.getElementById('compass-needle').style.transform=`rotate(${-cam.yaw*180/Math.PI}deg)`;
+});
+document.addEventListener('keydown', e => keys[e.code]=true);
+document.addEventListener('keyup', e => keys[e.code]=false);
 
-// Keyboard
-const keys={};
-document.addEventListener('keydown', e=>keys[e.code]=true);
-document.addEventListener('keyup',   e=>keys[e.code]=false);
+// Custom cursor
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX+'px';
+  cursor.style.top = e.clientY+'px';
+});
+document.addEventListener('mousedown', () => cursor.classList.add('active'));
+document.addEventListener('mouseup', () => cursor.classList.remove('active'));
 
-// ─── Toast helper ─────────────────────────────────────────
-let toastTimer=null;
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.className='show'; clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>{
-    t.className='hide';
-    setTimeout(()=>t.className='',400);
-  },1200);
+// ══════════════════════════════════════════════════
+// RENDER HELPERS
+// ══════════════════════════════════════════════════
+function useAttrib(prog, name, buf, size) {
+  const loc = gl.getAttribLocation(prog, name);
+  if(loc<0) return;
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
+}
+function setUniformMat4(prog, name, v) {
+  gl.uniformMatrix4fv(gl.getUniformLocation(prog,name), false, v);
+}
+function setUniform3f(prog, name, x, y, z) {
+  gl.uniform3f(gl.getUniformLocation(prog,name),x,y,z);
+}
+function setUniform1f(prog, name, v) {
+  gl.uniform1f(gl.getUniformLocation(prog,name),v);
+}
+function setUniform2f(prog, name, x, y) {
+  gl.uniform2f(gl.getUniformLocation(prog,name),x,y);
 }
 
-// ─── Uniforms helper ──────────────────────────────────────
-const UP = gl.getUniformLocation.bind(gl);
+const projMat = mat4.create();
+const viewMat = mat4.create();
+const modelMat = mat4.create();
+const tmpMat = mat4.create();
 
-// ─── Render a mesh ────────────────────────────────────────
-function drawMesh(mesh, model, color, type, uniMap){
-  gl.uniformMatrix4fv(uniMap.uMVP, false, mat4.multiply(mat4.create(), uniMap._VP, model));
-  gl.uniformMatrix4fv(uniMap.uModel, false, model);
-  gl.uniform3fv(uniMap.uBaseColor, color);
-  gl.uniform1i(uniMap.uType, type);
-  mesh.bind();
+function buildView() {
+  const cosY=Math.cos(cam.yaw), sinY=Math.sin(cam.yaw);
+  const cosPitch=Math.cos(cam.pitch), sinPitch=Math.sin(cam.pitch);
+  const fx = -sinY*cosPitch;
+  const fy = sinPitch;
+  const fz = -cosY*cosPitch;
+  mat4.lookAt(viewMat,
+    [cam.x, cam.y, cam.z],
+    [cam.x+fx, cam.y+fy, cam.z+fz],
+    [0,1,0]
+  );
+}
+
+function drawMesh(prog, mesh, model, extra) {
+  gl.useProgram(prog);
+  setUniformMat4(prog,'uProj',projMat);
+  setUniformMat4(prog,'uView',viewMat);
+  setUniformMat4(prog,'uModel',model);
+  if(extra) extra(prog);
+  useAttrib(prog,'aPos',mesh.posB,3);
+  if(mesh.normalB) useAttrib(prog,'aNormal',mesh.normalB,3);
+  if(mesh.colorB) useAttrib(prog,'aColor',mesh.colorB,3);
+  if(mesh.waveB) useAttrib(prog,'aWave',mesh.waveB,1);
+  if(mesh.uvB) useAttrib(prog,'aUV',mesh.uvB,2);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.idxB);
   gl.drawElements(gl.TRIANGLES, mesh.count, gl.UNSIGNED_SHORT, 0);
 }
 
-// ─── Update ───────────────────────────────────────────────
-let lastT=0, gameStarted=false, gameTime=0;
+// ══════════════════════════════════════════════════
+// TIME OF DAY
+// ══════════════════════════════════════════════════
+let timeOfDay = 0.35; // 0=midnight, 0.5=noon, 1=midnight
+const DAY_SPEED = 0.00008;
 
-function update(dt){
-  if(!gameStarted) return;
-  gameTime += dt;
-
-  // Movement
-  const spd = sprinting||keys['ShiftLeft']||keys['ShiftRight'] ? 8 : 4;
-  const cosY=Math.cos(player.yaw), sinY=Math.sin(player.yaw);
-  let moveX=0, moveZ=0;
-
-  // Joystick
-  if(joy.active){
-    moveX += joy.dx * cosY - (-joy.dy) * sinY;
-    moveZ += (-joy.dy) * cosY + joy.dx * sinY;
-  }
-  // Keyboard
-  if(keys['KeyW']||keys['ArrowUp'])   { moveX +=  cosY; moveZ += -sinY; }
-  if(keys['KeyS']||keys['ArrowDown']) { moveX += -cosY; moveZ +=  sinY; }
-  if(keys['KeyA']||keys['ArrowLeft']) { moveX += -sinY; moveZ += -cosY; }
-  if(keys['KeyD']||keys['ArrowRight']){ moveX +=  sinY; moveZ +=  cosY; }
-
-  const mlen=Math.sqrt(moveX*moveX+moveZ*moveZ);
-  if(mlen>0){ moveX/=mlen; moveZ/=mlen; }
-  player.x += moveX * spd * dt;
-  player.z += moveZ * spd * dt;
-
-  // Jump
-  if((jumping||keys['Space']) && player.y<=0.01) player.vy=6;
-  player.vy -= 16*dt;
-  player.y = Math.max(0, player.y + player.vy*dt);
-  if(player.y<=0) player.vy=0;
-
-  // Boundary
-  player.x = Math.max(-80, Math.min(80, player.x));
-  player.z = Math.max(-80, Math.min(80, player.z));
-
-  // Collect petals
-  for(const c of collectibles){
-    if(c.collected) continue;
-    const dy=c.y+0.2-player.y;
-    const dx=c.x-player.x, dz=c.z-player.z;
-    if(Math.sqrt(dx*dx+dz*dz)<1.5 && Math.abs(dy)<2){
-      c.collected=true;
-      petalScore++;
-      document.getElementById('petal-count').textContent=petalScore;
-      showToast('🌸 +1 꽃잎 수집!');
-      if(petalScore===10) showToast('🎉 10개 달성!');
-      if(petalScore===COLLECT_COUNT) showToast('🌸 모두 수집!');
-    }
-  }
-
-  // HUD time
-  const h=Math.floor((gameTime*0.5)%24), m=Math.floor((gameTime*30)%60);
-  document.getElementById('time-display').textContent=
-    `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-
-  // Compass
-  const needleN=document.getElementById('compass-needle-n');
-  if(needleN){
-    const cx=24, cy=24, r1=18, r2=8;
-    const a=player.yaw;
-    needleN.setAttribute('points',
-      `${cx+Math.sin(a)*r1},${cy-Math.cos(a)*r1} `+
-      `${cx-Math.sin(a)*r2},${cy+Math.cos(a)*r2} `+
-      `${cx+Math.cos(a)*4},${cy+Math.sin(a)*4}`);
-  }
+function getSunDir(t) {
+  const angle = t*Math.PI*2-Math.PI/2;
+  return [Math.cos(angle)*0.5, Math.sin(angle), Math.cos(angle)*0.2];
+}
+function getSunColor(t) {
+  const morning = [1.0, 0.75, 0.55];
+  const noon = [1.0, 0.97, 0.90];
+  const evening = [1.0, 0.55, 0.30];
+  const night = [0.20, 0.25, 0.45];
+  if(t<0.25) return interp3(night, morning, t/0.25);
+  if(t<0.5) return interp3(morning, noon, (t-0.25)/0.25);
+  if(t<0.75) return interp3(noon, evening, (t-0.5)/0.25);
+  return interp3(evening, night, (t-0.75)/0.25);
+}
+function getSkyTop(t) {
+  const day=[0.35,0.60,0.90]; const night=[0.03,0.04,0.12];
+  return t>0.2&&t<0.8 ? day : interp3(night,day,Math.max(0,Math.min(1,(t>0.5?1-t:t)/0.2)));
+}
+function getSkyBottom(t) {
+  const day=[0.72,0.85,0.98]; const night=[0.08,0.06,0.14];
+  return t>0.2&&t<0.8 ? day : interp3(night,day,Math.max(0,Math.min(1,(t>0.5?1-t:t)/0.2)));
+}
+function interp3(a,b,t){return[a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t];}
+function getAmbient(t) {
+  const d=Math.min(1,Math.max(0, t>0.5?(1-t)*4:(t)*4));
+  return [0.15+d*0.25, 0.12+d*0.22, 0.15+d*0.28];
 }
 
-// ─── Render ───────────────────────────────────────────────
-function render(t){
-  const dt=Math.min((t-lastT)/1000, 0.05); lastT=t;
-  update(dt);
+// ══════════════════════════════════════════════════
+// MAIN LOOP
+// ══════════════════════════════════════════════════
+let lastT = 0;
+let gameTime = 0;
 
+function update(dt) {
+  timeOfDay = (timeOfDay + DAY_SPEED*dt) % 1;
+  
+  const speed = keys['ShiftLeft']||keys['ShiftRight'] ? 8 : 4;
+  const cosY=Math.cos(cam.yaw), sinY=Math.sin(cam.yaw);
+  let moveX=0, moveZ=0;
+  if(keys['KeyW']||keys['ArrowUp'])   { moveX += -sinY; moveZ += -cosY; }
+  if(keys['KeyS']||keys['ArrowDown']) { moveX += sinY; moveZ += cosY; }
+  if(keys['KeyA']||keys['ArrowLeft']) { moveX += -cosY; moveZ += sinY; }
+  if(keys['KeyD']||keys['ArrowRight']){ moveX += cosY; moveZ += -sinY; }
+  
+  const len = Math.sqrt(moveX*moveX+moveZ*moveZ);
+  if(len>0) { moveX/=len; moveZ/=len; }
+  
+  cam.velX = moveX*speed;
+  cam.velZ = moveZ*speed;
+  
+  // Simple gravity & jump
+  if(keys['Space'] && cam.y<=1.71) cam.velY = 6;
+  cam.velY -= 18*dt;
+  
+  cam.x += cam.velX*dt;
+  cam.y += cam.velY*dt;
+  cam.z += cam.velZ*dt;
+  
+  if(cam.y < 1.7) { cam.y = 1.7; cam.velY = 0; }
+  
+  // Collect petals near camera
+  for(let i=0;i<PETAL_COUNT;i++) {
+    const dx=petalPos[i*3]-cam.x, dy=petalPos[i*3+1]-cam.y, dz=petalPos[i*3+2]-cam.z;
+    if(dx*dx+dy*dy+dz*dz < 1.5) {
+      petalCollected++;
+      petalPos[i*3+1] = 20; // send far up (reset)
+      document.getElementById('petal-count').textContent = `꽃잎 ${petalCollected}개 수집`;
+    }
+  }
+  
+  // Update sun track UI
+  const sunPct = timeOfDay;
+  document.getElementById('sun-dot').style.left = (sunPct*100)+'%';
+  
+  const hour = Math.floor(timeOfDay*24);
+  const min = Math.floor((timeOfDay*24-hour)*60);
+  document.getElementById('time-label').textContent = `${String(hour).padStart(2,'0')}:${String(min).padStart(2,'0')}`;
+}
+
+function render(t) {
+  const dt = Math.min((t-lastT)/1000, 0.05);
+  lastT = t;
+  gameTime += dt;
+  
+  update(dt);
+  updatePetals(cam.x, cam.z);
+  
+  buildView();
+  mat4.perspective(projMat, 1.1, canvas.width/canvas.height, 0.1, 300);
+  
+  const sunDir = getSunDir(timeOfDay);
+  const sunCol = getSunColor(timeOfDay);
+  const ambient = getAmbient(timeOfDay);
+  const skyTop = getSkyTop(timeOfDay);
+  const skyBot = getSkyBottom(timeOfDay);
+  const fogDist = 90.0;
+  
+  gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
   gl.enable(gl.DEPTH_TEST);
+  gl.depthFunc(gl.LEQUAL);
+  
+  // ── Sky backdrop ──
+  gl.disable(gl.DEPTH_TEST);
+  gl.useProgram(programs.sky);
+  gl.bindBuffer(gl.ARRAY_BUFFER, skyMesh.posB);
+  const skyPosLoc = gl.getAttribLocation(programs.sky,'aPos');
+  gl.enableVertexAttribArray(skyPosLoc);
+  gl.vertexAttribPointer(skyPosLoc, 2, gl.FLOAT, false, 0, 0);
+  setUniform3f(programs.sky,'uSunDir',...sunDir);
+  setUniform1f(programs.sky,'uTime',gameTime);
+  setUniform3f(programs.sky,'uSkyTop',...skyTop);
+  setUniform3f(programs.sky,'uSkyBottom',...skyBot);
+  // pitch=0 → 지평선이 화면 정중앙(0.5)
+  // pitch 올리면 지평선 내려감, 내리면 올라감
+  const fovY = 1.1;
+  const horizonY = 0.5 + Math.tan(cam.pitch) / (2.0 * Math.tan(fovY / 2.0)) * 0.45;
+  gl.uniform1f(gl.getUniformLocation(programs.sky,'uHorizon'), Math.max(0.05, Math.min(0.92, horizonY)));
+  gl.drawArrays(gl.TRIANGLES, 0, 6);
+  gl.enable(gl.DEPTH_TEST);
+  
+  const setLighting = (prog) => {
+    setUniform3f(prog,'uSunDir',...sunDir);
+    setUniform3f(prog,'uSunColor',...sunCol);
+    setUniform3f(prog,'uAmbient',...ambient);
+    setUniform1f(prog,'uTime',gameTime);
+    setUniform1f(prog,'uFogDist',fogDist);
+  };
+  
+  // ── Ground ──
+  mat4.identity(modelMat);
+  drawMesh(programs.ground, groundMesh, modelMat, (prog)=>{
+    setLighting(prog);
+    useAttrib(prog,'aUV',groundMesh.uvB,2);
+    useAttrib(prog,'aNormal',groundMesh.normalB,3);
+  });
+  // Fix: bind index separately for ground
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, groundMesh.idxB);
+  
+  const drawTreeLike = (prog, mesh, model) => {
+    gl.useProgram(prog);
+    setUniformMat4(prog,'uProj',projMat);
+    setUniformMat4(prog,'uView',viewMat);
+    setUniformMat4(prog,'uModel',model);
+    setLighting(prog);
+    setUniform3f(prog,'uCamPos',cam.x,cam.y,cam.z);
+    useAttrib(prog,'aPos',mesh.posB,3);
+    useAttrib(prog,'aNormal',mesh.normalB,3);
+    useAttrib(prog,'aColor',mesh.colorB,3);
+    useAttrib(prog,'aWave',mesh.waveB,1);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.idxB);
+    gl.drawElements(gl.TRIANGLES, mesh.count, gl.UNSIGNED_SHORT, 0);
+  };
+  
+  // ── Trees (frustum-ish cull by distance) ──
+  for(const inst of treeInstances) {
+    const dx=inst.x-cam.x, dz=inst.z-cam.z;
+    if(dx*dx+dz*dz > 90*90) continue;
+    mat4.identity(modelMat);
+    mat4.translate(modelMat, modelMat, [inst.x, inst.y, inst.z]);
+    mat4.rotateY(modelMat, modelMat, inst.rotY);
+    mat4.scale(modelMat, modelMat, [inst.scale,inst.scale,inst.scale]);
+    drawTreeLike(programs.tree, inst.mesh, modelMat);
+  }
+  
+  // ── Tea bushes ──
+  for(const inst of teaBushInstances) {
+    const dx=inst.x-cam.x, dz=inst.z-cam.z;
+    if(dx*dx+dz*dz > 60*60) continue;
+    mat4.identity(modelMat);
+    mat4.translate(modelMat, modelMat, [inst.x, inst.y, inst.z]);
+    mat4.rotateY(modelMat, modelMat, inst.rotY);
+    drawTreeLike(programs.tree, inst.mesh, modelMat);
+  }
+  
+  // ── Torii ──
+  mat4.identity(modelMat);
+  mat4.translate(modelMat, modelMat, [0, 0, -18]);
+  drawTreeLike(programs.tree, toriiMesh, modelMat);
+  
+  // ── Lanterns ──
+  for(const inst of lanternInstances) {
+    mat4.identity(modelMat);
+    mat4.translate(modelMat, modelMat, [inst.x, inst.y, inst.z]);
+    mat4.rotateY(modelMat, modelMat, inst.rotY);
+    drawTreeLike(programs.tree, lanternMesh, modelMat);
+  }
+  
+  // ── Pond (water) ──
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-  gl.clearColor(0,0,0,1);
-  gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
-
-  const W=canvas.width, H=canvas.height;
-  const aspect=W/H;
-  const proj=mat4.perspective(mat4.create(), Math.PI/3, aspect, 0.1, 200);
-
-  const eyeX=player.x, eyeY=player.y+1.6, eyeZ=player.z;
-  const lookX=eyeX+Math.sin(player.yaw)*Math.cos(player.pitch);
-  const lookY=eyeY+Math.sin(player.pitch);
-  const lookZ=eyeZ-Math.cos(player.yaw)*Math.cos(player.pitch);
-  const view=mat4.lookAt(mat4.create(),[eyeX,eyeY,eyeZ],[lookX,lookY,lookZ],[0,1,0]);
-  const VP=mat4.multiply(mat4.create(), proj, view);
-
-  // Day cycle
-  const dayT=gameTime*0.05;
-  const sunA=dayT-Math.PI/2;
-  const sunDir=[Math.cos(sunA)*0.8, Math.sin(sunA), 0.4];
-  const slen=Math.sqrt(sunDir[0]**2+sunDir[1]**2+sunDir[2]**2);
-  sunDir[0]/=slen; sunDir[1]/=slen; sunDir[2]/=slen;
-  const sunH=Math.max(sunDir[1],0);
-  const sunCol=[1.0*sunH+0.15, 0.85*sunH+0.05, 0.5*sunH+0.02];
-  const ambient=[0.15+0.2*sunH, 0.12+0.18*sunH, 0.12+0.22*sunH];
-  const fogCol=[0.5*sunH+0.04, 0.4*sunH+0.04, 0.5*sunH+0.06];
-  const skyTop=[0.08+0.25*sunH, 0.05+0.32*sunH, 0.18+0.5*sunH];
-  const skyHorizon=[fogCol[0]*1.2, fogCol[1]*1.1, fogCol[2]*1.3];
-
-  // ── Sky ──
+  gl.useProgram(programs.water);
+  mat4.identity(modelMat);
+  mat4.translate(modelMat, modelMat, [0, 0.02, 5]);
+  setUniformMat4(programs.water,'uProj',projMat);
+  setUniformMat4(programs.water,'uView',viewMat);
+  setUniformMat4(programs.water,'uModel',modelMat);
+  setUniform1f(programs.water,'uTime',gameTime);
+  setUniform3f(programs.water,'uSkyTop',...skyTop);
+  setUniform3f(programs.water,'uSkyBottom',...skyBot);
+  useAttrib(programs.water,'aPos',pondMesh.posB,3);
+  useAttrib(programs.water,'aUV',pondMesh.uvB,2);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, pondMesh.idxB);
+  gl.drawElements(gl.TRIANGLES, pondMesh.count, gl.UNSIGNED_SHORT, 0);
+  
+  // ── Petal particles ──
+  gl.useProgram(programs.petal);
   gl.depthMask(false);
-  gl.useProgram(progSky);
-  const skyCamRight=[view[0],view[4],view[8]];
-  const skyCamUp   =[view[1],view[5],view[9]];
-  // compute InvVP for sky
-  const skyCamFwd=[-view[2],-view[6],-view[10]];
-  // approximate: use unprojection of screen corners
-  const invVP=(()=>{
-    // simple sky pass: use VP inverse approx via transpose of view
-    // Just pass VP^-1 = (PV)^-1 : precompute manually
-    // for the sky we just need direction vectors—use the cam basis
-    // We'll pass a special matrix to the sky shader encoding cam orientation
-    const m=mat4.identity(mat4.create());
-    const ip=mat4.identity(mat4.create());
-    // unproj: dir = (VP^-1 * ndc).xyz
-    // We pass VP^-1 below
-    const vp=VP;
-    // Use simple 4x4 inverse for sky
-    return vp; // placeholder - shader uses vDir which is approximate
-  })();
-
-  gl.uniform3fv(UP(progSky,'uSkyTop'), skyTop);
-  gl.uniform3fv(UP(progSky,'uSkyHorizon'), skyHorizon);
-  gl.uniform3fv(UP(progSky,'uSunDir'), sunDir);
-  gl.uniform3fv(UP(progSky,'uSunColor'), sunCol);
-  // For the sky shader, pass view-proj inverse as best we can
-  // Actually, we use a simpler approach: pass the inv-view-proj
-  // by just encoding the frustum corners
-  // We'll override: use a simple skybox trick via the prog
-  const aPosSky=getAttrib(progSky,'aPos');
-  gl.bindBuffer(gl.ARRAY_BUFFER, skyBuf);
-  gl.enableVertexAttribArray(aPosSky);
-  gl.vertexAttribPointer(aPosSky,3,gl.FLOAT,false,0,0);
-  // Pass a matrix that unprojects NDC to world dir:
-  // dir = (invProj * ndc).xyz then (invView * dir)
-  // Short: pass camera basis directly
-  const skyMat = new Float32Array(16);
-  // encode cam right/up/fwd in first 3 columns, scale by fov
-  const fovY=Math.PI/3, tanH=Math.tan(fovY/2);
-  skyMat[0]=skyCamRight[0]*tanH*aspect; skyMat[1]=skyCamRight[1]*tanH*aspect; skyMat[2]=skyCamRight[2]*tanH*aspect; skyMat[3]=0;
-  skyMat[4]=skyCamUp[0]*tanH;           skyMat[5]=skyCamUp[1]*tanH;           skyMat[6]=skyCamUp[2]*tanH;           skyMat[7]=0;
-  skyMat[8]=skyCamFwd[0];               skyMat[9]=skyCamFwd[1];               skyMat[10]=skyCamFwd[2];              skyMat[11]=0;
-  skyMat[12]=0; skyMat[13]=0; skyMat[14]=0; skyMat[15]=1;
-  gl.uniformMatrix4fv(UP(progSky,'uInvVP'), false, skyMat);
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, skyIdx);
-  gl.drawElements(gl.TRIANGLES,6,gl.UNSIGNED_SHORT,0);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  setUniformMat4(programs.petal,'uProj',projMat);
+  setUniformMat4(programs.petal,'uView',viewMat);
+  setUniform1f(programs.petal,'uTime',gameTime);
+  setUniform3f(programs.petal,'uCamPos',cam.x,cam.y,cam.z);
+  useAttrib(programs.petal,'aPos',petalMesh.posB,3);
+  useAttrib(programs.petal,'aUV',petalMesh.uvB,2);
+  useAttrib(programs.petal,'aPetalData',petalMesh.dataB,4);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, petalMesh.idxB);
+  gl.drawElements(gl.TRIANGLES, petalMesh.count, gl.UNSIGNED_SHORT, 0);
+  
   gl.depthMask(true);
-
-  // ── Main scene ──
-  gl.useProgram(progMain);
-  const uniM = {
-    uMVP:     UP(progMain,'uMVP'),
-    uModel:   UP(progMain,'uModel'),
-    uBaseColor:UP(progMain,'uBaseColor'),
-    uType:    UP(progMain,'uType'),
-    uTime:    UP(progMain,'uTime'),
-    uSunDir:  UP(progMain,'uSunDir'),
-    uSunColor:UP(progMain,'uSunColor'),
-    uAmbient: UP(progMain,'uAmbient'),
-    uFogColor:UP(progMain,'uFogColor'),
-    uFogDensity:UP(progMain,'uFogDensity'),
-    _VP: VP
-  };
-  gl.uniform1f(uniM.uTime, gameTime);
-  gl.uniform3fv(uniM.uSunDir, sunDir);
-  gl.uniform3fv(uniM.uSunColor, sunCol);
-  gl.uniform3fv(uniM.uAmbient, ambient);
-  gl.uniform3fv(uniM.uFogColor, fogCol);
-  gl.uniform1f(uniM.uFogDensity, 0.0008);
-
-  // Ground
-  const I=mat4.identity(mat4.create());
-  drawMesh(meshGround, I, [0.2,0.38,0.15], 0, uniM);
-
-  // Water pond (near center)
-  const waterM=mat4.translate(I, 5, 0.01, -8);
-  drawMesh(meshWater, waterM, [0.15,0.35,0.55], 3, uniM);
-
-  // Trees
-  for(const tr of trees){
-    const trunkColor=[0.38,0.22,0.12];
-    const blosColor=[1.0,0.7,0.82];
-    const darkBlos=[0.88,0.6,0.72];
-    // trunk
-    let m=mat4.translate(I, tr.x, 0, tr.z);
-    m=mat4.scale(m, tr.sc, tr.sc, tr.sc);
-    drawMesh(meshCylSmall, m, trunkColor, 1, uniM);
-    // blossoms (2-3 spheres per tree)
-    const meshFoliage=[meshSphSm, meshSphMed, meshSphLg][tr.type];
-    let fm=mat4.translate(I, tr.x+tr.rx*2, (tr.type+1)*tr.sc*1.1+tr.sc, tr.z+tr.rx);
-    fm=mat4.scale(fm, tr.sc, tr.sc, tr.sc);
-    drawMesh(meshFoliage, fm, blosColor, 1, uniM);
-    if(tr.type>0){
-      let fm2=mat4.translate(I, tr.x-tr.rx, (tr.type+1)*tr.sc*0.8+tr.sc*0.5, tr.z+tr.rx*1.5);
-      fm2=mat4.scale(fm2, tr.sc*0.7, tr.sc*0.7, tr.sc*0.7);
-      drawMesh(meshSphSm, fm2, darkBlos, 1, uniM);
-    }
-  }
-
-  // Lanterns (stone color)
-  for(const ln of lanterns){
-    const lm=mat4.translate(I, ln.x, 0, ln.z);
-    drawMesh(meshLanternBase, lm, [0.5,0.48,0.44], 1, uniM);
-    const lm2=mat4.translate(I, ln.x, 0.15, ln.z);
-    drawMesh(meshLanternBody, lm2, [0.48,0.45,0.42], 1, uniM);
-    const lm3=mat4.translate(I, ln.x, 0.55, ln.z);
-    drawMesh(meshLanternTop, lm3, [0.52,0.5,0.46], 1, uniM);
-    // glowing top at night
-    if(sunH < 0.3){
-      const glow=[1.0, 0.8+sunH, 0.3+sunH];
-      const gm=mat4.translate(I, ln.x, 0.38, ln.z);
-      drawMesh(meshLanternBody, mat4.scale(gm,0.8,0.8,0.8), glow, 1, uniM);
-    }
-  }
-
-  // Collectible petals (glowing orbs)
-  const orb=meshSphSm;
-  for(const c of collectibles){
-    if(c.collected) continue;
-    const bob=Math.sin(gameTime*2+c.phase)*0.12;
-    const cm=mat4.translate(I, c.x, c.y+bob, c.z);
-    const s=0.12+Math.sin(gameTime*3+c.phase)*0.02;
-    drawMesh(orb, mat4.scale(cm,s,s,s), [1.0,0.8,0.9], 1, uniM);
-  }
-
-  // ── Falling petals ──
-  gl.depthMask(false);
-  gl.useProgram(progPetal);
-  const pVP=UP(progPetal,'uVP');
-  const pTime=UP(progPetal,'uTime');
-  const pRight=UP(progPetal,'uCamRight');
-  const pUp=UP(progPetal,'uCamUp');
-  const pOffset=getAttrib(progPetal,'aOffset');
-  const pPhase=getAttrib(progPetal,'aPhase');
-
-  gl.uniformMatrix4fv(pVP,false,VP);
-  gl.uniform1f(pTime, gameTime);
-  gl.uniform3fv(pRight, skyCamRight);
-  gl.uniform3fv(pUp, skyCamUp);
-
-  petalMesh.bind();
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, petalOffsetBuf);
-  gl.enableVertexAttribArray(pOffset);
-  gl.vertexAttribPointer(pOffset,3,gl.FLOAT,false,0,0);
-  if(gl.vertexAttribDivisor) gl.vertexAttribDivisor(pOffset,1);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, petalPhaseBuf);
-  gl.enableVertexAttribArray(pPhase);
-  gl.vertexAttribPointer(pPhase,1,gl.FLOAT,false,0,0);
-  if(gl.vertexAttribDivisor) gl.vertexAttribDivisor(pPhase,1);
-
-  if(gl.drawElementsInstanced){
-    gl.drawElementsInstanced(gl.TRIANGLES,6,gl.UNSIGNED_SHORT,0,PETAL_COUNT);
-  } else {
-    // fallback: draw subset manually
-    for(let i=0;i<Math.min(PETAL_COUNT,100);i++){
-      gl.uniform1f(pTime, gameTime+petalPhases[i]*2);
-      gl.drawElements(gl.TRIANGLES,6,gl.UNSIGNED_SHORT,0);
-    }
-  }
-  if(gl.vertexAttribDivisor){ gl.vertexAttribDivisor(pOffset,0); gl.vertexAttribDivisor(pPhase,0); }
-
-  gl.depthMask(true);
+  gl.disable(gl.BLEND);
+  
   requestAnimationFrame(render);
 }
 
-// ─── Start ────────────────────────────────────────────────
-const startOverlay=document.getElementById('start-overlay');
-const loadingEl=document.getElementById('loading');
+// ── Launch ──────────────────────────────────────
+setTimeout(()=>{
+  const loading = document.getElementById('loading');
+  loading.style.opacity = '0';
+  setTimeout(()=>{ loading.style.display='none'; },1500);
+  requestAnimationFrame(t=>{ lastT=t; render(t); });
+}, 3000);
+</script>
 
-setTimeout(()=>loadingEl.classList.add('done'), 1800);
+<!-- ═══════════════════════════════════════
+     MOBILE TOUCH CONTROLS
+═══════════════════════════════════════ -->
+<div id="joy-wrap">
+  <div id="joy-bg"><div id="joy-knob"></div></div>
+</div>
+<div id="btn-wrap">
+  <div class="m-btn" id="btn-jump">🌸</div>
+  <div class="m-btn" id="btn-sprint">💨</div>
+</div>
+<div id="look-hint">👆 드래그<br>시점 변경</div>
 
-document.getElementById('start-btn').addEventListener('click', ()=>{
-  gameStarted=true;
-  startOverlay.classList.add('hide');
-  setTimeout(()=>startOverlay.style.display='none', 900);
-});
+<script>
+// ═══════════════════════════════════════
+// MOBILE TOUCH INPUT — PC 원본 비침습적 패치
+// ═══════════════════════════════════════
+(function(){
+  // 터치 기기 여부 확인
+  const isTouch = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
+  if(!isTouch) {
+    document.getElementById('joy-wrap').style.display='none';
+    document.getElementById('btn-wrap').style.display='none';
+    document.getElementById('look-hint').style.display='none';
+    return;
+  }
 
-requestAnimationFrame(t=>{ lastT=t; requestAnimationFrame(render); });
+  // 모바일에서 cursor 숨기기
+  const cur = document.getElementById('cursor');
+  if(cur) cur.style.display='none';
+
+  const joyBg   = document.getElementById('joy-bg');
+  const joyKnob = document.getElementById('joy-knob');
+  const lookHint = document.getElementById('look-hint');
+
+  // ── 조이스틱 상태 ──
+  const joy = { active:false, id:-1, cx:0, cy:0, dx:0, dy:0 };
+  const DEAD = 8, MAX_R = 45;
+
+  // ── 카메라 드래그 상태 ──
+  const look = { active:false, id:-1, lx:0, ly:0 };
+  let hintFaded = false;
+
+  // ── 버튼 상태 ──
+  let touchJumping = false, touchSprinting = false;
+
+  // 조이스틱 터치
+  joyBg.addEventListener('touchstart', e=>{
+    e.preventDefault();
+    const t=e.changedTouches[0];
+    const r=joyBg.getBoundingClientRect();
+    joy.active=true; joy.id=t.identifier;
+    joy.cx=r.left+r.width/2; joy.cy=r.top+r.height/2;
+    joy.dx=0; joy.dy=0;
+  },{passive:false});
+
+  document.addEventListener('touchmove', e=>{
+    e.preventDefault();
+    for(const t of e.changedTouches){
+      // 조이스틱
+      if(joy.active && t.identifier===joy.id){
+        let dx=t.clientX-joy.cx, dy=t.clientY-joy.cy;
+        const len=Math.sqrt(dx*dx+dy*dy);
+        if(len>MAX_R){ dx=dx/len*MAX_R; dy=dy/len*MAX_R; }
+        joy.dx = Math.abs(dx)>DEAD ? dx/MAX_R : 0;
+        joy.dy = Math.abs(dy)>DEAD ? dy/MAX_R : 0;
+        joyKnob.style.transform=`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+      }
+      // 카메라 드래그 (조이스틱·버튼 영역 제외한 나머지)
+      if(look.active && t.identifier===look.id){
+        const ddx=(t.clientX-look.lx)*0.004;
+        const ddy=(t.clientY-look.ly)*0.004;
+        cam.yaw   -= ddx;
+        cam.pitch  = Math.max(-1.4, Math.min(1.4, cam.pitch - ddy));
+        document.getElementById('compass-needle').style.transform=
+          `rotate(${-cam.yaw*180/Math.PI}deg)`;
+        look.lx=t.clientX; look.ly=t.clientY;
+        if(!hintFaded){ hintFaded=true; lookHint.style.opacity='0'; }
+      }
+    }
+  },{passive:false});
+
+  document.addEventListener('touchend', e=>{
+    for(const t of e.changedTouches){
+      if(joy.active && t.identifier===joy.id){
+        joy.active=false; joy.dx=0; joy.dy=0;
+        joyKnob.style.transform='translate(-50%,-50%)';
+      }
+      if(look.active && t.identifier===look.id){
+        look.active=false;
+      }
+    }
+  },{passive:false});
+
+  // 화면 드래그 → 카메라 (조이스틱·버튼 영역 제외)
+  const joyWrap = document.getElementById('joy-wrap');
+  const btnWrap = document.getElementById('btn-wrap');
+
+  canvas.addEventListener('touchstart', e=>{
+    e.preventDefault();
+    for(const t of e.changedTouches){
+      // 조이스틱·버튼 영역 위는 look으로 처리하지 않음
+      const overJoy = joyWrap.contains(document.elementFromPoint(t.clientX,t.clientY));
+      const overBtn = btnWrap.contains(document.elementFromPoint(t.clientX,t.clientY));
+      if(!overJoy && !overBtn && !look.active){
+        look.active=true; look.id=t.identifier;
+        look.lx=t.clientX; look.ly=t.clientY;
+      }
+    }
+  },{passive:false});
+
+  // 점프 버튼
+  const btnJump = document.getElementById('btn-jump');
+  btnJump.addEventListener('touchstart', e=>{
+    e.preventDefault(); touchJumping=true;
+  },{passive:false});
+  btnJump.addEventListener('touchend', e=>{
+    e.preventDefault(); touchJumping=false;
+  },{passive:false});
+
+  // 달리기 버튼
+  const btnSprint = document.getElementById('btn-sprint');
+  btnSprint.addEventListener('touchstart', e=>{
+    e.preventDefault(); touchSprinting=true;
+  },{passive:false});
+  btnSprint.addEventListener('touchend', e=>{
+    e.preventDefault(); touchSprinting=false;
+  },{passive:false});
+
+  // ── 원본 update() 패치 ──
+  // keys 객체에 가상 키를 주입해 원본 로직 그대로 활용
+  const _origUpdate = update;
+  window.update = function(dt){
+    // 조이스틱 → 가상 키
+    keys['_joyX'] = joy.dx;
+    keys['_joyY'] = joy.dy;
+
+    // 원본 이동 코드를 가상 조이스틱으로 보강
+    const speed = (touchSprinting || keys['ShiftLeft'] || keys['ShiftRight']) ? 8 : 4;
+    const cosY=Math.cos(cam.yaw), sinY=Math.sin(cam.yaw);
+
+    // 원본 update 먼저 호출
+    _origUpdate(dt);
+
+    // 조이스틱 이동 추가 적용 (원본이 keys만 보므로 여기서 추가)
+    if(joy.active && (Math.abs(joy.dx)>0 || Math.abs(joy.dy)>0)){
+      // joy.dy: 위 = -1(전진), 아래 = +1(후진)
+      // joy.dx: 왼 = -1, 오 = +1
+      let mx = -sinY*(-joy.dy) + (-cosY)*(joy.dx);
+      let mz = -cosY*(-joy.dy) +  sinY *(joy.dx);
+      const ml=Math.sqrt(mx*mx+mz*mz);
+      if(ml>0){ mx/=ml; mz/=ml; }
+      cam.x += mx * speed * dt;
+      cam.z += mz * speed * dt;
+    }
+
+    // 터치 점프
+    if(touchJumping && cam.y <= 1.71) cam.velY = 6;
+  };
+
+  // 힌트 3초 후 자동 페이드
+  setTimeout(()=>{
+    if(!hintFaded){ lookHint.style.opacity='0'; }
+  }, 3000);
+
+})();
 </script>
 </body>
 </html>
