@@ -627,7 +627,7 @@ function selectSubject(subj, el) {
   chips.innerHTML = s.qtypes.map(q=>`
     <label class="qtype-check-item">
       <input type="checkbox" name="qtype" value="${q.v}" checked> ${q.l}
-    </label>`).join(('');
+    </label>`).join('');
 
   // 단원 업데이트
   updateUnits();

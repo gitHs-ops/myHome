@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중학교 사회 교재별 단원별 시험지</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1209; --rice:#fdf8ef; --gold:#b8860b; --gold-lt:#e8c060;
+  --red:#8b1a2a; --teal:#0d6b5e; --blue:#1d4ed8; --purple:#5b21b6;
+  --gray:#64748b; --green:#166534; --white:#fff;
+  --shadow: 0 4px 24px rgba(0,0,0,.09);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--rice);color:var(--ink);min-height:100vh;}
+
+/* ══════════ HERO ══════════ */
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;padding:48px 20px 60px;
+  background:linear-gradient(160deg,#fffbeb 0%,#fef3c7 100%);
+  position:relative;overflow:hidden;
+}
+#hero::before{
+  content:"漢 文";
+  position:fixed;bottom:-60px;right:-40px;
+  font-family:'Noto Serif KR',serif;font-size:clamp(160px,22vw,320px);
+  font-weight:900;color:rgba(0,0,0,.055);pointer-events:none;
+  letter-spacing:.1em;z-index:0;
+}
+.hero-inner{position:relative;z-index:1;width:100%;max-width:680px;}
+
+.hero-top{text-align:center;margin-bottom:40px;}
+.site-tag{
+  display:inline-block;background:var(--red);color:#fff;
+  font-size:11px;font-weight:700;letter-spacing:.18em;
+  padding:5px 16px;border-radius:2px;margin-bottom:18px;
+}
+.hero-title{
+  font-family:'Noto Serif KR',serif;
+  font-size:clamp(30px,6vw,58px);font-weight:900;line-height:1.15;
+}
+.hero-title em{color:var(--gold);font-style:normal;}
+.hero-sub{font-size:14px;color:var(--gray);font-weight:300;margin-top:8px;letter-spacing:.05em;}
+
+/* 선택 카드 */
+.card{
+  background:var(--white);border-radius:14px;padding:28px 28px 24px;
+  box-shadow:var(--shadow);border:1px solid rgba(0,0,0,.06);
+  margin-bottom:16px;position:relative;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:14px 14px 0 0;
+}
+.card.pub::before{background:linear-gradient(90deg,var(--gold),#d4a832);}
+.card.grp::before{background:linear-gradient(90deg,var(--teal),#1a9b8c);}
+.card.unit::before{background:linear-gradient(90deg,var(--blue),#3b82f6);}
+.card.cnt::before{background:linear(90deg,#334155,#64748b);}
+
+.step-label{
+  font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--gray);
+  margin-bottom:12px;display:flex;align-items:center;gap:6px;
+}
+.step-num{
+  width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:#fff;
+}
+.step-label.s1 .step-num{background:var(--gold);}
+.step-label.s2 .step-num{background:var(--teal);}
+.step-label.s3 .step-num{background:var(--blue);}
+.step-label.s4 .step-num{background:var(--red);}
+.step-label.s5 .step-num{background:#334155;}
+
+/* 출판사 선택 */
+.pub-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+@media(max-width:560px){.pub-grid{grid-template-columns:repeat(3,1fr);}}
+.pub-btn{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:12px 6px;border:2px solid #e2d8c8;border-radius:10px;
+  background:white;cursor:pointer;transition:all .17s;
+}
+.pub-btn .pub-icon{font-size:22px;}
+.pub-btn .pub-name{font-size:11px;font-weight:700;color:var(--gray);letter-spacing:.04em;}
+.pub-btn .pub-author{font-size:10px;color:#aaa;}
+.pub-btn:hover{border-color:#92400e;transform:translateY(-2px);box-shadow:0 4px 12px rgba(184,134,11,.18);}
+.pub-btn.active{border-color:#92400e;background:#fffbeb;box-shadow:0 4px 16px rgba(184,134,11,.25);}
+.pub-btn.active .pub-name{color:#92400e;}
+
+/* 학년·학기 */
+.row-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.sel-btn{
+  flex:1;min-width:60px;padding:10px 12px;
+  border:2px solid #e2d8c8;border-radius:8px;background:white;
+  font-family:'Noto Serif KR',serif;font-size:14px;font-weight:600;
+  color:var(--gray);cursor:pointer;transition:all .17s;text-align:center;
+}
+.sel-btn:hover{border-color:var(--teal);color:var(--teal);background:#f0fafa;}
+.sel-btn.active{border-color:var(--teal);background:var(--teal);color:white;box-shadow:0 3px 10px rgba(13,107,94,.3);}
+
+/* 단원 그리드 */
+.unit-wrap{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+@media(max-width:400px){.unit-wrap{grid-template-columns:1fr;}}
+.unit-btn{
+  padding:11px 14px;border:2px solid #e2d8c8;border-radius:9px;
+  background:white;cursor:pointer;transition:all .17s;text-align:left;
+}
+.unit-btn:hover{border-color:var(--blue);background:#eff6ff;transform:translateY(-1px);}
+.unit-btn.active{border-color:var(--blue);background:var(--blue);color:white;}
+.unit-btn .u-no{font-size:10px;font-weight:700;opacity:.65;letter-spacing:.08em;display:block;margin-bottom:3px;}
+.unit-btn .u-name{font-size:13px;font-weight:600;line-height:1.3;}
+.unit-btn .u-topic{font-size:11px;opacity:.7;line-height:1.3;margin-top:2px;}
+.unit-btn.active .u-topic{opacity:.85;}
+
+/* 문항수 */
+.cnt-row{display:flex;gap:8px;}
+.cnt-btn{
+  flex:1;padding:10px;border:2px solid #e2d8c8;border-radius:8px;background:white;
+  font-family:'Noto Serif KR',serif;font-size:14px;font-weight:700;
+  color:var(--gray);cursor:pointer;transition:all .17s;text-align:center;
+}
+.cnt-btn:hover{border-color:var(--red);color:var(--red);}
+.cnt-btn.active{border-color:var(--red);background:var(--red);color:white;box-shadow:0 3px 10px rgba(139,26,42,.3);}
+
+.start-btn{
+  width:100%;padding:16px;margin-top:16px;
+  background:linear-gradient(135deg,var(--ink) 0%,#2c3e50 100%);
+  color:white;border:none;border-radius:10px;
+  font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;
+  letter-spacing:.12em;cursor:pointer;transition:all .2s;
+  position:relative;box-shadow:0 4px 20px rgba(0,0,0,.25);
+}
+.start-btn::after{content:'→';position:absolute;right:22px;top:50%;transform:translateY(-50%);transition:right .2s;}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.3);}
+.start-btn:hover::after{right:16px;}
+.start-btn:disabled{background:#aaa;box-shadow:none;cursor:not-allowed;transform:none;}
+
+/* ══════════ QUIZ ══════════ */
+#quiz-page{display:none;min-height:100vh;background:var(--rice);}
+.qhdr{
+  background:var(--ink);color:white;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 20px rgba(0,0,0,.35);
+}
+.qhdr-inner{
+  max-width:980px;margin:0 auto;padding:13px 22px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.qhdr-title{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;}
+.qhdr-title span{color:var(--gold-lt);}
+.qhdr-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.mbadge{background:rgba(255,255,255,.12);padding:4px 11px;border-radius:20px;font-size:12px;}
+.mbadge.pub-tag{background:rgba(232,192,96,.2);color:var(--gold-lt);font-weight:700;}
+.timer{
+  font-family:monospace;font-size:13px;color:#ffd;letter-spacing:.1em;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  padding:4px 13px;border-radius:20px;
+}
+.back-btn{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:white;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;
+}
+.back-btn:hover{background:rgba(255,255,255,.2);}
+.prog-wrap{background:rgba(255,255,255,.1);height:4px;}
+.prog-fill{height:100%;background:var(--gold-lt);transition:width .3s;}
+
+/* 시험지 */
+.exam-sheet{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
+.exam-header-row{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  border-bottom:2.5px solid var(--ink);padding-bottom:14px;margin-bottom:28px;flex-wrap:wrap;gap:12px;
+}
+.exam-title-block .exam-pub-label{
+  font-size:11px;font-weight:700;letter-spacing:.12em;
+  padding:3px 10px;border-radius:10px;color:white;display:inline-block;margin-bottom:6px;
+}
+.exam-title-block .exam-main-title{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;}
+.exam-info-row{display:flex;gap:22px;font-size:12px;color:var(--gray);}
+.exam-info-row strong{color:var(--ink);}
+
+/* 섹션 */
+.sec-hdr{
+  display:flex;align-items:center;gap:10px;padding:9px 14px;
+  margin:28px 0 12px;border-radius:6px;
+}
+.sec-icon{font-size:18px;}
+.sec-title-text{font-family:'Noto Serif KR',serif;font-size:14px;font-weight:700;}
+.sec-nums{font-size:11px;color:var(--gray);margin-left:auto;}
+
+/* 문제 그리드 */
+.q-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+@media(max-width:600px){.q-grid{grid-template-columns:1fr;}}
+
+/* 문제 카드 */
+.q-card{
+  background:white;border:1px solid #e8e0d0;border-radius:10px;
+  padding:15px 17px;display:flex;align-items:flex-start;gap:12px;
+  position:relative;transition:box-shadow .15s;
+}
+.q-card:hover{box-shadow:0 3px 14px rgba(0,0,0,.08);}
+.q-card.gc{border:2px solid var(--green);}
+.q-card.gw{border:2px solid var(--red);}
+.q-num-badge{
+  font-family:'Noto Serif KR',serif;font-size:11px;font-weight:700;
+  color:white;background:var(--ink);width:25px;height:25px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.q-body{flex:1;}
+.type-chip{
+  display:inline-block;font-size:10px;font-weight:700;letter-spacing:.06em;
+  padding:2px 8px;border-radius:10px;margin-bottom:7px;color:white;
+}
+.q-passage{
+  font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;
+  color:var(--ink);line-height:1.6;margin-bottom:3px;letter-spacing:.04em;
+}
+.q-passage.sm{font-size:14px;}
+.q-source{font-size:10px;color:#aaa;margin-bottom:6px;font-style:italic;}
+.q-text{font-size:12px;color:var(--gray);margin-bottom:9px;}
+.choices{display:flex;flex-direction:column;gap:4px;}
+.choice{
+  display:flex;align-items:center;gap:7px;padding:6px 9px;
+  border:1px solid #ece7df;border-radius:6px;cursor:pointer;
+  transition:all .12s;font-size:13px;
+}
+.choice:hover{background:#fffbf0;border-color:#92400e;}
+.choice.sel{background:var(--gold);border-color:#92400e;color:white;}
+.choice.ok{background:var(--green);border-color:var(--green);color:white;}
+.choice.ng{background:var(--red);border-color:var(--red);color:white;text-decoration:line-through;opacity:.7;}
+.choice-n{font-weight:700;font-size:11px;opacity:.7;min-width:13px;}
+.ans-mark{position:absolute;top:9px;right:11px;font-size:14px;display:none;}
+.q-card.gc .ans-mark,.q-card.gw .ans-mark{display:block;}
+
+/* 제출 */
+.submit-wrap{margin-top:36px;text-align:center;}
+.submit-btn{
+  padding:15px 48px;background:linear-gradient(135deg,var(--red),#6b1220);
+  color:white;border:none;border-radius:9px;
+  font-family:'Noto Serif KR',serif;font-size:16px;font-weight:700;
+  letter-spacing:.1em;cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 16px rgba(139,26,42,.35);
+}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(139,26,42,.4);}
+
+/* 결과 모달 */
+.overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);
+  z-index:200;align-items:center;justify-content:center;padding:20px;
+}
+.overlay.show{display:flex;}
+.result-box{
+  background:white;border-radius:16px;padding:44px 32px;
+  max-width:400px;width:100%;text-align:center;
+  animation:pop .3s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.r-emoji{font-size:52px;margin-bottom:8px;}
+.r-score{font-family:'Noto Serif KR',serif;font-size:52px;font-weight:900;line-height:1;}
+.r-score span{font-size:20px;color:var(--gray);font-weight:400;}
+.r-grade{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:700;margin:10px 0 4px;}
+.r-desc{font-size:12px;color:var(--gray);margin-bottom:22px;}
+.r-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0;padding:14px 0;border-top:1px solid #eee;border-bottom:1px solid #eee;}
+.r-stat{text-align:center;}
+.r-stat-n{font-family:'Noto Serif KR',serif;font-size:22px;font-weight:700;}
+.r-stat-l{font-size:10px;color:var(--gray);margin-top:2px;}
+.co .r-stat-n{color:var(--green);}
+.wr .r-stat-n{color:var(--red);}
+.r-btns{display:flex;gap:10px;}
+.r-btn{flex:1;padding:11px;border-radius:8px;font-family:'Noto Serif KR',serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;border:2px solid;}
+.r-btn.pri{background:var(--ink);color:white;border-color:var(--ink);}
+.r-btn.sec{background:white;color:var(--ink);border-color:#ddd;}
+.r-btn:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,.15);}
+
+/* 유틸 */
+.empty-msg{text-align:center;padding:36px;color:var(--gray);font-family:'Noto Serif KR',serif;}
+.sel-hint{font-size:11px;color:var(--gray);margin-top:6px;text-align:right;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section id="hero">
+<div class="hero-inner">
+
+  <div class="hero-top">
+    <div class="site-tag">2022 개정 교육과정</div>
+    <h1 class="hero-title">중학교 <em>사회</em><br>교재별 단원 시험지</h1>
+    <p class="hero-sub">교재 · 학년 · 학기 · 단원을 선택하면 사회 문제를 랜덤으로 출제합니다</p>
+  </div>
+
+  <!-- STEP 1: 출판사 -->
+  <div class="card pub">
+    <div class="step-label s1"><span class="step-num">1</span> 교재(출판사) 선택</div>
+    <div class="pub-grid" id="pub-grid"></div>
+  </div>
+
+  <!-- STEP 2: 학년 + 학기 -->
+  <div class="card grp">
+    <div class="step-label s2"><span class="step-num">2</span> 학년 · 학기 선택</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:140px;">
+        <div style="font-size:11px;color:var(--gray);margin-bottom:7px;font-weight:600;">학년</div>
+        <div class="row-btns" id="grade-row">
+          <button class="sel-btn active" onclick="sel('grade',1,this)">중 1</button>
+          <button class="sel-btn" onclick="sel('grade',2,this)">중 2</button>
+          <button class="sel-btn" onclick="sel('grade',3,this)">중 3</button>
+        </div>
+      </div>
+      <div style="flex:1;min-width:140px;">
+        <div style="font-size:11px;color:var(--gray);margin-bottom:7px;font-weight:600;">학기</div>
+        <div class="row-btns" id="sem-row">
+          <button class="sel-btn active" onclick="sel('sem',1,this)">1 학기</button>
+          <button class="sel-btn" onclick="sel('sem',2,this)">2 학기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: 단원 -->
+  <div class="card unit">
+    <div class="step-label s3"><span class="step-num">3</span> 단원 선택 <span style="font-weight:400;font-size:11px;margin-left:4px;">(복수 선택 가능)</span></div>
+    <div class="unit-wrap" id="unit-wrap"><div class="empty-msg">교재와 학년·학기를 먼저 선택하세요</div></div>
+    <p class="sel-hint" id="sel-hint"></p>
+  </div>
+
+  <!-- STEP 4: 시험 유형 -->
+  <div class="card" style="border-top:3px solid var(--red);">
+    <div class="step-label s4"><span class="step-num">4</span> 시험 종류</div>
+    <div class="row-btns" id="exam-type-row">
+      <button class="sel-btn active" onclick="sel('examType','all',this)">전체 유형</button>
+      <button class="sel-btn" onclick="sel('examType','mid',this)">중간고사</button>
+      <button class="sel-btn" onclick="sel('examType','final',this)">기말고사</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: 문항수 -->
+  <div class="card" style="border-top:3px solid #334155;">
+    <div class="step-label s5"><span class="step-num">5</span> 문항 수</div>
+    <div class="cnt-row">
+      <button class="cnt-btn" onclick="sel('count',10,this)">10문항</button>
+      <button class="cnt-btn active" onclick="sel('count',20,this)">20문항</button>
+      <button class="cnt-btn" onclick="sel('count',30,this)">30문항</button>
+    </div>
+  </div>
+
+  <button class="start-btn" id="start-btn" onclick="startQuiz()">시험 시작하기</button>
+</div>
+</section>
+
+<!-- ══════════════ QUIZ PAGE ══════════════ -->
+<div id="quiz-page">
+  <div class="qhdr">
+    <div class="qhdr-inner">
+      <div class="qhdr-title">중학교 <span>사회</span> 단원별 시험</div>
+      <div class="qhdr-meta">
+        <span class="mbadge pub-tag" id="hdr-pub"></span>
+        <span class="mbadge" id="hdr-grade"></span>
+        <span class="mbadge" id="hdr-unit"></span>
+        <span class="timer" id="timer">00:00</span>
+        <button class="back-btn" onclick="goBack()">← 처음으로</button>
+      </div>
+    </div>
+    <div class="prog-wrap"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+  </div>
+
+  <div class="exam-sheet">
+    <div class="exam-header-row">
+      <div class="exam-title-block">
+        <span class="exam-pub-label" id="exam-pub-label">미래엔</span>
+        <div class="exam-main-title" id="exam-main-title">社會 單元別 試驗紙</div>
+      </div>
+      <div class="exam-info-row">
+        <div>교재: <strong id="ei-pub"></strong></div>
+        <div>학년: <strong id="ei-grade"></strong></div>
+        <div>문항: <strong id="ei-count"></strong></div>
+        <div>배점: <strong id="ei-score"></strong></div>
+      </div>
+    </div>
+    <div id="q-container"></div>
+    <div class="submit-wrap">
+      <button class="submit-btn" onclick="submitQuiz()">✓ 채점하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 결과 모달 -->
+<div class="overlay" id="overlay">
+  <div class="result-box">
+    <div class="r-emoji" id="r-emoji">🎉</div>
+    <div class="r-score" id="r-score">80<span>점</span></div>
+    <div class="r-grade" id="r-grade">잘했어요!</div>
+    <div class="r-desc" id="r-desc"></div>
+    <div class="r-stats">
+      <div class="r-stat co"><div class="r-stat-n" id="s-co">0</div><div class="r-stat-l">정답</div></div>
+      <div class="r-stat wr"><div class="r-stat-n" id="s-wr">0</div><div class="r-stat-l">오답</div></div>
+      <div class="r-stat"><div class="r-stat-n" id="s-un">0</div><div class="r-stat-l">미응답</div></div>
+    </div>
+    <div class="r-btns">
+      <button class="r-btn sec" onclick="reviewAns()">오답 확인</button>
+      <button class="r-btn pri" onclick="retryQuiz()">다시 풀기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  출판사 정의
+// ════════════════════════════════════════════════════════════
+const PUBLISHERS = [{"id": "mir", "name": "미래엔", "author": "김진수", "icon": "📘", "color": "#1d4ed8"}, {"id": "chun", "name": "천재교육", "author": "박선미", "icon": "📗", "color": "#166534"}, {"id": "vis", "name": "비상교육", "author": "이진석", "icon": "📙", "color": "#92400e"}, {"id": "dong", "name": "동아출판", "author": "모경환", "icon": "📕", "color": "#881337"}, {"id": "sin", "name": "신사고", "author": "한진수", "icon": "📓", "color": "#4c1d95"}];
+
+
+const CURRICULUM={mir:{1:{1:[
+  {id:'so-1-1-1',name:'내가 사는 세계',topic:'지도·위치·지리 정보 시스템',exam:'mid'},
+  {id:'so-1-1-2',name:'자연환경과 인간',topic:'기후·지형과 인간 생활',exam:'mid'},
+  {id:'so-1-1-3',name:'인문 환경과 인간',topic:'인구·도시화·문화',exam:'mid'},
+  {id:'so-1-1-4',name:'극한 지역의 생활',topic:'냉대·열대·건조·고산 기후',exam:'final'},
+  {id:'so-1-1-5',name:'자원과 환경',topic:'자원의 종류·분포·환경 문제',exam:'final'},
+],2:[
+  {id:'so-1-2-1',name:'개인과 사회',topic:'사회화·사회 집단·일탈',exam:'mid'},
+  {id:'so-1-2-2',name:'문화의 이해',topic:'문화 특성·다문화·문화 상대주의',exam:'mid'},
+  {id:'so-1-2-3',name:'정치 생활',topic:'민주주의·선거·정치 참여',exam:'final'},
+  {id:'so-1-2-4',name:'경제생활의 이해',topic:'희소성·경제 문제·경제 주체',exam:'final'},
+]},2:{1:[
+  {id:'so-2-1-1',name:'인권과 헌법',topic:'기본권·인권 보장·헌법',exam:'mid'},
+  {id:'so-2-1-2',name:'헌법과 국가 기관',topic:'삼권 분립·국가 기관',exam:'mid'},
+  {id:'so-2-1-3',name:'경제 주체',topic:'가계·기업·정부의 역할',exam:'final'},
+  {id:'so-2-1-4',name:'시장 경제',topic:'수요·공급·시장 가격',exam:'final'},
+],2:[
+  {id:'so-2-2-1',name:'사회 변동',topic:'사회 변동·사회 문제',exam:'mid'},
+  {id:'so-2-2-2',name:'현대 사회의 변화',topic:'정보화·세계화·저출산 고령화',exam:'mid'},
+  {id:'so-2-2-3',name:'세계 여러 지역',topic:'세계 지역 지리',exam:'final'},
+  {id:'so-2-2-4',name:'글로벌 경제',topic:'무역·국제 분업·환율',exam:'final'},
+]},3:{1:[
+  {id:'so-3-1-1',name:'정치 과정',topic:'정당·선거·정치 참여·시민 사회',exam:'mid'},
+  {id:'so-3-1-2',name:'국제 정치',topic:'국제 관계·외교·국제 기구',exam:'mid'},
+  {id:'so-3-1-3',name:'국민 경제',topic:'GDP·경제 성장·물가·실업',exam:'final'},
+  {id:'so-3-1-4',name:'국제 경제',topic:'무역·환율·국제 수지',exam:'final'},
+],2:[
+  {id:'so-3-2-1',name:'사회 불평등',topic:'사회 계층·불평등 해결',exam:'mid'},
+  {id:'so-3-2-2',name:'다양한 문화',topic:'문화 다양성·다문화 사회',exam:'mid'},
+  {id:'so-3-2-3',name:'지속가능한 발전',topic:'환경 문제·지속가능 발전',exam:'final'},
+  {id:'so-3-2-4',name:'인구와 지역 변화',topic:'인구 문제·도시화',exam:'final'},
+]}},chun:{1:{1:[
+  {id:'soc-1-1-1',name:'세계와 지리',topic:'지리 정보',exam:'mid'},
+  {id:'soc-1-1-2',name:'자연환경',topic:'기후·지형',exam:'mid'},
+  {id:'soc-1-1-3',name:'인간과 환경',topic:'인구·도시',exam:'final'},
+  {id:'soc-1-1-4',name:'자원',topic:'자원·환경',exam:'final'},
+],2:[
+  {id:'soc-1-2-1',name:'개인과 사회',topic:'사회화',exam:'mid'},
+  {id:'soc-1-2-2',name:'문화',topic:'문화 이해',exam:'mid'},
+  {id:'soc-1-2-3',name:'정치',topic:'민주주의',exam:'final'},
+  {id:'soc-1-2-4',name:'경제',topic:'경제 기초',exam:'final'},
+]},2:{1:[
+  {id:'soc-2-1-1',name:'인권·헌법',topic:'기본권',exam:'mid'},
+  {id:'soc-2-1-2',name:'국가 기관',topic:'삼권 분립',exam:'mid'},
+  {id:'soc-2-1-3',name:'경제 주체',topic:'가계·기업',exam:'final'},
+  {id:'soc-2-1-4',name:'시장',topic:'시장 경제',exam:'final'},
+],2:[
+  {id:'soc-2-2-1',name:'사회 변동',topic:'변동·문제',exam:'mid'},
+  {id:'soc-2-2-2',name:'현대 사회',topic:'정보화',exam:'mid'},
+  {id:'soc-2-2-3',name:'세계 지역',topic:'세계 지리',exam:'final'},
+  {id:'soc-2-2-4',name:'글로벌',topic:'무역·환율',exam:'final'},
+]},3:{1:[
+  {id:'soc-3-1-1',name:'정치 과정',topic:'선거·정당',exam:'mid'},
+  {id:'soc-3-1-2',name:'국제 정치',topic:'국제 관계',exam:'mid'},
+  {id:'soc-3-1-3',name:'국민 경제',topic:'GDP',exam:'final'},
+  {id:'soc-3-1-4',name:'국제 경제',topic:'무역',exam:'final'},
+],2:[
+  {id:'soc-3-2-1',name:'불평등',topic:'사회 불평등',exam:'mid'},
+  {id:'soc-3-2-2',name:'다문화',topic:'문화 다양성',exam:'mid'},
+  {id:'soc-3-2-3',name:'지속가능',topic:'지속가능 발전',exam:'final'},
+  {id:'soc-3-2-4',name:'인구',topic:'인구·도시',exam:'final'},
+]}},vis:{1:{1:[
+  {id:'sov-1-1-1',name:'지리 기초',topic:'지리 정보',exam:'mid'},
+  {id:'sov-1-1-2',name:'자연과 인간',topic:'기후·지형',exam:'mid'},
+  {id:'sov-1-1-3',name:'인문 환경',topic:'인구·문화',exam:'final'},
+  {id:'sov-1-1-4',name:'자원과 환경',topic:'자원',exam:'final'},
+],2:[
+  {id:'sov-1-2-1',name:'사회와 개인',topic:'사회화',exam:'mid'},
+  {id:'sov-1-2-2',name:'문화',topic:'문화',exam:'mid'},
+  {id:'sov-1-2-3',name:'민주주의',topic:'정치',exam:'final'},
+  {id:'sov-1-2-4',name:'경제',topic:'경제 기초',exam:'final'},
+]},2:{1:[
+  {id:'sov-2-1-1',name:'헌법·인권',topic:'기본권',exam:'mid'},
+  {id:'sov-2-1-2',name:'국가',topic:'국가 기관',exam:'mid'},
+  {id:'sov-2-1-3',name:'경제',topic:'경제 주체',exam:'final'},
+  {id:'sov-2-1-4',name:'시장',topic:'시장',exam:'final'},
+],2:[
+  {id:'sov-2-2-1',name:'사회 변동',topic:'변동',exam:'mid'},
+  {id:'sov-2-2-2',name:'현대',topic:'현대 사회',exam:'mid'},
+  {id:'sov-2-2-3',name:'세계 지리',topic:'세계',exam:'final'},
+  {id:'sov-2-2-4',name:'세계 경제',topic:'무역',exam:'final'},
+]},3:{1:[
+  {id:'sov-3-1-1',name:'정치',topic:'정치 과정',exam:'mid'},
+  {id:'sov-3-1-2',name:'국제',topic:'국제 관계',exam:'mid'},
+  {id:'sov-3-1-3',name:'경제',topic:'국민 경제',exam:'final'},
+  {id:'sov-3-1-4',name:'무역',topic:'국제 경제',exam:'final'},
+],2:[
+  {id:'sov-3-2-1',name:'불평등',topic:'사회',exam:'mid'},
+  {id:'sov-3-2-2',name:'문화',topic:'다문화',exam:'mid'},
+  {id:'sov-3-2-3',name:'환경',topic:'지속가능',exam:'final'},
+  {id:'sov-3-2-4',name:'인구',topic:'인구',exam:'final'},
+]}},dong:{1:{1:[
+  {id:'sod-1-1-1',name:'세계 지리',topic:'지리',exam:'mid'},
+  {id:'sod-1-1-2',name:'자연환경',topic:'환경',exam:'mid'},
+  {id:'sod-1-1-3',name:'인간 생활',topic:'인문',exam:'final'},
+  {id:'sod-1-1-4',name:'자원',topic:'자원',exam:'final'},
+],2:[
+  {id:'sod-1-2-1',name:'개인·사회',topic:'사회화',exam:'mid'},
+  {id:'sod-1-2-2',name:'문화',topic:'문화',exam:'mid'},
+  {id:'sod-1-2-3',name:'정치',topic:'민주',exam:'final'},
+  {id:'sod-1-2-4',name:'경제',topic:'경제',exam:'final'},
+]},2:{1:[
+  {id:'sod-2-1-1',name:'인권',topic:'기본권',exam:'mid'},
+  {id:'sod-2-1-2',name:'국가',topic:'국가 기관',exam:'mid'},
+  {id:'sod-2-1-3',name:'경제',topic:'경제 주체',exam:'final'},
+  {id:'sod-2-1-4',name:'시장',topic:'시장',exam:'final'},
+],2:[
+  {id:'sod-2-2-1',name:'변동',topic:'사회 변동',exam:'mid'},
+  {id:'sod-2-2-2',name:'현대',topic:'현대',exam:'mid'},
+  {id:'sod-2-2-3',name:'세계',topic:'세계 지리',exam:'final'},
+  {id:'sod-2-2-4',name:'무역',topic:'국제 경제',exam:'final'},
+]},3:{1:[
+  {id:'sod-3-1-1',name:'정치',topic:'선거',exam:'mid'},
+  {id:'sod-3-1-2',name:'국제',topic:'국제',exam:'mid'},
+  {id:'sod-3-1-3',name:'경제',topic:'GDP',exam:'final'},
+  {id:'sod-3-1-4',name:'무역',topic:'무역',exam:'final'},
+],2:[
+  {id:'sod-3-2-1',name:'불평등',topic:'불평등',exam:'mid'},
+  {id:'sod-3-2-2',name:'다문화',topic:'문화',exam:'mid'},
+  {id:'sod-3-2-3',name:'환경',topic:'환경',exam:'final'},
+  {id:'sod-3-2-4',name:'인구',topic:'인구',exam:'final'},
+]}},sin:{1:{1:[
+  {id:'sos-1-1-1',name:'지리',topic:'지리 정보',exam:'mid'},
+  {id:'sos-1-1-2',name:'자연',topic:'기후·지형',exam:'mid'},
+  {id:'sos-1-1-3',name:'인문',topic:'인구·도시',exam:'final'},
+  {id:'sos-1-1-4',name:'자원',topic:'자원',exam:'final'},
+],2:[
+  {id:'sos-1-2-1',name:'사회화',topic:'개인·사회',exam:'mid'},
+  {id:'sos-1-2-2',name:'문화',topic:'문화 이해',exam:'mid'},
+  {id:'sos-1-2-3',name:'민주주의',topic:'정치',exam:'final'},
+  {id:'sos-1-2-4',name:'경제 기초',topic:'경제',exam:'final'},
+]},2:{1:[
+  {id:'sos-2-1-1',name:'헌법',topic:'기본권',exam:'mid'},
+  {id:'sos-2-1-2',name:'국가 기관',topic:'삼권',exam:'mid'},
+  {id:'sos-2-1-3',name:'경제 주체',topic:'경제',exam:'final'},
+  {id:'sos-2-1-4',name:'시장',topic:'시장',exam:'final'},
+],2:[
+  {id:'sos-2-2-1',name:'사회 변동',topic:'변동',exam:'mid'},
+  {id:'sos-2-2-2',name:'현대 사회',topic:'정보화',exam:'mid'},
+  {id:'sos-2-2-3',name:'세계',topic:'세계 지리',exam:'final'},
+  {id:'sos-2-2-4',name:'글로벌',topic:'무역',exam:'final'},
+]},3:{1:[
+  {id:'sos-3-1-1',name:'정치 과정',topic:'정당·선거',exam:'mid'},
+  {id:'sos-3-1-2',name:'국제 정치',topic:'외교',exam:'mid'},
+  {id:'sos-3-1-3',name:'국민 경제',topic:'GDP',exam:'final'},
+  {id:'sos-3-1-4',name:'국제 경제',topic:'무역·환율',exam:'final'},
+],2:[
+  {id:'sos-3-2-1',name:'불평등',topic:'계층',exam:'mid'},
+  {id:'sos-3-2-2',name:'다문화',topic:'문화',exam:'mid'},
+  {id:'sos-3-2-3',name:'지속가능',topic:'환경',exam:'final'},
+  {id:'sos-3-2-4',name:'인구·도시',topic:'인구',exam:'final'},
+]}}
+
+
+const SHARED={
+  '지리':[
+    {type:'지리',q:'위도와 경도에 대한 설명으로 옳은 것은?',answer:'위도는 적도 기준, 경도는 본초 자오선 기준',choices:['위도는 적도 기준, 경도는 본초 자오선 기준','위도는 동서, 경도는 남북','위도 360°, 경도 180°','둘 다 적도 기준']},
+    {type:'지리',q:'열대 기후의 특징은?',answer:'연중 고온다우, 연평균 기온 25°C 이상',choices:['연중 고온다우, 연평균 기온 25°C 이상','여름 덥고 겨울 추움','연중 건조함','눈이 많이 내림']},
+    {type:'지리',q:'도시화의 문제점이 아닌 것은?',answer:'인구 감소',choices:['인구 감소','교통 혼잡','환경 오염','주택 부족']},
+    {type:'지리',q:'세계에서 가장 넓은 대륙은?',answer:'아시아',choices:['아시아','아프리카','유럽','북아메리카']},
+    {type:'지리',q:'인구 밀도 = ?',answer:'인구 ÷ 면적',choices:['인구 ÷ 면적','면적 ÷ 인구','인구 × 면적','출생률 - 사망률']},
+  ],
+  '일반사회':[
+    {type:'일반사회',q:'민주주의의 기본 원리가 아닌 것은?',answer:'독재주의',choices:['독재주의','국민 주권','기본권 보장','권력 분립']},
+    {type:'일반사회',q:'삼권 분립에서 행정권을 담당하는 기관은?',answer:'정부(행정부)',choices:['정부(행정부)','국회','법원','헌법재판소']},
+    {type:'일반사회',q:'기본권의 종류가 아닌 것은?',answer:'납세의 의무',choices:['납세의 의무','자유권','평등권','사회권']},
+    {type:'일반사회',q:'선거의 4대 원칙이 아닌 것은?',answer:'비밀 선거의 예외 허용',choices:['비밀 선거의 예외 허용','보통 선거','평등 선거','직접 선거']},
+    {type:'일반사회',q:'법치주의의 핵심 내용은?',answer:'국가 권력도 법에 따라야 한다',choices:['국가 권력도 법에 따라야 한다','법은 강자가 만든다','국민은 법을 모두 알아야 한다','법보다 규칙이 우선']},
+    {type:'일반사회',q:'시민 불복종의 조건이 아닌 것은?',answer:'폭력 사용 허용',choices:['폭력 사용 허용','비폭력적 방법','공개적 실시','법적 처벌 감수']},
+  ],
+  '경제':[
+    {type:'경제',q:'수요 법칙이란?',answer:'가격이 오르면 수요량이 감소한다',choices:['가격이 오르면 수요량이 감소한다','가격이 오르면 수요량이 증가한다','수요는 항상 일정하다','가격과 무관하다']},
+    {type:'경제',q:'GDP(국내총생산)의 정의는?',answer:'한 나라에서 일정 기간 생산된 최종 재화와 서비스의 시장 가치',choices:['한 나라에서 일정 기간 생산된 최종 재화와 서비스의 시장 가치','국민 총소득','수출액 합계','정부 예산 총액']},
+    {type:'경제',q:'희소성이란?',answer:'인간의 욕구에 비해 자원이 부족한 상태',choices:['인간의 욕구에 비해 자원이 부족한 상태','자원이 없는 상태','모든 재화가 공짜인 상태','생산이 멈춘 상태']},
+    {type:'경제',q:'공급 법칙이란?',answer:'가격이 오르면 공급량이 증가한다',choices:['가격이 오르면 공급량이 증가한다','가격이 오르면 공급량이 감소한다','공급은 항상 일정하다','가격과 무관하다']},
+    {type:'경제',q:'환율이 상승하면 수출에 미치는 영향은?',answer:'수출 유리 (상품 가격 하락 효과)',choices:['수출 유리 (상품 가격 하락 효과)','수출 불리','수출과 무관','수입 증가']},
+  ],
+  '문화':[
+    {type:'문화',q:'문화 상대주의란?',answer:'각 문화를 그 사회의 맥락에서 이해하는 관점',choices:['각 문화를 그 사회의 맥락에서 이해하는 관점','자국 문화가 우월하다는 생각','다른 문화를 무조건 수용','문화 차이가 없다는 주장']},
+    {type:'문화',q:'사회화의 뜻은?',answer:'개인이 사회의 가치·규범·지식을 배우는 과정',choices:['개인이 사회의 가치·규범·지식을 배우는 과정','사회가 개인을 처벌하는 것','집단을 형성하는 것','경제 활동을 배우는 것']},
+    {type:'문화',q:'다문화 사회의 긍정적 측면은?',answer:'문화적 다양성 증가',choices:['문화적 다양성 증가','사회 갈등 증가','정체성 혼란','언어 장벽']},
+  ],
+  '역사':[
+    {type:'역사',q:'역사를 배우는 목적으로 가장 적절한 것은?',answer:'과거를 통해 현재를 이해하고 미래를 전망',choices:['과거를 통해 현재를 이해하고 미래를 전망','과거 사건을 암기','옛날 사람들을 비판','역사적 영웅 숭배']},
+  ],
+  '정치':[
+    {type:'정치',q:'삼권 분립의 목적은?',answer:'권력 남용 방지·국민의 자유와 권리 보장',choices:['권력 남용 방지·국민의 자유와 권리 보장','행정의 효율성','입법 속도 향상','사법권 강화']},
+    {type:'정치',q:'국제 연합(UN)의 주요 목적은?',answer:'국제 평화와 안전 유지',choices:['국제 평화와 안전 유지','세계 경제 통합','군사 동맹 강화','자유무역 촉진']},
+  ],
+};
+function getPoolForUnit(uid){
+  const pools=[];
+  if(uid.includes('지리')||uid.includes('지형')||uid.includes('기후')||uid.includes('인구')||uid.includes('도시')||uid.includes('자원')||uid.includes('세계')){pools.push(...(SHARED['지리']||[]));}
+  if(uid.includes('사회')||uid.includes('헌법')||uid.includes('인권')||uid.includes('국가')||uid.includes('선거')||uid.includes('민주')||uid.includes('법')){pools.push(...(SHARED['일반사회']||[]));}
+  if(uid.includes('경제')||uid.includes('시장')||uid.includes('무역')||uid.includes('환율')||uid.includes('GDP')){pools.push(...(SHARED['경제']||[]));}
+  if(uid.includes('문화')||uid.includes('사회화')||uid.includes('다문화')){pools.push(...(SHARED['문화']||[]));}
+  if(uid.includes('역사')){pools.push(...(SHARED['역사']||[]));}
+  if(uid.includes('정치')||uid.includes('국제')||uid.includes('정당')){pools.push(...(SHARED['정치']||[]));}
+  if(pools.length<8){Object.values(SHARED).forEach(p=>pools.push(...p));}
+  const seen=new Set();return pools.filter(q=>{if(seen.has(q.q))return false;seen.add(q.q);return true;});
+}
+
+// ════════════════════════════════════════════════════════════
+//  상태
+// ════════════════════════════════════════════════════════════
+let state = {pub:'mirae', grade:1, sem:1, units:new Set(), examType:'all', count:20};
+let curQs=[], userAns={}, submitted=false, timerSec=0, timerInterval;
+const NUMS=['①','②','③','④'];
+const CHIP_COLOR = {"\uc9c0\ub9ac": "#0d6b5e", "\uc5ed\uc0ac": "#881337", "\uc77c\ubc18\uc0ac\ud68c": "#1d4ed8", "\uacbd\uc81c": "#166534", "\uc815\uce58": "#6d28d9", "\ubb38\ud654": "#92400e"};
+
+// ════════════════════════════════════════════════════════════
+//  초기화
+// ════════════════════════════════════════════════════════════
+window.onload = () => {
+  renderPubs();
+  renderUnits();
+};
+
+function renderPubs(){
+  document.getElementById('pub-grid').innerHTML = PUBLISHERS.map(p=>`
+    <button class="pub-btn${p.id===state.pub?' active':''}" onclick="selectPub('${p.id}',this)">
+      <span class="pub-icon">${p.icon}</span>
+      <span class="pub-name">${p.name}</span>
+      <span class="pub-author">${p.author}</span>
+    </button>`).join('');
+}
+
+function selectPub(id, btn){
+  state.pub = id;
+  state.units.clear();
+  document.querySelectorAll('.pub-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderUnits();
+}
+
+function sel(key, val, btn){
+  state[key] = val;
+  if(key==='grade'||key==='sem'){
+    state.units.clear();
+    const rowId = key==='grade'?'grade-row':'sem-row';
+    document.getElementById(rowId).querySelectorAll('.sel-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderUnits();
+  } else {
+    btn.parentElement.querySelectorAll('.sel-btn,.cnt-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+}
+
+function renderUnits(){
+  const units = (CURRICULUM[state.pub]?.[state.grade]?.[state.sem]) || [];
+  state.units.clear();
+  document.getElementById('unit-wrap').innerHTML = units.length ? units.map(u=>`
+    <button class="unit-btn" data-id="${u.id}" onclick="toggleUnit('${u.id}',this)">
+      <span class="u-no">${u.exam==='mid'?'[중간]':'[기말]'} · ${u.topic}</span>
+      <span class="u-name">${u.name}</span>
+    </button>`).join('') : '<div class="empty-msg">해당 단원 정보가 없습니다</div>';
+  document.getElementById('sel-hint').textContent='';
+}
+
+function toggleUnit(id, btn){
+  if(state.units.has(id)){state.units.delete(id);btn.classList.remove('active');}
+  else{state.units.add(id);btn.classList.add('active');}
+  const n = state.units.size;
+  document.getElementById('sel-hint').textContent = n>0 ? `${n}개 단원 선택됨` : '';
+}
+
+// ════════════════════════════════════════════════════════════
+//  퀴즈 시작
+// ════════════════════════════════════════════════════════════
+function startQuiz(){
+  if(state.units.size===0){alert('단원을 하나 이상 선택해 주세요.');return;}
+  const pub = PUBLISHERS.find(p=>p.id===state.pub);
+  const units = CURRICULUM[state.pub][state.grade][state.sem];
+
+  // 선택 단원 문제 수집
+  let pool = [];
+  state.units.forEach(uid=>{
+    const p = getPoolForUnit(uid);
+    pool = [...pool, ...p.map(q=>({...q, unitId:uid}))];
+  });
+
+  // 중복 제거 (같은 question 텍스트)
+  const seen = new Set();
+  pool = pool.filter(q=>{ const k=q.q; if(seen.has(k))return false; seen.add(k); return true; });
+
+  // 시험 유형 필터 (단원 exam 기반)
+  if(state.examType !== 'all'){
+    const unitExamMap = {};
+    units.forEach(u=>unitExamMap[u.id]=u.exam);
+    pool = pool.filter(q=>{
+      const ex = unitExamMap[q.unitId];
+      if(state.examType==='mid') return ex==='mid';
+      if(state.examType==='final') return ex==='final';
+      return true;
+    });
+    if(pool.length < 5){
+      // fallback: 전체 사용
+      pool = [];
+      state.units.forEach(uid=>{pool=[...pool,...getPoolForUnit(uid).map(q=>({...q,unitId:uid}))];});
+      const seen2=new Set();
+      pool=pool.filter(q=>{const k=q.q;if(seen2.has(k))return false;seen2.add(k);return true;});
+    }
+  }
+
+  if(pool.length===0){alert('해당 단원·유형의 문제 데이터가 없습니다.');return;}
+
+  // 랜덤 추출
+  const shuffled = [...pool].sort(()=>Math.random()-.5);
+  curQs = shuffled.slice(0, Math.min(state.count, shuffled.length)).map((q,i)=>({
+    ...q, index:i+1, choices:[...q.choices].sort(()=>Math.random()-.5)
+  }));
+  userAns={}; submitted=false;
+
+  const unitNames = Array.from(state.units).map(id=>{
+    const u=units.find(u=>u.id===id); return u?u.name:'';
+  }).filter(Boolean).join(' · ');
+  const gradeLabel = `중${state.grade} ${state.sem}학기`;
+  const pubColor = pub.color;
+
+  // 헤더
+  document.getElementById('hdr-pub').textContent = `${pub.name}(${pub.author})`;
+  document.getElementById('hdr-grade').textContent = gradeLabel;
+  document.getElementById('hdr-unit').textContent = unitNames;
+  // 시험지 상단
+  const label = document.getElementById('exam-pub-label');
+  label.textContent = `${pub.name} · ${gradeLabel}`;
+  label.style.background = pubColor;
+  document.getElementById('exam-main-title').textContent = `社會 單元別 試驗紙`;
+  document.getElementById('ei-pub').textContent = `${pub.name}(${pub.author})`;
+  document.getElementById('ei-grade').textContent = gradeLabel;
+  document.getElementById('ei-count').textContent = curQs.length + '문항';
+  document.getElementById('ei-score').textContent = `각 ${Math.floor(100/curQs.length)}점`;
+
+  renderQs();
+  document.getElementById('hero').style.display='none';
+  document.getElementById('quiz-page').style.display='block';
+  window.scrollTo(0,0);
+  startTimer();
+}
+
+function renderQs(){
+  const container = document.getElementById('q-container');
+  const groups={};
+  const typeOrder=['한자의 짜임','단어의 짜임','단문 해석','사자성어','명심보감·논어','허사','한시'];
+  curQs.forEach(q=>{const t=q.type||'기타';if(!groups[t])groups[t]=[];groups[t].push(q);});
+  const icons={'한자의 짜임':'🔡','단어의 짜임':'🔤','단문 해석':'📜','사자성어':'🀄','명심보감·논어':'📖','허사':'✨','한시':'🎋','기타':'📝'};
+  const bgColors={'한자의 짜임':'rgba(78,91,166,.07)','단어의 짜임':'rgba(78,91,166,.07)','단문 해석':'rgba(22,101,52,.07)','사자성어':'rgba(146,64,14,.07)','명심보감·논어':'rgba(29,78,216,.07)','허사':'rgba(109,40,217,.07)','한시':'rgba(13,107,94,.07)','기타':'rgba(0,0,0,.04)'};
+
+  let html='';
+  const orderedTypes=[...typeOrder,...Object.keys(groups).filter(t=>!typeOrder.includes(t))];
+  orderedTypes.forEach(t=>{
+    if(!groups[t]||!groups[t].length)return;
+    const qs=groups[t];
+    html+=`
+      <div class="sec-hdr" style="background:${bgColors[t]||'rgba(0,0,0,.04)'}">
+        <span class="sec-icon">${icons[t]||'📝'}</span>
+        <span class="sec-title-text">${t}</span>
+        <span class="sec-nums">${qs.map(q=>q.index+'번').join(' · ')}</span>
+      </div>
+      <div class="q-grid">${qs.map(renderCard).join('')}</div>`;
+  });
+  container.innerHTML = html||'<div class="empty-msg">문제를 불러오지 못했습니다</div>';
+}
+
+function renderCard(q){
+  const color = CHIP_COLOR[q.type]||'#334155';
+  const hasP = q.passage && q.passage.length>0;
+  return `
+    <div class="q-card" id="qcard-${q.index}">
+      <div class="q-num-badge">${q.index}</div>
+      <div class="q-body">
+        <span class="type-chip" style="background:${color}">${q.type}</span>
+        ${hasP?`<div class="q-passage${q.passage.length>22?' sm':''}">${q.passage}</div>`:''}
+        ${q.source?`<div class="q-source">출전: ${q.source}</div>`:''}
+        <div class="q-text">${q.q}</div>
+        <div class="choices" id="ch-${q.index}">
+          ${q.choices.map((c,ci)=>`
+            <div class="choice" id="ci-${q.index}-${ci}" onclick="pick(${q.index},${ci})">
+              <span class="choice-n">${NUMS[ci]}</span><span>${c}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="ans-mark" id="mk-${q.index}"></div>
+    </div>`;
+}
+
+function pick(qi, ci){
+  if(submitted)return;
+  userAns[qi]=ci;
+  document.querySelectorAll(`#ch-${qi} .choice`).forEach((c,i)=>c.classList.toggle('sel',i===ci));
+  document.getElementById('prog').style.width=(Object.keys(userAns).length/curQs.length*100)+'%';
+}
+
+function startTimer(){
+  timerSec=0; clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    timerSec++;
+    const m=String(Math.floor(timerSec/60)).padStart(2,'0');
+    const s=String(timerSec%60).padStart(2,'0');
+    document.getElementById('timer').textContent=`${m}:${s}`;
+  },1000);
+}
+
+function submitQuiz(){
+  const ans=Object.keys(userAns).length;
+  if(!submitted&&ans<curQs.length)
+    if(!confirm(`${curQs.length-ans}문항이 미응답입니다. 채점할까요?`))return;
+  submitted=true; clearInterval(timerInterval);
+
+  let correct=0;
+  curQs.forEach(q=>{
+    const card=document.getElementById(`qcard-${q.index}`);
+    const cIdx=q.choices.indexOf(q.answer);
+    const uIdx=userAns[q.index];
+    card.querySelectorAll('.choice').forEach((c,i)=>{
+      c.classList.remove('sel');
+      if(i===cIdx)c.classList.add('ok');
+      else if(i===uIdx&&uIdx!==cIdx)c.classList.add('ng');
+    });
+    const mk=document.getElementById(`mk-${q.index}`);
+    if(uIdx===cIdx){correct++;card.classList.add('gc');mk.textContent='✓';mk.style.color='var(--green)';}
+    else{card.classList.add('gw');mk.textContent='✗';mk.style.color='var(--red)';}
+  });
+
+  const total=curQs.length, wrong=ans-correct, unanswered=total-ans;
+  const score=Math.round(correct/total*100);
+  document.getElementById('r-score').innerHTML=`${score}<span>점</span>`;
+  document.getElementById('s-co').textContent=correct;
+  document.getElementById('s-wr').textContent=wrong;
+  document.getElementById('s-un').textContent=unanswered;
+
+  let emoji,grade,desc;
+  if(score>=90){emoji='🏆';grade='최우수! 완벽에 가까운 실력!';desc='한문을 자유롭게 읽을 수 있는 수준입니다.';}
+  else if(score>=80){emoji='🥇';grade='우수! 핵심을 잘 이해했어요!';desc='오답 문제를 한 번 더 확인하면 완벽해요.';}
+  else if(score>=70){emoji='🎯';grade='양호! 조금만 더 노력하세요!';desc='틀린 문제의 출전을 소리 내어 읽어 보세요.';}
+  else if(score>=60){emoji='📚';grade='보통, 기초부터 다시 다져요!';desc='교과서 원문을 꼼꼼히 반복해 보세요.';}
+  else{emoji='💪';grade='분발이 필요해요!';desc='한자의 짜임과 기초 단문부터 시작해 봐요.';}
+
+  document.getElementById('r-emoji').textContent=emoji;
+  document.getElementById('r-grade').textContent=grade;
+  document.getElementById('r-desc').textContent=desc;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function reviewAns(){document.getElementById('overlay').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'});}
+function retryQuiz(){document.getElementById('overlay').classList.remove('show');startQuiz();}
+function goBack(){
+  clearInterval(timerInterval);
+  document.getElementById('quiz-page').style.display='none';
+  document.getElementById('hero').style.display='flex';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중학교 영어 교재별 단원별 시험지</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1209; --rice:#fdf8ef; --gold:#b8860b; --gold-lt:#e8c060;
+  --red:#8b1a2a; --teal:#0d6b5e; --blue:#1d4ed8; --purple:#5b21b6;
+  --gray:#64748b; --green:#166534; --white:#fff;
+  --shadow: 0 4px 24px rgba(0,0,0,.09);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--rice);color:var(--ink);min-height:100vh;}
+
+/* ══════════ HERO ══════════ */
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;padding:48px 20px 60px;
+  background:linear-gradient(160deg,#eff6ff 0%,#dbeafe 100%);
+  position:relative;overflow:hidden;
+}
+#hero::before{
+  content:"漢 文";
+  position:fixed;bottom:-60px;right:-40px;
+  font-family:'Noto Serif KR',serif;font-size:clamp(160px,22vw,320px);
+  font-weight:900;color:rgba(0,0,0,.055);pointer-events:none;
+  letter-spacing:.1em;z-index:0;
+}
+.hero-inner{position:relative;z-index:1;width:100%;max-width:680px;}
+
+.hero-top{text-align:center;margin-bottom:40px;}
+.site-tag{
+  display:inline-block;background:var(--red);color:#fff;
+  font-size:11px;font-weight:700;letter-spacing:.18em;
+  padding:5px 16px;border-radius:2px;margin-bottom:18px;
+}
+.hero-title{
+  font-family:'Noto Serif KR',serif;
+  font-size:clamp(30px,6vw,58px);font-weight:900;line-height:1.15;
+}
+.hero-title em{color:var(--gold);font-style:normal;}
+.hero-sub{font-size:14px;color:var(--gray);font-weight:300;margin-top:8px;letter-spacing:.05em;}
+
+/* 선택 카드 */
+.card{
+  background:var(--white);border-radius:14px;padding:28px 28px 24px;
+  box-shadow:var(--shadow);border:1px solid rgba(0,0,0,.06);
+  margin-bottom:16px;position:relative;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:14px 14px 0 0;
+}
+.card.pub::before{background:linear-gradient(90deg,var(--gold),#d4a832);}
+.card.grp::before{background:linear-gradient(90deg,var(--teal),#1a9b8c);}
+.card.unit::before{background:linear-gradient(90deg,var(--blue),#3b82f6);}
+.card.cnt::before{background:linear(90deg,#334155,#64748b);}
+
+.step-label{
+  font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--gray);
+  margin-bottom:12px;display:flex;align-items:center;gap:6px;
+}
+.step-num{
+  width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:#fff;
+}
+.step-label.s1 .step-num{background:var(--gold);}
+.step-label.s2 .step-num{background:var(--teal);}
+.step-label.s3 .step-num{background:var(--blue);}
+.step-label.s4 .step-num{background:var(--red);}
+.step-label.s5 .step-num{background:#334155;}
+
+/* 출판사 선택 */
+.pub-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+@media(max-width:560px){.pub-grid{grid-template-columns:repeat(3,1fr);}}
+.pub-btn{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:12px 6px;border:2px solid #e2d8c8;border-radius:10px;
+  background:white;cursor:pointer;transition:all .17s;
+}
+.pub-btn .pub-icon{font-size:22px;}
+.pub-btn .pub-name{font-size:11px;font-weight:700;color:var(--gray);letter-spacing:.04em;}
+.pub-btn .pub-author{font-size:10px;color:#aaa;}
+.pub-btn:hover{border-color:#1d4ed8;transform:translateY(-2px);box-shadow:0 4px 12px rgba(184,134,11,.18);}
+.pub-btn.active{border-color:#1d4ed8;background:#eff6ff;box-shadow:0 4px 16px rgba(184,134,11,.25);}
+.pub-btn.active .pub-name{color:#1d4ed8;}
+
+/* 학년·학기 */
+.row-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.sel-btn{
+  flex:1;min-width:60px;padding:10px 12px;
+  border:2px solid #e2d8c8;border-radius:8px;background:white;
+  font-family:'Noto Serif KR',serif;font-size:14px;font-weight:600;
+  color:var(--gray);cursor:pointer;transition:all .17s;text-align:center;
+}
+.sel-btn:hover{border-color:var(--teal);color:var(--teal);background:#f0fafa;}
+.sel-btn.active{border-color:var(--teal);background:var(--teal);color:white;box-shadow:0 3px 10px rgba(13,107,94,.3);}
+
+/* 단원 그리드 */
+.unit-wrap{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+@media(max-width:400px){.unit-wrap{grid-template-columns:1fr;}}
+.unit-btn{
+  padding:11px 14px;border:2px solid #e2d8c8;border-radius:9px;
+  background:white;cursor:pointer;transition:all .17s;text-align:left;
+}
+.unit-btn:hover{border-color:var(--blue);background:#eff6ff;transform:translateY(-1px);}
+.unit-btn.active{border-color:var(--blue);background:var(--blue);color:white;}
+.unit-btn .u-no{font-size:10px;font-weight:700;opacity:.65;letter-spacing:.08em;display:block;margin-bottom:3px;}
+.unit-btn .u-name{font-size:13px;font-weight:600;line-height:1.3;}
+.unit-btn .u-topic{font-size:11px;opacity:.7;line-height:1.3;margin-top:2px;}
+.unit-btn.active .u-topic{opacity:.85;}
+
+/* 문항수 */
+.cnt-row{display:flex;gap:8px;}
+.cnt-btn{
+  flex:1;padding:10px;border:2px solid #e2d8c8;border-radius:8px;background:white;
+  font-family:'Noto Serif KR',serif;font-size:14px;font-weight:700;
+  color:var(--gray);cursor:pointer;transition:all .17s;text-align:center;
+}
+.cnt-btn:hover{border-color:var(--red);color:var(--red);}
+.cnt-btn.active{border-color:var(--red);background:var(--red);color:white;box-shadow:0 3px 10px rgba(139,26,42,.3);}
+
+.start-btn{
+  width:100%;padding:16px;margin-top:16px;
+  background:linear-gradient(135deg,var(--ink) 0%,#2c3e50 100%);
+  color:white;border:none;border-radius:10px;
+  font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;
+  letter-spacing:.12em;cursor:pointer;transition:all .2s;
+  position:relative;box-shadow:0 4px 20px rgba(0,0,0,.25);
+}
+.start-btn::after{content:'→';position:absolute;right:22px;top:50%;transform:translateY(-50%);transition:right .2s;}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.3);}
+.start-btn:hover::after{right:16px;}
+.start-btn:disabled{background:#aaa;box-shadow:none;cursor:not-allowed;transform:none;}
+
+/* ══════════ QUIZ ══════════ */
+#quiz-page{display:none;min-height:100vh;background:var(--rice);}
+.qhdr{
+  background:var(--ink);color:white;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 20px rgba(0,0,0,.35);
+}
+.qhdr-inner{
+  max-width:980px;margin:0 auto;padding:13px 22px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.qhdr-title{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;}
+.qhdr-title span{color:var(--gold-lt);}
+.qhdr-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.mbadge{background:rgba(255,255,255,.12);padding:4px 11px;border-radius:20px;font-size:12px;}
+.mbadge.pub-tag{background:rgba(232,192,96,.2);color:var(--gold-lt);font-weight:700;}
+.timer{
+  font-family:monospace;font-size:13px;color:#ffd;letter-spacing:.1em;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  padding:4px 13px;border-radius:20px;
+}
+.back-btn{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:white;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;
+}
+.back-btn:hover{background:rgba(255,255,255,.2);}
+.prog-wrap{background:rgba(255,255,255,.1);height:4px;}
+.prog-fill{height:100%;background:var(--gold-lt);transition:width .3s;}
+
+/* 시험지 */
+.exam-sheet{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
+.exam-header-row{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  border-bottom:2.5px solid var(--ink);padding-bottom:14px;margin-bottom:28px;flex-wrap:wrap;gap:12px;
+}
+.exam-title-block .exam-pub-label{
+  font-size:11px;font-weight:700;letter-spacing:.12em;
+  padding:3px 10px;border-radius:10px;color:white;display:inline-block;margin-bottom:6px;
+}
+.exam-title-block .exam-main-title{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;}
+.exam-info-row{display:flex;gap:22px;font-size:12px;color:var(--gray);}
+.exam-info-row strong{color:var(--ink);}
+
+/* 섹션 */
+.sec-hdr{
+  display:flex;align-items:center;gap:10px;padding:9px 14px;
+  margin:28px 0 12px;border-radius:6px;
+}
+.sec-icon{font-size:18px;}
+.sec-title-text{font-family:'Noto Serif KR',serif;font-size:14px;font-weight:700;}
+.sec-nums{font-size:11px;color:var(--gray);margin-left:auto;}
+
+/* 문제 그리드 */
+.q-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+@media(max-width:600px){.q-grid{grid-template-columns:1fr;}}
+
+/* 문제 카드 */
+.q-card{
+  background:white;border:1px solid #e8e0d0;border-radius:10px;
+  padding:15px 17px;display:flex;align-items:flex-start;gap:12px;
+  position:relative;transition:box-shadow .15s;
+}
+.q-card:hover{box-shadow:0 3px 14px rgba(0,0,0,.08);}
+.q-card.gc{border:2px solid var(--green);}
+.q-card.gw{border:2px solid var(--red);}
+.q-num-badge{
+  font-family:'Noto Serif KR',serif;font-size:11px;font-weight:700;
+  color:white;background:var(--ink);width:25px;height:25px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.q-body{flex:1;}
+.type-chip{
+  display:inline-block;font-size:10px;font-weight:700;letter-spacing:.06em;
+  padding:2px 8px;border-radius:10px;margin-bottom:7px;color:white;
+}
+.q-passage{
+  font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;
+  color:var(--ink);line-height:1.6;margin-bottom:3px;letter-spacing:.04em;
+}
+.q-passage.sm{font-size:14px;}
+.q-source{font-size:10px;color:#aaa;margin-bottom:6px;font-style:italic;}
+.q-text{font-size:12px;color:var(--gray);margin-bottom:9px;}
+.choices{display:flex;flex-direction:column;gap:4px;}
+.choice{
+  display:flex;align-items:center;gap:7px;padding:6px 9px;
+  border:1px solid #ece7df;border-radius:6px;cursor:pointer;
+  transition:all .12s;font-size:13px;
+}
+.choice:hover{background:#fffbf0;border-color:#1d4ed8;}
+.choice.sel{background:var(--gold);border-color:#1d4ed8;color:white;}
+.choice.ok{background:var(--green);border-color:var(--green);color:white;}
+.choice.ng{background:var(--red);border-color:var(--red);color:white;text-decoration:line-through;opacity:.7;}
+.choice-n{font-weight:700;font-size:11px;opacity:.7;min-width:13px;}
+.ans-mark{position:absolute;top:9px;right:11px;font-size:14px;display:none;}
+.q-card.gc .ans-mark,.q-card.gw .ans-mark{display:block;}
+
+/* 제출 */
+.submit-wrap{margin-top:36px;text-align:center;}
+.submit-btn{
+  padding:15px 48px;background:linear-gradient(135deg,var(--red),#6b1220);
+  color:white;border:none;border-radius:9px;
+  font-family:'Noto Serif KR',serif;font-size:16px;font-weight:700;
+  letter-spacing:.1em;cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 16px rgba(139,26,42,.35);
+}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(139,26,42,.4);}
+
+/* 결과 모달 */
+.overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);
+  z-index:200;align-items:center;justify-content:center;padding:20px;
+}
+.overlay.show{display:flex;}
+.result-box{
+  background:white;border-radius:16px;padding:44px 32px;
+  max-width:400px;width:100%;text-align:center;
+  animation:pop .3s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.r-emoji{font-size:52px;margin-bottom:8px;}
+.r-score{font-family:'Noto Serif KR',serif;font-size:52px;font-weight:900;line-height:1;}
+.r-score span{font-size:20px;color:var(--gray);font-weight:400;}
+.r-grade{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:700;margin:10px 0 4px;}
+.r-desc{font-size:12px;color:var(--gray);margin-bottom:22px;}
+.r-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0;padding:14px 0;border-top:1px solid #eee;border-bottom:1px solid #eee;}
+.r-stat{text-align:center;}
+.r-stat-n{font-family:'Noto Serif KR',serif;font-size:22px;font-weight:700;}
+.r-stat-l{font-size:10px;color:var(--gray);margin-top:2px;}
+.co .r-stat-n{color:var(--green);}
+.wr .r-stat-n{color:var(--red);}
+.r-btns{display:flex;gap:10px;}
+.r-btn{flex:1;padding:11px;border-radius:8px;font-family:'Noto Serif KR',serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;border:2px solid;}
+.r-btn.pri{background:var(--ink);color:white;border-color:var(--ink);}
+.r-btn.sec{background:white;color:var(--ink);border-color:#ddd;}
+.r-btn:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,.15);}
+
+/* 유틸 */
+.empty-msg{text-align:center;padding:36px;color:var(--gray);font-family:'Noto Serif KR',serif;}
+.sel-hint{font-size:11px;color:var(--gray);margin-top:6px;text-align:right;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section id="hero">
+<div class="hero-inner">
+
+  <div class="hero-top">
+    <div class="site-tag">2022 개정 교육과정</div>
+    <h1 class="hero-title">중학교 <em>영어</em><br>교재별 단원 시험지</h1>
+    <p class="hero-sub">교재 · 학년 · 학기 · 단원을 선택하면 영어 문제를 랜덤으로 출제합니다</p>
+  </div>
+
+  <!-- STEP 1: 출판사 -->
+  <div class="card pub">
+    <div class="step-label s1"><span class="step-num">1</span> 교재(출판사) 선택</div>
+    <div class="pub-grid" id="pub-grid"></div>
+  </div>
+
+  <!-- STEP 2: 학년 + 학기 -->
+  <div class="card grp">
+    <div class="step-label s2"><span class="step-num">2</span> 학년 · 학기 선택</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:140px;">
+        <div style="font-size:11px;color:var(--gray);margin-bottom:7px;font-weight:600;">학년</div>
+        <div class="row-btns" id="grade-row">
+          <button class="sel-btn active" onclick="sel('grade',1,this)">중 1</button>
+          <button class="sel-btn" onclick="sel('grade',2,this)">중 2</button>
+          <button class="sel-btn" onclick="sel('grade',3,this)">중 3</button>
+        </div>
+      </div>
+      <div style="flex:1;min-width:140px;">
+        <div style="font-size:11px;color:var(--gray);margin-bottom:7px;font-weight:600;">학기</div>
+        <div class="row-btns" id="sem-row">
+          <button class="sel-btn active" onclick="sel('sem',1,this)">1 학기</button>
+          <button class="sel-btn" onclick="sel('sem',2,this)">2 학기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: 단원 -->
+  <div class="card unit">
+    <div class="step-label s3"><span class="step-num">3</span> 단원 선택 <span style="font-weight:400;font-size:11px;margin-left:4px;">(복수 선택 가능)</span></div>
+    <div class="unit-wrap" id="unit-wrap"><div class="empty-msg">교재와 학년·학기를 먼저 선택하세요</div></div>
+    <p class="sel-hint" id="sel-hint"></p>
+  </div>
+
+  <!-- STEP 4: 시험 유형 -->
+  <div class="card" style="border-top:3px solid var(--red);">
+    <div class="step-label s4"><span class="step-num">4</span> 시험 종류</div>
+    <div class="row-btns" id="exam-type-row">
+      <button class="sel-btn active" onclick="sel('examType','all',this)">전체 유형</button>
+      <button class="sel-btn" onclick="sel('examType','mid',this)">중간고사</button>
+      <button class="sel-btn" onclick="sel('examType','final',this)">기말고사</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: 문항수 -->
+  <div class="card" style="border-top:3px solid #334155;">
+    <div class="step-label s5"><span class="step-num">5</span> 문항 수</div>
+    <div class="cnt-row">
+      <button class="cnt-btn" onclick="sel('count',10,this)">10문항</button>
+      <button class="cnt-btn active" onclick="sel('count',20,this)">20문항</button>
+      <button class="cnt-btn" onclick="sel('count',30,this)">30문항</button>
+    </div>
+  </div>
+
+  <button class="start-btn" id="start-btn" onclick="startQuiz()">시험 시작하기</button>
+</div>
+</section>
+
+<!-- ══════════════ QUIZ PAGE ══════════════ -->
+<div id="quiz-page">
+  <div class="qhdr">
+    <div class="qhdr-inner">
+      <div class="qhdr-title">중학교 <span>영어</span> 단원별 시험</div>
+      <div class="qhdr-meta">
+        <span class="mbadge pub-tag" id="hdr-pub"></span>
+        <span class="mbadge" id="hdr-grade"></span>
+        <span class="mbadge" id="hdr-unit"></span>
+        <span class="timer" id="timer">00:00</span>
+        <button class="back-btn" onclick="goBack()">← 처음으로</button>
+      </div>
+    </div>
+    <div class="prog-wrap"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+  </div>
+
+  <div class="exam-sheet">
+    <div class="exam-header-row">
+      <div class="exam-title-block">
+        <span class="exam-pub-label" id="exam-pub-label">미래엔</span>
+        <div class="exam-main-title" id="exam-main-title">English Unit Test</div>
+      </div>
+      <div class="exam-info-row">
+        <div>교재: <strong id="ei-pub"></strong></div>
+        <div>학년: <strong id="ei-grade"></strong></div>
+        <div>문항: <strong id="ei-count"></strong></div>
+        <div>배점: <strong id="ei-score"></strong></div>
+      </div>
+    </div>
+    <div id="q-container"></div>
+    <div class="submit-wrap">
+      <button class="submit-btn" onclick="submitQuiz()">✓ 채점하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 결과 모달 -->
+<div class="overlay" id="overlay">
+  <div class="result-box">
+    <div class="r-emoji" id="r-emoji">🎉</div>
+    <div class="r-score" id="r-score">80<span>점</span></div>
+    <div class="r-grade" id="r-grade">잘했어요!</div>
+    <div class="r-desc" id="r-desc"></div>
+    <div class="r-stats">
+      <div class="r-stat co"><div class="r-stat-n" id="s-co">0</div><div class="r-stat-l">정답</div></div>
+      <div class="r-stat wr"><div class="r-stat-n" id="s-wr">0</div><div class="r-stat-l">오답</div></div>
+      <div class="r-stat"><div class="r-stat-n" id="s-un">0</div><div class="r-stat-l">미응답</div></div>
+    </div>
+    <div class="r-btns">
+      <button class="r-btn sec" onclick="reviewAns()">오답 확인</button>
+      <button class="r-btn pri" onclick="retryQuiz()">다시 풀기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  출판사 정의
+// ════════════════════════════════════════════════════════════
+const PUBLISHERS = [{"id": "ybm", "name": "YBM", "author": "박준언", "icon": "📘", "color": "#1d4ed8"}, {"id": "chun", "name": "천재교육", "author": "이재영", "icon": "📗", "color": "#166534"}, {"id": "vis", "name": "비상교육", "author": "김진완", "icon": "📙", "color": "#92400e"}, {"id": "dong", "name": "동아출판", "author": "이병민", "icon": "📕", "color": "#881337"}, {"id": "mir", "name": "미래엔", "author": "최연희", "icon": "📓", "color": "#4c1d95"}];
+
+
+const CURRICULUM={ybm:{1:{1:[
+  {id:'e-y-1-1-1',name:'Unit 1: Hello!',topic:'자기소개·인사표현·be동사',exam:'mid'},
+  {id:'e-y-1-1-2',name:'Unit 2: My Family',topic:'가족·소유격·일반동사',exam:'mid'},
+  {id:'e-y-1-1-3',name:'Unit 3: School Life',topic:'학교생활·현재시제',exam:'mid'},
+  {id:'e-y-1-1-4',name:'Unit 4: Free Time',topic:'여가·현재진행형',exam:'final'},
+  {id:'e-y-1-1-5',name:'Unit 5: Food',topic:'음식·조동사 can·may',exam:'final'},
+  {id:'e-y-1-1-6',name:'Unit 6: Seasons',topic:'계절·There is·are',exam:'final'},
+],2:[
+  {id:'e-y-1-2-1',name:'Unit 7: Travel',topic:'여행·과거시제',exam:'mid'},
+  {id:'e-y-1-2-2',name:'Unit 8: Health',topic:'건강·비교급·최상급',exam:'mid'},
+  {id:'e-y-1-2-3',name:'Unit 9: Nature',topic:'자연·미래시제 will',exam:'final'},
+  {id:'e-y-1-2-4',name:'Unit 10: People',topic:'인물·관계대명사 기초',exam:'final'},
+]},2:{1:[
+  {id:'e-y-2-1-1',name:'Unit 1: Interests',topic:'취미·동명사',exam:'mid'},
+  {id:'e-y-2-1-2',name:'Unit 2: Community',topic:'지역사회·to부정사',exam:'mid'},
+  {id:'e-y-2-1-3',name:'Unit 3: Culture',topic:'문화·현재완료',exam:'final'},
+  {id:'e-y-2-1-4',name:'Unit 4: Technology',topic:'기술·수동태 기초',exam:'final'},
+],2:[
+  {id:'e-y-2-2-1',name:'Unit 5: Environment',topic:'환경·접속사',exam:'mid'},
+  {id:'e-y-2-2-2',name:'Unit 6: Art',topic:'예술·관계대명사 심화',exam:'mid'},
+  {id:'e-y-2-2-3',name:'Unit 7: Future',topic:'미래 직업·가정법 기초',exam:'final'},
+  {id:'e-y-2-2-4',name:'Unit 8: Stories',topic:'이야기·간접화법',exam:'final'},
+]},3:{1:[
+  {id:'e-y-3-1-1',name:'Unit 1: Identity',topic:'정체성·분사',exam:'mid'},
+  {id:'e-y-3-1-2',name:'Unit 2: Society',topic:'사회·관계부사',exam:'mid'},
+  {id:'e-y-3-1-3',name:'Unit 3: Science',topic:'과학·가정법',exam:'final'},
+  {id:'e-y-3-1-4',name:'Unit 4: Media',topic:'미디어·복잡 문장',exam:'final'},
+],2:[
+  {id:'e-y-3-2-1',name:'Unit 5: Global Issues',topic:'세계 문제·논설 독해',exam:'mid'},
+  {id:'e-y-3-2-2',name:'Unit 6: Creativity',topic:'창의성·복합 문법',exam:'mid'},
+  {id:'e-y-3-2-3',name:'Unit 7: Challenge',topic:'도전·심화 독해',exam:'final'},
+  {id:'e-y-3-2-4',name:'Unit 8: Dreams',topic:'꿈·심화 작문',exam:'final'},
+]}},chun:{1:{1:[
+  {id:'ec-1-1-1',name:'Lesson 1: Nice to Meet You',topic:'만남·인사·be동사',exam:'mid'},
+  {id:'ec-1-1-2',name:'Lesson 2: My Day',topic:'일상·일반동사',exam:'mid'},
+  {id:'ec-1-1-3',name:'Lesson 3: My Favorite',topic:'좋아하는 것·형용사',exam:'final'},
+  {id:'ec-1-1-4',name:'Lesson 4: Let's Eat',topic:'음식·can',exam:'final'},
+],2:[
+  {id:'ec-1-2-1',name:'Lesson 5: Last Weekend',topic:'지난 주말·과거시제',exam:'mid'},
+  {id:'ec-1-2-2',name:'Lesson 6: My Body',topic:'신체·건강',exam:'mid'},
+  {id:'ec-1-2-3',name:'Lesson 7: Around the World',topic:'세계·비교급',exam:'final'},
+  {id:'ec-1-2-4',name:'Lesson 8: My Future',topic:'미래 계획·will',exam:'final'},
+]},2:{1:[
+  {id:'ec-2-1-1',name:'Lesson 1: Hobbies',topic:'취미·동명사',exam:'mid'},
+  {id:'ec-2-1-2',name:'Lesson 2: Going Green',topic:'환경·to부정사',exam:'mid'},
+  {id:'ec-2-1-3',name:'Lesson 3: Amazing Trips',topic:'여행·현재완료',exam:'final'},
+  {id:'ec-2-1-4',name:'Lesson 4: Science World',topic:'과학·수동태',exam:'final'},
+],2:[
+  {id:'ec-2-2-1',name:'Lesson 5: Great Stories',topic:'이야기·관계대명사',exam:'mid'},
+  {id:'ec-2-2-2',name:'Lesson 6: Culture Hub',topic:'문화·접속사',exam:'mid'},
+  {id:'ec-2-2-3',name:'Lesson 7: Work and Play',topic:'직업·분사',exam:'final'},
+  {id:'ec-2-2-4',name:'Lesson 8: Dream Big',topic:'꿈·복합 문법',exam:'final'},
+]},3:{1:[
+  {id:'ec-3-1-1',name:'Lesson 1: Who Am I?',topic:'정체성·복잡 문장',exam:'mid'},
+  {id:'ec-3-1-2',name:'Lesson 2: Our Society',topic:'사회 문제·가정법',exam:'mid'},
+  {id:'ec-3-1-3',name:'Lesson 3: Tech Life',topic:'기술·관계부사',exam:'final'},
+  {id:'ec-3-1-4',name:'Lesson 4: Be Creative',topic:'창의성·심화 문법',exam:'final'},
+],2:[
+  {id:'ec-3-2-1',name:'Lesson 5: Go Global',topic:'세계화·논설 독해',exam:'mid'},
+  {id:'ec-3-2-2',name:'Lesson 6: For the Earth',topic:'환경·심화 독해',exam:'mid'},
+  {id:'ec-3-2-3',name:'Lesson 7: New Challenges',topic:'도전·심화 작문',exam:'final'},
+  {id:'ec-3-2-4',name:'Lesson 8: Future Plans',topic:'미래·종합',exam:'final'},
+]}},vis:{1:{1:[
+  {id:'ev-1-1-1',name:'Ch.1 New Start',topic:'학교생활·be동사',exam:'mid'},
+  {id:'ev-1-1-2',name:'Ch.2 Daily Life',topic:'일상·일반동사',exam:'mid'},
+  {id:'ev-1-1-3',name:'Ch.3 Favorites',topic:'취향·형용사·부사',exam:'final'},
+  {id:'ev-1-1-4',name:'Ch.4 Around Me',topic:'주변·can·조동사',exam:'final'},
+],2:[
+  {id:'ev-1-2-1',name:'Ch.5 Past Days',topic:'과거·과거시제',exam:'mid'},
+  {id:'ev-1-2-2',name:'Ch.6 Stay Healthy',topic:'건강·비교',exam:'mid'},
+  {id:'ev-1-2-3',name:'Ch.7 The World',topic:'세계·미래',exam:'final'},
+  {id:'ev-1-2-4',name:'Ch.8 My Dream',topic:'꿈·진로',exam:'final'},
+]},2:{1:[
+  {id:'ev-2-1-1',name:'Ch.1 My Interests',topic:'취미·동명사',exam:'mid'},
+  {id:'ev-2-1-2',name:'Ch.2 Together',topic:'공동체·to부정사',exam:'mid'},
+  {id:'ev-2-1-3',name:'Ch.3 Experiences',topic:'경험·현재완료',exam:'final'},
+  {id:'ev-2-1-4',name:'Ch.4 How Things Work',topic:'원리·수동태',exam:'final'},
+],2:[
+  {id:'ev-2-2-1',name:'Ch.5 Nature and Us',topic:'자연·환경·접속사',exam:'mid'},
+  {id:'ev-2-2-2',name:'Ch.6 Arts and Culture',topic:'예술·관계대명사',exam:'mid'},
+  {id:'ev-2-2-3',name:'Ch.7 What If?',topic:'가정법',exam:'final'},
+  {id:'ev-2-2-4',name:'Ch.8 Life Stories',topic:'이야기·분사',exam:'final'},
+]},3:{1:[
+  {id:'ev-3-1-1',name:'Ch.1 Who We Are',topic:'정체성·복합 구문',exam:'mid'},
+  {id:'ev-3-1-2',name:'Ch.2 Society Matters',topic:'사회·가정법 심화',exam:'mid'},
+  {id:'ev-3-1-3',name:'Ch.3 Science & Tech',topic:'기술·관계부사',exam:'final'},
+  {id:'ev-3-1-4',name:'Ch.4 Creative Minds',topic:'창의·복합 문법',exam:'final'},
+],2:[
+  {id:'ev-3-2-1',name:'Ch.5 Global Citizens',topic:'세계·논설',exam:'mid'},
+  {id:'ev-3-2-2',name:'Ch.6 Earth First',topic:'환경·심화',exam:'mid'},
+  {id:'ev-3-2-3',name:'Ch.7 Rise Up',topic:'도전·심화 독해',exam:'final'},
+  {id:'ev-3-2-4',name:'Ch.8 My Tomorrow',topic:'미래·종합',exam:'final'},
+]}},dong:{1:{1:[
+  {id:'ed-1-1-1',name:'Unit 1: Here I Am',topic:'자기소개·be동사',exam:'mid'},
+  {id:'ed-1-1-2',name:'Unit 2: Family Ties',topic:'가족·소유격',exam:'mid'},
+  {id:'ed-1-1-3',name:'Unit 3: School Days',topic:'학교·일반동사',exam:'final'},
+  {id:'ed-1-1-4',name:'Unit 4: Fun Activities',topic:'활동·진행형',exam:'final'},
+],2:[
+  {id:'ed-1-2-1',name:'Unit 5: Good Memories',topic:'기억·과거시제',exam:'mid'},
+  {id:'ed-1-2-2',name:'Unit 6: Healthy Life',topic:'건강·비교급',exam:'mid'},
+  {id:'ed-1-2-3',name:'Unit 7: Our Planet',topic:'지구·will',exam:'final'},
+  {id:'ed-1-2-4',name:'Unit 8: Big Dreams',topic:'꿈·be going to',exam:'final'},
+]},2:{1:[
+  {id:'ed-2-1-1',name:'Unit 1: My Passion',topic:'열정·동명사',exam:'mid'},
+  {id:'ed-2-1-2',name:'Unit 2: Giving Back',topic:'봉사·to부정사',exam:'mid'},
+  {id:'ed-2-1-3',name:'Unit 3: World Explorer',topic:'탐험·현재완료',exam:'final'},
+  {id:'ed-2-1-4',name:'Unit 4: How It Works',topic:'원리·수동태',exam:'final'},
+],2:[
+  {id:'ed-2-2-1',name:'Unit 5: Save the Earth',topic:'환경·접속사',exam:'mid'},
+  {id:'ed-2-2-2',name:'Unit 6: Art Around Us',topic:'예술·관계대명사',exam:'mid'},
+  {id:'ed-2-2-3',name:'Unit 7: Future Jobs',topic:'미래 직업·가정법',exam:'final'},
+  {id:'ed-2-2-4',name:'Unit 8: Great Stories',topic:'이야기·간접화법',exam:'final'},
+]},3:{1:[
+  {id:'ed-3-1-1',name:'Unit 1: Being Me',topic:'자아·복합 문장',exam:'mid'},
+  {id:'ed-3-1-2',name:'Unit 2: Social Issues',topic:'사회·가정법',exam:'mid'},
+  {id:'ed-3-1-3',name:'Unit 3: Innovation',topic:'혁신·관계부사',exam:'final'},
+  {id:'ed-3-1-4',name:'Unit 4: Express Yourself',topic:'표현·복합 문법',exam:'final'},
+],2:[
+  {id:'ed-3-2-1',name:'Unit 5: Global Minds',topic:'글로벌·논설',exam:'mid'},
+  {id:'ed-3-2-2',name:'Unit 6: Green Future',topic:'녹색 미래·심화',exam:'mid'},
+  {id:'ed-3-2-3',name:'Unit 7: Overcome',topic:'극복·심화 독해',exam:'final'},
+  {id:'ed-3-2-4',name:'Unit 8: Shine On',topic:'빛나다·종합',exam:'final'},
+]}},mir:{1:{1:[
+  {id:'em-1-1-1',name:'Lesson 1: Hello, Everyone!',topic:'만남·인사',exam:'mid'},
+  {id:'em-1-1-2',name:'Lesson 2: My Sweet Home',topic:'가족·집',exam:'mid'},
+  {id:'em-1-1-3',name:'Lesson 3: Let's Go to School',topic:'학교생활',exam:'final'},
+  {id:'em-1-1-4',name:'Lesson 4: What Do You Like?',topic:'좋아하는 것',exam:'final'},
+],2:[
+  {id:'em-1-2-1',name:'Lesson 5: What Did You Do?',topic:'과거 활동',exam:'mid'},
+  {id:'em-1-2-2',name:'Lesson 6: How Are You?',topic:'건강·감정',exam:'mid'},
+  {id:'em-1-2-3',name:'Lesson 7: Let's Travel',topic:'여행·계획',exam:'final'},
+  {id:'em-1-2-4',name:'Lesson 8: My Future',topic:'미래·꿈',exam:'final'},
+]},2:{1:[
+  {id:'em-2-1-1',name:'Lesson 1: Hobbies and Talents',topic:'취미·재능',exam:'mid'},
+  {id:'em-2-1-2',name:'Lesson 2: Life in the City',topic:'도시생활',exam:'mid'},
+  {id:'em-2-1-3',name:'Lesson 3: Different Cultures',topic:'문화 다양성',exam:'final'},
+  {id:'em-2-1-4',name:'Lesson 4: Technology Matters',topic:'기술',exam:'final'},
+],2:[
+  {id:'em-2-2-1',name:'Lesson 5: Our Green Earth',topic:'환경',exam:'mid'},
+  {id:'em-2-2-2',name:'Lesson 6: Art Speaks',topic:'예술',exam:'mid'},
+  {id:'em-2-2-3',name:'Lesson 7: Dream Jobs',topic:'직업',exam:'final'},
+  {id:'em-2-2-4',name:'Lesson 8: Stories to Tell',topic:'이야기',exam:'final'},
+]},3:{1:[
+  {id:'em-3-1-1',name:'Lesson 1: True Identity',topic:'정체성',exam:'mid'},
+  {id:'em-3-1-2',name:'Lesson 2: Social Concerns',topic:'사회 문제',exam:'mid'},
+  {id:'em-3-1-3',name:'Lesson 3: Future Science',topic:'미래 과학',exam:'final'},
+  {id:'em-3-1-4',name:'Lesson 4: Creative Life',topic:'창의성',exam:'final'},
+],2:[
+  {id:'em-3-2-1',name:'Lesson 5: One World',topic:'세계',exam:'mid'},
+  {id:'em-3-2-2',name:'Lesson 6: Earth Matters',topic:'환경 심화',exam:'mid'},
+  {id:'em-3-2-3',name:'Lesson 7: Dare to Dream',topic:'도전',exam:'final'},
+  {id:'em-3-2-4',name:'Lesson 8: Looking Forward',topic:'미래',exam:'final'},
+]}}}
+
+
+const SHARED={
+  '문법':[
+    {type:'문법',q:"'He ___ a student.'의 빈칸에 알맞은 be동사는?",answer:'is',choices:['is','am','are','were']},
+    {type:'문법',q:'현재진행형의 형태로 옳은 것은?',answer:'am/is/are + 동사ing',choices:['am/is/are + 동사ing','did + 동사원형','will + 동사원형','have + 과거분사']},
+    {type:'문법',q:"'I ___ to school yesterday.'에 알맞은 것은?",answer:'went',choices:['went','go','goes','going']},
+    {type:'문법',q:'비교급을 만들 때 -er을 붙이지 않는 형용사는?',answer:'beautiful',choices:['beautiful','tall','fast','small']},
+    {type:'문법',q:"'She has lived here ___ 2010.'에 알맞은 전치사는?",answer:'since',choices:['since','for','from','during']},
+    {type:'문법',q:'수동태의 형태로 옳은 것은?',answer:'be동사 + 과거분사',choices:['be동사 + 과거분사','조동사 + 동사원형','have + 과거분사','be + 동사ing']},
+    {type:'문법',q:"관계대명사 'who'가 수식하는 선행사는?",answer:'사람',choices:['사람','사물','장소','시간']},
+    {type:'문법',q:'동명사(Gerund)란?',answer:'동사원형 + -ing, 명사 역할',choices:['동사원형 + -ing, 명사 역할','동사의 과거형','be동사 + 동사ing','조동사 + 동사']},
+    {type:'문법',q:"'If I were you, I would study harder.'의 문법은?",answer:'가정법 과거',choices:['가정법 과거','단순 조건문','현재완료','수동태']},
+    {type:'문법',q:'to부정사의 명사적 용법 예시는?',answer:'To study English is fun.',choices:['To study English is fun.','She went to buy milk.','He is happy to meet you.','I have work to do.']},
+  ],
+  '어휘':[
+    {type:'어휘',q:"'environment'의 뜻은?",answer:'환경',choices:['환경','경험','실험','교육']},
+    {type:'어휘',q:"'community'의 뜻은?",answer:'지역 사회',choices:['지역 사회','통신','공동체 의식','기회']},
+    {type:'어휘',q:"'challenge'의 뜻으로 가장 적절한 것은?",answer:'도전',choices:['도전','변화','기회','위험']},
+    {type:'어휘',q:"'global'의 반의어는?",answer:'local',choices:['local','national','social','cultural']},
+    {type:'어휘',q:"'creative'의 뜻은?",answer:'창의적인',choices:['창의적인','비판적인','논리적인','체계적인']},
+  ],
+  '독해':[
+    {type:'독해',q:'글의 주제를 파악할 때 가장 먼저 봐야 할 것은?',answer:'첫 문장과 마지막 문장',choices:['첫 문장과 마지막 문장','긴 문장','모르는 단어','문장 수']},
+    {type:'독해',q:"'However'가 문장 앞에 오면 앞 내용과의 관계는?",answer:'반대·대조',choices:['반대·대조','원인·결과','예시','추가']},
+    {type:'독해',q:"'Therefore'의 의미로 옳은 것은?",answer:'그러므로 (결과)',choices:['그러므로 (결과)','그러나 (대조)','예를 들어 (예시)','게다가 (추가)']},
+    {type:'독해',q:"'For example'의 역할은?",answer:'예시 제시',choices:['예시 제시','결론 제시','반대 의견','원인 설명']},
+  ],
+  '쓰기':[
+    {type:'쓰기',q:'영어 문장의 기본 어순으로 옳은 것은?',answer:'주어 + 동사 + 목적어',choices:['주어 + 동사 + 목적어','동사 + 주어 + 목적어','목적어 + 주어 + 동사','주어 + 목적어 + 동사']},
+    {type:'쓰기',q:'영어 편지 마무리로 적절한 표현은?',answer:'Sincerely yours,',choices:['Sincerely yours,','Dear Sir,','To Whom,','Hello,']},
+  ],
+  '듣기·말하기':[
+    {type:'듣기·말하기',q:"전화 영어에서 'Hold on.'의 뜻은?",answer:'잠깐 기다리세요',choices:['잠깐 기다리세요','전화 끊겠습니다','다시 전화하세요','누구세요']},
+    {type:'듣기·말하기',q:"'May I speak to Tom?'의 뜻은?",answer:'Tom과 통화할 수 있을까요?',choices:['Tom과 통화할 수 있을까요?','Tom을 만날 수 있을까요?','Tom에게 말해줘요','Tom이 있나요?']},
+  ],
+  '문화':[
+    {type:'문화',q:'영어권 나라가 아닌 것은?',answer:'프랑스',choices:['프랑스','미국','영국','호주']},
+    {type:'문화',q:"영국 영어에서 'autumn'은 미국 영어로?",answer:'fall',choices:['fall','spring','winter','season']},
+  ],
+};
+function getPoolForUnit(uid){
+  const pools=[];
+  if(uid.includes('1-1')||uid.includes('1-2-1')){pools.push(...(SHARED['문법']||[]).slice(0,5));}
+  if(uid.includes('2-1')||uid.includes('2-2')){pools.push(...(SHARED['문법']||[]));}
+  if(uid.includes('3-1')||uid.includes('3-2')){pools.push(...(SHARED['문법']||[]));}
+  pools.push(...(SHARED['어휘']||[]),...(SHARED['독해']||[]),...(SHARED['쓰기']||[]),...(SHARED['듣기·말하기']||[]),...(SHARED['문화']||[]));
+  if(pools.length<8){Object.values(SHARED).forEach(p=>pools.push(...p));}
+  const seen=new Set();return pools.filter(q=>{if(seen.has(q.q))return false;seen.add(q.q);return true;});
+}
+
+// ════════════════════════════════════════════════════════════
+//  상태
+// ════════════════════════════════════════════════════════════
+let state = {pub:'mirae', grade:1, sem:1, units:new Set(), examType:'all', count:20};
+let curQs=[], userAns={}, submitted=false, timerSec=0, timerInterval;
+const NUMS=['①','②','③','④'];
+const CHIP_COLOR = {"\uc5b4\ud718": "#1d4ed8", "\ubb38\ubc95": "#166534", "\ub3c5\ud574": "#92400e", "\ub4e3\uae30\u00b7\ub9d0\ud558\uae30": "#6d28d9", "\uc4f0\uae30": "#0d6b5e", "\ubb38\ud654": "#881337"};
+
+// ════════════════════════════════════════════════════════════
+//  초기화
+// ════════════════════════════════════════════════════════════
+window.onload = () => {
+  renderPubs();
+  renderUnits();
+};
+
+function renderPubs(){
+  document.getElementById('pub-grid').innerHTML = PUBLISHERS.map(p=>`
+    <button class="pub-btn${p.id===state.pub?' active':''}" onclick="selectPub('${p.id}',this)">
+      <span class="pub-icon">${p.icon}</span>
+      <span class="pub-name">${p.name}</span>
+      <span class="pub-author">${p.author}</span>
+    </button>`).join('');
+}
+
+function selectPub(id, btn){
+  state.pub = id;
+  state.units.clear();
+  document.querySelectorAll('.pub-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderUnits();
+}
+
+function sel(key, val, btn){
+  state[key] = val;
+  if(key==='grade'||key==='sem'){
+    state.units.clear();
+    const rowId = key==='grade'?'grade-row':'sem-row';
+    document.getElementById(rowId).querySelectorAll('.sel-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderUnits();
+  } else {
+    btn.parentElement.querySelectorAll('.sel-btn,.cnt-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+}
+
+function renderUnits(){
+  const units = (CURRICULUM[state.pub]?.[state.grade]?.[state.sem]) || [];
+  state.units.clear();
+  document.getElementById('unit-wrap').innerHTML = units.length ? units.map(u=>`
+    <button class="unit-btn" data-id="${u.id}" onclick="toggleUnit('${u.id}',this)">
+      <span class="u-no">${u.exam==='mid'?'[중간]':'[기말]'} · ${u.topic}</span>
+      <span class="u-name">${u.name}</span>
+    </button>`).join('') : '<div class="empty-msg">해당 단원 정보가 없습니다</div>';
+  document.getElementById('sel-hint').textContent='';
+}
+
+function toggleUnit(id, btn){
+  if(state.units.has(id)){state.units.delete(id);btn.classList.remove('active');}
+  else{state.units.add(id);btn.classList.add('active');}
+  const n = state.units.size;
+  document.getElementById('sel-hint').textContent = n>0 ? `${n}개 단원 선택됨` : '';
+}
+
+// ════════════════════════════════════════════════════════════
+//  퀴즈 시작
+// ════════════════════════════════════════════════════════════
+function startQuiz(){
+  if(state.units.size===0){alert('단원을 하나 이상 선택해 주세요.');return;}
+  const pub = PUBLISHERS.find(p=>p.id===state.pub);
+  const units = CURRICULUM[state.pub][state.grade][state.sem];
+
+  // 선택 단원 문제 수집
+  let pool = [];
+  state.units.forEach(uid=>{
+    const p = getPoolForUnit(uid);
+    pool = [...pool, ...p.map(q=>({...q, unitId:uid}))];
+  });
+
+  // 중복 제거 (같은 question 텍스트)
+  const seen = new Set();
+  pool = pool.filter(q=>{ const k=q.q; if(seen.has(k))return false; seen.add(k); return true; });
+
+  // 시험 유형 필터 (단원 exam 기반)
+  if(state.examType !== 'all'){
+    const unitExamMap = {};
+    units.forEach(u=>unitExamMap[u.id]=u.exam);
+    pool = pool.filter(q=>{
+      const ex = unitExamMap[q.unitId];
+      if(state.examType==='mid') return ex==='mid';
+      if(state.examType==='final') return ex==='final';
+      return true;
+    });
+    if(pool.length < 5){
+      // fallback: 전체 사용
+      pool = [];
+      state.units.forEach(uid=>{pool=[...pool,...getPoolForUnit(uid).map(q=>({...q,unitId:uid}))];});
+      const seen2=new Set();
+      pool=pool.filter(q=>{const k=q.q;if(seen2.has(k))return false;seen2.add(k);return true;});
+    }
+  }
+
+  if(pool.length===0){alert('해당 단원·유형의 문제 데이터가 없습니다.');return;}
+
+  // 랜덤 추출
+  const shuffled = [...pool].sort(()=>Math.random()-.5);
+  curQs = shuffled.slice(0, Math.min(state.count, shuffled.length)).map((q,i)=>({
+    ...q, index:i+1, choices:[...q.choices].sort(()=>Math.random()-.5)
+  }));
+  userAns={}; submitted=false;
+
+  const unitNames = Array.from(state.units).map(id=>{
+    const u=units.find(u=>u.id===id); return u?u.name:'';
+  }).filter(Boolean).join(' · ');
+  const gradeLabel = `중${state.grade} ${state.sem}학기`;
+  const pubColor = pub.color;
+
+  // 헤더
+  document.getElementById('hdr-pub').textContent = `${pub.name}(${pub.author})`;
+  document.getElementById('hdr-grade').textContent = gradeLabel;
+  document.getElementById('hdr-unit').textContent = unitNames;
+  // 시험지 상단
+  const label = document.getElementById('exam-pub-label');
+  label.textContent = `${pub.name} · ${gradeLabel}`;
+  label.style.background = pubColor;
+  document.getElementById('exam-main-title').textContent = `English Unit Test`;
+  document.getElementById('ei-pub').textContent = `${pub.name}(${pub.author})`;
+  document.getElementById('ei-grade').textContent = gradeLabel;
+  document.getElementById('ei-count').textContent = curQs.length + '문항';
+  document.getElementById('ei-score').textContent = `각 ${Math.floor(100/curQs.length)}점`;
+
+  renderQs();
+  document.getElementById('hero').style.display='none';
+  document.getElementById('quiz-page').style.display='block';
+  window.scrollTo(0,0);
+  startTimer();
+}
+
+function renderQs(){
+  const container = document.getElementById('q-container');
+  const groups={};
+  const typeOrder=['한자의 짜임','단어의 짜임','단문 해석','사자성어','명심보감·논어','허사','한시'];
+  curQs.forEach(q=>{const t=q.type||'기타';if(!groups[t])groups[t]=[];groups[t].push(q);});
+  const icons={'한자의 짜임':'🔡','단어의 짜임':'🔤','단문 해석':'📜','사자성어':'🀄','명심보감·논어':'📖','허사':'✨','한시':'🎋','기타':'📝'};
+  const bgColors={'한자의 짜임':'rgba(78,91,166,.07)','단어의 짜임':'rgba(78,91,166,.07)','단문 해석':'rgba(22,101,52,.07)','사자성어':'rgba(146,64,14,.07)','명심보감·논어':'rgba(29,78,216,.07)','허사':'rgba(109,40,217,.07)','한시':'rgba(13,107,94,.07)','기타':'rgba(0,0,0,.04)'};
+
+  let html='';
+  const orderedTypes=[...typeOrder,...Object.keys(groups).filter(t=>!typeOrder.includes(t))];
+  orderedTypes.forEach(t=>{
+    if(!groups[t]||!groups[t].length)return;
+    const qs=groups[t];
+    html+=`
+      <div class="sec-hdr" style="background:${bgColors[t]||'rgba(0,0,0,.04)'}">
+        <span class="sec-icon">${icons[t]||'📝'}</span>
+        <span class="sec-title-text">${t}</span>
+        <span class="sec-nums">${qs.map(q=>q.index+'번').join(' · ')}</span>
+      </div>
+      <div class="q-grid">${qs.map(renderCard).join('')}</div>`;
+  });
+  container.innerHTML = html||'<div class="empty-msg">문제를 불러오지 못했습니다</div>';
+}
+
+function renderCard(q){
+  const color = CHIP_COLOR[q.type]||'#334155';
+  const hasP = q.passage && q.passage.length>0;
+  return `
+    <div class="q-card" id="qcard-${q.index}">
+      <div class="q-num-badge">${q.index}</div>
+      <div class="q-body">
+        <span class="type-chip" style="background:${color}">${q.type}</span>
+        ${hasP?`<div class="q-passage${q.passage.length>22?' sm':''}">${q.passage}</div>`:''}
+        ${q.source?`<div class="q-source">출전: ${q.source}</div>`:''}
+        <div class="q-text">${q.q}</div>
+        <div class="choices" id="ch-${q.index}">
+          ${q.choices.map((c,ci)=>`
+            <div class="choice" id="ci-${q.index}-${ci}" onclick="pick(${q.index},${ci})">
+              <span class="choice-n">${NUMS[ci]}</span><span>${c}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="ans-mark" id="mk-${q.index}"></div>
+    </div>`;
+}
+
+function pick(qi, ci){
+  if(submitted)return;
+  userAns[qi]=ci;
+  document.querySelectorAll(`#ch-${qi} .choice`).forEach((c,i)=>c.classList.toggle('sel',i===ci));
+  document.getElementById('prog').style.width=(Object.keys(userAns).length/curQs.length*100)+'%';
+}
+
+function startTimer(){
+  timerSec=0; clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    timerSec++;
+    const m=String(Math.floor(timerSec/60)).padStart(2,'0');
+    const s=String(timerSec%60).padStart(2,'0');
+    document.getElementById('timer').textContent=`${m}:${s}`;
+  },1000);
+}
+
+function submitQuiz(){
+  const ans=Object.keys(userAns).length;
+  if(!submitted&&ans<curQs.length)
+    if(!confirm(`${curQs.length-ans}문항이 미응답입니다. 채점할까요?`))return;
+  submitted=true; clearInterval(timerInterval);
+
+  let correct=0;
+  curQs.forEach(q=>{
+    const card=document.getElementById(`qcard-${q.index}`);
+    const cIdx=q.choices.indexOf(q.answer);
+    const uIdx=userAns[q.index];
+    card.querySelectorAll('.choice').forEach((c,i)=>{
+      c.classList.remove('sel');
+      if(i===cIdx)c.classList.add('ok');
+      else if(i===uIdx&&uIdx!==cIdx)c.classList.add('ng');
+    });
+    const mk=document.getElementById(`mk-${q.index}`);
+    if(uIdx===cIdx){correct++;card.classList.add('gc');mk.textContent='✓';mk.style.color='var(--green)';}
+    else{card.classList.add('gw');mk.textContent='✗';mk.style.color='var(--red)';}
+  });
+
+  const total=curQs.length, wrong=ans-correct, unanswered=total-ans;
+  const score=Math.round(correct/total*100);
+  document.getElementById('r-score').innerHTML=`${score}<span>점</span>`;
+  document.getElementById('s-co').textContent=correct;
+  document.getElementById('s-wr').textContent=wrong;
+  document.getElementById('s-un').textContent=unanswered;
+
+  let emoji,grade,desc;
+  if(score>=90){emoji='🏆';grade='최우수! 완벽에 가까운 실력!';desc='한문을 자유롭게 읽을 수 있는 수준입니다.';}
+  else if(score>=80){emoji='🥇';grade='우수! 핵심을 잘 이해했어요!';desc='오답 문제를 한 번 더 확인하면 완벽해요.';}
+  else if(score>=70){emoji='🎯';grade='양호! 조금만 더 노력하세요!';desc='틀린 문제의 출전을 소리 내어 읽어 보세요.';}
+  else if(score>=60){emoji='📚';grade='보통, 기초부터 다시 다져요!';desc='교과서 원문을 꼼꼼히 반복해 보세요.';}
+  else{emoji='💪';grade='분발이 필요해요!';desc='한자의 짜임과 기초 단문부터 시작해 봐요.';}
+
+  document.getElementById('r-emoji').textContent=emoji;
+  document.getElementById('r-grade').textContent=grade;
+  document.getElementById('r-desc').textContent=desc;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function reviewAns(){document.getElementById('overlay').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'});}
+function retryQuiz(){document.getElementById('overlay').classList.remove('show');startQuiz();}
+function goBack(){
+  clearInterval(timerInterval);
+  document.getElementById('quiz-page').style.display='none';
+  document.getElementById('hero').style.display='flex';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
