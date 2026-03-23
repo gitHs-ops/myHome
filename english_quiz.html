@@ -631,7 +631,7 @@ function getPoolForUnit(uid){
 // ════════════════════════════════════════════════════════════
 //  상태
 // ════════════════════════════════════════════════════════════
-let state = {pub:'ybm', grade:1, sem:1, units:new Set(), examType:'all', count:20};
+let state = {pubs:new Set(['ybm']), grade:1, sem:1, units:new Set(), examType:'all', count:20};
 let curQs=[], userAns={}, submitted=false, timerSec=0, timerInterval;
 const NUMS=['①','②','③','④'];
 const CHIP_COLOR = {"\uc5b4\ud718": "#1d4ed8", "\ubb38\ubc95": "#166534", "\ub3c5\ud574": "#92400e", "\ub4e3\uae30\u00b7\ub9d0\ud558\uae30": "#6d28d9", "\uc4f0\uae30": "#0d6b5e", "\ubb38\ud654": "#881337"};
@@ -646,7 +646,7 @@ window.onload = () => {
 
 function renderPubs(){
   document.getElementById('pub-grid').innerHTML = PUBLISHERS.map(p=>`
-    <button class="pub-btn${p.id===state.pub?' active':''}" data-pub="${p.id}" onclick="selectPub(this.dataset.pub,this)">
+    <button class="pub-btn${state.pubs.has(p.id)?' active':''}" data-pub="${p.id}" onclick="selectPub(this.dataset.pub,this)">
       <span class="pub-icon">${p.icon}</span>
       <span class="pub-name">${p.name}</span>
       <span class="pub-author">${p.author}</span>
@@ -654,10 +654,16 @@ function renderPubs(){
 }
 
 function selectPub(id, btn){
-  state.pub = id;
+  if(state.pubs.has(id)){
+    if(state.pubs.size===1) return;
+    state.pubs.delete(id);
+    btn.classList.remove('active');
+  } else {
+    state.pubs.add(id);
+    btn.classList.add('active');
+  }
   state.units.clear();
-  document.querySelectorAll('.pub-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  document.getElementById('sel-hint').textContent='';
   renderUnits();
 }
 
@@ -676,11 +682,22 @@ function sel(key, val, btn){
 }
 
 function renderUnits(){
-  const units = (CURRICULUM[state.pub]?.[state.grade]?.[state.sem]) || [];
+  let units = [];
+  state.pubs.forEach(pid => {
+    const u = (CURRICULUM[pid]?.[state.grade]?.[state.sem]) || [];
+    u.forEach(unit => units.push({...unit, pubId:pid}));
+  });
+  const seen = new Set();
+  units = units.filter(u => { if(seen.has(u.id)) return false; seen.add(u.id); return true; });
   state.units.clear();
+  const pubLabel = (pid) => {
+    if(state.pubs.size <= 1) return '';
+    const p = PUBLISHERS.find(p=>p.id===pid);
+    return p ? '<span style="font-size:9px;background:'+p.color+';color:#fff;padding:1px 5px;border-radius:3px;margin-right:4px;">'+p.name+'</span>' : '';
+  };
   document.getElementById('unit-wrap').innerHTML = units.length ? units.map(u=>`
     <button class="unit-btn" data-id="${u.id}" onclick="toggleUnit(this.dataset.id,this)">
-      <span class="u-no">${u.exam==='mid'?'[중간]':'[기말]'} · ${u.topic}</span>
+      <span class="u-no">${pubLabel(u.pubId)}${u.exam==='mid'?'[중간]':'[기말]'} · ${u.topic}</span>
       <span class="u-name">${u.name}</span>
     </button>`).join('') : '<div class="empty-msg">해당 단원 정보가 없습니다</div>';
   document.getElementById('sel-hint').textContent='';
@@ -698,8 +715,16 @@ function toggleUnit(id, btn){
 // ════════════════════════════════════════════════════════════
 function startQuiz(){
   if(state.units.size===0){alert('단원을 하나 이상 선택해 주세요.');return;}
-  const pub = PUBLISHERS.find(p=>p.id===state.pub);
-  const units = CURRICULUM[state.pub][state.grade][state.sem];
+  const pubList = PUBLISHERS.filter(p=>state.pubs.has(p.id));
+  const pub = pubList[0];
+  let allUnits = [];
+  state.pubs.forEach(pid => {
+    const u = (CURRICULUM[pid]?.[state.grade]?.[state.sem]) || [];
+    u.forEach(unit => allUnits.push({...unit, pubId:pid}));
+  });
+  const uSeen = new Set();
+  allUnits = allUnits.filter(u=>{ if(uSeen.has(u.id)) return false; uSeen.add(u.id); return true; });
+  const units = allUnits;
 
   // 선택 단원 문제 수집
   let pool = [];
@@ -744,18 +769,18 @@ function startQuiz(){
     const u=units.find(u=>u.id===id); return u?u.name:'';
   }).filter(Boolean).join(' · ');
   const gradeLabel = `중${state.grade} ${state.sem}학기`;
-  const pubColor = pub.color;
 
   // 헤더
-  document.getElementById('hdr-pub').textContent = `${pub.name}(${pub.author})`;
+  const pubNames = pubList.map(p=>p.name).join('·');
+  document.getElementById('hdr-pub').textContent = pubList.length>1 ? pubNames : `${pub.name}(${pub.author})`;
   document.getElementById('hdr-grade').textContent = gradeLabel;
   document.getElementById('hdr-unit').textContent = unitNames;
   // 시험지 상단
   const label = document.getElementById('exam-pub-label');
-  label.textContent = `${pub.name} · ${gradeLabel}`;
-  label.style.background = pubColor;
+  label.textContent = pubList.length>1 ? `${pubNames} · ${gradeLabel}` : `${pub.name} · ${gradeLabel}`;
+  label.style.background = pub.color;
   document.getElementById('exam-main-title').textContent = `English Unit Test`;
-  document.getElementById('ei-pub').textContent = `${pub.name}(${pub.author})`;
+  document.getElementById('ei-pub').textContent = pubList.length>1 ? pubNames : `${pub.name}(${pub.author})`;
   document.getElementById('ei-grade').textContent = gradeLabel;
   document.getElementById('ei-count').textContent = curQs.length + '문항';
   document.getElementById('ei-score').textContent = `각 ${Math.floor(100/curQs.length)}점`;
