@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중학교 진로와 직업 교재별 단원별 시험지</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1209; --bg1:#f0f9ff; --bg2:#e0f2fe;
+  --main:#0369a1; --main-lt:#7dd3fc; --main-dk:#0c4a6e;
+  --red:#8b1a2a; --teal:#0d6b5e; --blue:#1d4ed8; --purple:#5b21b6;
+  --gray:#64748b; --green:#166534; --white:#fff;
+  --shadow: 0 4px 24px rgba(0,0,0,.09);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg1);color:var(--ink);min-height:100vh;}
+
+/* ══════════ HERO ══════════ */
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;padding:48px 20px 60px;
+  background:linear-gradient(160deg,#f0f9ff 0%,#dbeafe 100%);
+  position:relative;overflow:hidden;
+}
+#hero::before{
+  content:"進 路";
+  position:fixed;bottom:-60px;right:-40px;
+  font-family:'Noto Serif KR',serif;font-size:clamp(160px,22vw,320px);
+  font-weight:900;color:rgba(3,105,161,.055);pointer-events:none;
+  letter-spacing:.1em;z-index:0;
+}
+.hero-inner{position:relative;z-index:1;width:100%;max-width:680px;}
+
+.hero-top{text-align:center;margin-bottom:40px;}
+.site-tag{
+  display:inline-block;background:var(--main);color:#fff;
+  font-size:11px;font-weight:700;letter-spacing:.18em;
+  padding:5px 16px;border-radius:2px;margin-bottom:18px;
+}
+.hero-title{
+  font-family:'Noto Serif KR',serif;
+  font-size:clamp(30px,6vw,58px);font-weight:900;line-height:1.15;
+}
+.hero-title em{color:var(--main);font-style:normal;}
+.hero-sub{font-size:14px;color:var(--gray);font-weight:300;margin-top:8px;letter-spacing:.05em;}
+
+/* 선택 카드 */
+.card{
+  background:var(--white);border-radius:14px;padding:28px 28px 24px;
+  box-shadow:var(--shadow);border:1px solid rgba(0,0,0,.06);
+  margin-bottom:16px;position:relative;
+}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;}
+.card.pub::before{background:linear-gradient(90deg,var(--main),#38bdf8);}
+.card.unit::before{background:linear-gradient(90deg,var(--teal),#1a9b8c);}
+.card.cnt::before{background:linear-gradient(90deg,#334155,#64748b);}
+
+.step-label{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--gray);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.step-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;}
+.step-label.s1 .step-num{background:var(--main);}
+.step-label.s2 .step-num{background:var(--teal);}
+.step-label.s3 .step-num{background:#334155;}
+
+/* 출판사 선택 */
+.pub-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+@media(max-width:560px){.pub-grid{grid-template-columns:repeat(3,1fr);}}
+.pub-btn{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:12px 6px;border:2px solid #e2d8c8;border-radius:10px;
+  background:white;cursor:pointer;transition:all .17s;
+}
+.pub-btn .pub-icon{font-size:22px;}
+.pub-btn .pub-name{font-size:11px;font-weight:700;color:var(--gray);letter-spacing:.04em;}
+.pub-btn .pub-author{font-size:10px;color:#aaa;}
+.pub-btn:hover{border-color:var(--main);transform:translateY(-2px);box-shadow:0 4px 12px rgba(3,105,161,.18);}
+.pub-btn.active{border-color:var(--main);background:linear-gradient(135deg,#f0f9ff,#dbeafe);box-shadow:0 4px 16px rgba(3,105,161,.25);}
+.pub-btn.active .pub-name{color:var(--main);}
+
+/* 단원 그리드 */
+.unit-wrap{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+@media(max-width:400px){.unit-wrap{grid-template-columns:1fr;}}
+.unit-btn{
+  padding:11px 14px;border:2px solid #e2d8c8;border-radius:9px;
+  background:white;cursor:pointer;transition:all .17s;text-align:left;
+}
+.unit-btn:hover{border-color:var(--teal);background:#f0fafa;transform:translateY(-1px);}
+.unit-btn.active{border-color:var(--teal);background:var(--teal);color:white;}
+.unit-btn .u-no{font-size:10px;font-weight:700;opacity:.65;letter-spacing:.08em;display:block;margin-bottom:3px;}
+.unit-btn .u-name{font-size:13px;font-weight:600;line-height:1.3;}
+.unit-btn .u-topic{font-size:11px;opacity:.7;line-height:1.3;margin-top:2px;}
+.unit-btn.active .u-topic{opacity:.85;}
+
+/* 문항수 */
+.cnt-row{display:flex;gap:8px;}
+.cnt-btn{
+  flex:1;padding:10px;border:2px solid #e2d8c8;border-radius:8px;background:white;
+  font-family:'Noto Serif KR',serif;font-size:14px;font-weight:700;
+  color:var(--gray);cursor:pointer;transition:all .17s;text-align:center;
+}
+.cnt-btn:hover{border-color:var(--red);color:var(--red);}
+.cnt-btn.active{border-color:var(--red);background:var(--red);color:white;box-shadow:0 3px 10px rgba(139,26,42,.3);}
+
+#sel-hint{font-size:12px;color:var(--main);margin-top:8px;font-weight:600;}
+
+.start-btn{
+  width:100%;padding:16px;margin-top:16px;
+  background:linear-gradient(135deg,var(--main-dk) 0%,#0369a1 100%);
+  color:white;border:none;border-radius:10px;
+  font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;
+  letter-spacing:.12em;cursor:pointer;transition:all .2s;
+  position:relative;box-shadow:0 4px 20px rgba(0,0,0,.25);
+}
+.start-btn::after{content:'→';position:absolute;right:22px;top:50%;transform:translateY(-50%);transition:right .2s;}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.3);}
+.start-btn:hover::after{right:16px;}
+.start-btn:disabled{background:#aaa;box-shadow:none;cursor:not-allowed;transform:none;}
+
+/* 학교급 배지 */
+.level-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(3,105,161,.1);border:1px solid rgba(3,105,161,.2);
+  color:var(--main-dk);padding:6px 14px;border-radius:20px;
+  font-size:12px;font-weight:700;margin-bottom:16px;
+}
+
+/* ══════════ QUIZ ══════════ */
+#quiz-page{display:none;min-height:100vh;background:var(--bg1);}
+.qhdr{
+  background:var(--main-dk);color:white;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 20px rgba(0,0,0,.35);
+}
+.qhdr-inner{
+  max-width:980px;margin:0 auto;padding:13px 22px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.qhdr-title{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;}
+.qhdr-title span{color:var(--main-lt);}
+.qhdr-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.mbadge{background:rgba(255,255,255,.12);padding:4px 11px;border-radius:20px;font-size:12px;}
+.mbadge.pub-tag{background:rgba(125,211,252,.2);color:var(--main-lt);font-weight:700;}
+.timer{
+  font-family:monospace;font-size:13px;color:#ffd;letter-spacing:.1em;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  padding:4px 13px;border-radius:20px;
+}
+.back-btn{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:white;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;
+}
+.back-btn:hover{background:rgba(255,255,255,.2);}
+.prog-wrap{background:rgba(255,255,255,.1);height:4px;}
+.prog-fill{height:100%;background:var(--main-lt);transition:width .3s;}
+#prog{width:0%;}
+
+/* 시험지 */
+.exam-sheet{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
+.exam-header-row{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  border-bottom:2.5px solid var(--ink);padding-bottom:14px;margin-bottom:28px;flex-wrap:wrap;gap:12px;
+}
+.exam-title-block .exam-pub-label{
+  font-size:11px;font-weight:700;letter-spacing:.12em;
+  padding:3px 10px;border-radius:10px;color:white;display:inline-block;margin-bottom:6px;
+}
+.exam-title-block .exam-main-title{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;}
+.exam-info-row{display:flex;gap:22px;font-size:12px;color:var(--gray);}
+.exam-info-row strong{color:var(--ink);}
+
+/* 섹션 */
+.sec-hdr{
+  display:flex;align-items:center;gap:10px;padding:9px 14px;
+  margin:28px 0 12px;border-radius:6px;
+}
+.sec-icon{font-size:18px;}
+.sec-title-text{font-family:'Noto Serif KR',serif;font-size:14px;font-weight:700;}
+.sec-nums{font-size:11px;color:var(--gray);margin-left:auto;}
+
+/* 문제 그리드 */
+.q-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+@media(max-width:600px){.q-grid{grid-template-columns:1fr;}}
+
+/* 문제 카드 */
+.q-card{
+  background:white;border:1px solid #e8e0d0;border-radius:10px;
+  padding:15px 17px;display:flex;align-items:flex-start;gap:12px;
+  position:relative;transition:box-shadow .15s;
+}
+.q-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);}
+.q-num-badge{
+  min-width:28px;height:28px;border-radius:50%;
+  background:var(--main-dk);color:white;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;flex-shrink:0;margin-top:2px;
+}
+.q-body{flex:1;}
+.type-chip{
+  display:inline-block;color:white;font-size:10px;font-weight:700;
+  padding:2px 8px;border-radius:4px;margin-bottom:7px;letter-spacing:.04em;
+}
+.q-text{font-size:14px;font-weight:600;line-height:1.5;margin-bottom:10px;color:#1e293b;}
+.choices{display:flex;flex-direction:column;gap:6px;}
+.choice{
+  display:flex;align-items:flex-start;gap:8px;padding:7px 11px;
+  border:1.5px solid #e2e8f0;border-radius:7px;cursor:pointer;
+  font-size:13px;transition:all .13s;line-height:1.4;
+}
+.choice:hover{border-color:var(--main);background:#f0f9ff;}
+.choice.sel{border-color:var(--main);background:#dbeafe;font-weight:600;}
+.choice.ok{border-color:var(--green);background:#dcfce7;font-weight:700;}
+.choice.ng{border-color:var(--red);background:#fee2e2;}
+.choice-n{font-weight:800;color:var(--main);min-width:16px;flex-shrink:0;}
+.choice.ok .choice-n{color:var(--green);}
+.choice.ng .choice-n{color:var(--red);}
+.ans-mark{
+  position:absolute;top:12px;right:14px;
+  font-size:20px;font-weight:900;
+}
+.q-card.gc{background:#f0fdf4;}
+.q-card.gw{background:#fff5f5;}
+
+/* 제출 버튼 */
+.submit-wrap{
+  max-width:980px;margin:0 auto;padding:0 20px 40px;
+  display:flex;justify-content:center;gap:12px;
+}
+.submit-btn{
+  padding:14px 40px;background:linear-gradient(135deg,var(--main-dk),var(--main));
+  color:white;border:none;border-radius:10px;font-size:16px;font-weight:700;
+  cursor:pointer;box-shadow:0 4px 16px rgba(3,105,161,.3);transition:all .2s;
+}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(3,105,161,.4);}
+
+/* ══════ OVERLAY ══════ */
+#overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);
+  z-index:200;align-items:center;justify-content:center;padding:20px;
+}
+#overlay.show{display:flex;}
+.result-card{
+  background:white;border-radius:20px;padding:36px 32px;
+  max-width:420px;width:100%;text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+.r-emoji{font-size:52px;margin-bottom:8px;}
+.r-score{font-family:'Noto Serif KR',serif;font-size:56px;font-weight:900;color:var(--main-dk);}
+.r-score span{font-size:22px;color:var(--gray);}
+.r-grade{font-size:17px;font-weight:700;margin:12px 0 6px;color:var(--ink);}
+.r-desc{font-size:13px;color:var(--gray);margin-bottom:20px;}
+.r-stats{display:flex;justify-content:center;gap:20px;margin:16px 0 24px;padding:14px;background:#f8fafc;border-radius:10px;}
+.r-stat{text-align:center;}
+.r-stat .label{font-size:11px;color:var(--gray);margin-bottom:4px;}
+.r-stat .val{font-size:20px;font-weight:800;}
+.r-stat.co .val{color:var(--green);}
+.r-stat.wr .val{color:var(--red);}
+.r-stat.un .val{color:var(--gray);}
+.overlay-btns{display:flex;gap:10px;justify-content:center;}
+.obtn{
+  flex:1;padding:12px;border:none;border-radius:9px;font-size:14px;
+  font-weight:700;cursor:pointer;transition:all .17s;
+}
+.obtn-review{background:#f1f5f9;color:var(--ink);}
+.obtn-review:hover{background:#e2e8f0;}
+.obtn-retry{background:var(--main);color:white;}
+.obtn-retry:hover{background:var(--main-dk);}
+
+.empty-msg{padding:16px;text-align:center;color:var(--gray);font-size:13px;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section id="hero">
+<div class="hero-inner">
+
+  <div class="hero-top">
+    <span class="site-tag">CAREER EDUCATION</span>
+    <h1 class="hero-title">중학교 <em>진로와 직업</em><br>단원별 시험지</h1>
+    <p class="hero-sub">교재 · 단원을 선택하면 진로교육 문제를 랜덤으로 출제합니다</p>
+    <div class="level-badge" style="margin-top:16px;">🎯 중학교 선택과목 · 1~3학년 공통</div>
+  </div>
+
+  <!-- STEP 1: 출판사 -->
+  <div class="card pub">
+    <div class="step-label s1"><span class="step-num">1</span> 교재(출판사) 선택</div>
+    <div class="pub-grid" id="pub-grid"></div>
+  </div>
+
+  <!-- STEP 2: 단원 -->
+  <div class="card unit">
+    <div class="step-label s2"><span class="step-num">2</span> 단원 선택 (복수 선택 가능)</div>
+    <div class="unit-wrap" id="unit-wrap"></div>
+    <div id="sel-hint"></div>
+  </div>
+
+  <!-- STEP 3: 문항수 -->
+  <div class="card cnt">
+    <div class="step-label s3"><span class="step-num">3</span> 문항 수 선택</div>
+    <div class="cnt-row">
+      <button class="cnt-btn active" onclick="sel('count',10,this)">10문항</button>
+      <button class="cnt-btn" onclick="sel('count',15,this)">15문항</button>
+      <button class="cnt-btn" onclick="sel('count',20,this)">20문항</button>
+      <button class="cnt-btn" onclick="sel('count',25,this)">25문항</button>
+    </div>
+    <button class="start-btn" onclick="startQuiz()">시험 시작하기</button>
+  </div>
+
+</div>
+</section>
+
+<!-- ══════════════ QUIZ PAGE ══════════════ -->
+<div id="quiz-page">
+  <div class="qhdr">
+    <div class="qhdr-inner">
+      <div class="qhdr-title">중학교 <span>진로와 직업</span> 단원별 시험</div>
+      <div class="qhdr-meta">
+        <span class="mbadge pub-tag" id="hdr-pub"></span>
+        <span class="mbadge" id="hdr-unit"></span>
+        <span class="timer" id="timer">00:00</span>
+        <button class="back-btn" onclick="goBack()">← 처음으로</button>
+      </div>
+    </div>
+    <div class="prog-wrap"><div class="prog-fill" id="prog"></div></div>
+  </div>
+  <div class="exam-sheet">
+    <div class="exam-header-row">
+      <div class="exam-title-block">
+        <span class="exam-pub-label" id="exam-pub-label"></span>
+        <div class="exam-main-title" id="exam-main-title">進路와 職業 試驗紙</div>
+      </div>
+      <div class="exam-info-row">
+        <span>출판사: <strong id="ei-pub"></strong></span>
+        <span>단원: <strong id="ei-unit"></strong></span>
+        <span>문항: <strong id="ei-count"></strong></span>
+        <span>배점: <strong id="ei-score"></strong></span>
+      </div>
+    </div>
+    <div id="q-container"></div>
+  </div>
+  <div class="submit-wrap">
+    <button class="submit-btn" onclick="submitQuiz()">채점하기</button>
+  </div>
+</div>
+
+<!-- ══════════════ 결과 OVERLAY ══════════════ -->
+<div id="overlay">
+  <div class="result-card">
+    <div class="r-emoji" id="r-emoji"></div>
+    <div class="r-score" id="r-score"></div>
+    <div class="r-grade" id="r-grade"></div>
+    <div class="r-desc" id="r-desc"></div>
+    <div class="r-stats">
+      <div class="r-stat co"><div class="label">정답</div><div class="val" id="s-co"></div></div>
+      <div class="r-stat wr"><div class="label">오답</div><div class="val" id="s-wr"></div></div>
+      <div class="r-stat un"><div class="label">미응답</div><div class="val" id="s-un"></div></div>
+    </div>
+    <div class="overlay-btns">
+      <button class="obtn obtn-review" onclick="reviewAns()">해설 보기</button>
+      <button class="obtn obtn-retry" onclick="retryQuiz()">다시 풀기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  출판사 정의 (2022 개정 교육과정 인정교과서)
+// ════════════════════════════════════════════════════════════
+const PUBLISHERS = [
+  {id:'cmass', name:'씨마스',    author:'임은미', icon:'📘', color:'#0369a1'},
+  {id:'mir',   name:'미래엔',    author:'최미례', icon:'📗', color:'#166534'},
+  {id:'jih',   name:'지학사',    author:'황매향', icon:'📙', color:'#92400e'},
+  {id:'kyo',   name:'교학사',    author:'이남철', icon:'📕', color:'#881337'},
+  {id:'sam',   name:'삼양미디어',author:'한상근', icon:'📓', color:'#4c1d95'},
+];
+
+// ════════════════════════════════════════════════════════════
+//  교육과정 단원 구조
+//  진로와 직업은 학년 구분 없는 선택과목 → 대단원 3개 체계
+//  2022 개정: Ⅰ.진로와 나의 이해 / Ⅱ.직업 세계와 진로 탐색 / Ⅲ.진로 설계와 실천
+// ════════════════════════════════════════════════════════════
+const CURRICULUM = {
+  cmass:[
+    {id:'cm-1-1', name:'Ⅰ-1. 나는 누구인가',           topic:'자아 이해·성격·흥미·적성 탐색',        area:'Ⅰ'},
+    {id:'cm-1-2', name:'Ⅰ-2. 나의 가치와 역량',         topic:'직업 가치관·강점·사회적 역량',          area:'Ⅰ'},
+    {id:'cm-1-3', name:'Ⅰ-3. 건강한 자기 관리',         topic:'자존감·정서 관리·대인 관계',            area:'Ⅰ'},
+    {id:'cm-2-1', name:'Ⅱ-1. 일과 직업 세계',           topic:'일의 의미·직업의 종류·미래 직업 변화',  area:'Ⅱ'},
+    {id:'cm-2-2', name:'Ⅱ-2. 직업 정보 탐색',           topic:'직업 정보 수집·분석·활용 방법',         area:'Ⅱ'},
+    {id:'cm-2-3', name:'Ⅱ-3. 미래 직업 세계 변화',      topic:'4차 산업혁명·AI·미래 유망 직업',        area:'Ⅱ'},
+    {id:'cm-3-1', name:'Ⅲ-1. 진로 의사결정',            topic:'진로 의사결정 방법·합리적 선택',        area:'Ⅲ'},
+    {id:'cm-3-2', name:'Ⅲ-2. 진로 계획 수립',           topic:'진로 목표 설정·진로 계획서 작성',       area:'Ⅲ'},
+    {id:'cm-3-3', name:'Ⅲ-3. 진로 준비와 실천',         topic:'학업 계획·학교 선택·진로 실천',         area:'Ⅲ'},
+  ],
+  mir:[
+    {id:'mr-1-1', name:'Ⅰ-1. 자기 이해',                topic:'나의 흥미·적성·성격·신체적 특성',       area:'Ⅰ'},
+    {id:'mr-1-2', name:'Ⅰ-2. 긍정적 자아 개념',         topic:'자아 존중감·자기 효능감·자기 관리',     area:'Ⅰ'},
+    {id:'mr-1-3', name:'Ⅰ-3. 대인 관계와 의사소통',     topic:'협동·갈등 해결·효과적인 의사소통',      area:'Ⅰ'},
+    {id:'mr-2-1', name:'Ⅱ-1. 일과 직업의 이해',         topic:'일의 가치·직업의 특성·직업 윤리',       area:'Ⅱ'},
+    {id:'mr-2-2', name:'Ⅱ-2. 직업 세계 탐색',           topic:'직업 분류·직업 정보 탐색·체험',         area:'Ⅱ'},
+    {id:'mr-2-3', name:'Ⅱ-3. 미래 변화와 직업',         topic:'기술 변화·신직업·창업과 기업가 정신',   area:'Ⅱ'},
+    {id:'mr-3-1', name:'Ⅲ-1. 진로 탐색과 결정',         topic:'고등학교 유형·진로 경로·의사결정',      area:'Ⅲ'},
+    {id:'mr-3-2', name:'Ⅲ-2. 진로 계획 세우기',         topic:'진로 목표·학습 계획·준비 전략',         area:'Ⅲ'},
+    {id:'mr-3-3', name:'Ⅲ-3. 진로 실천과 관리',         topic:'자기 주도 학습·진로 포트폴리오',        area:'Ⅲ'},
+  ],
+  jih:[
+    {id:'jh-1-1', name:'Ⅰ-1. 나의 특성 이해',           topic:'흥미·적성·성격·가치관 탐색',            area:'Ⅰ'},
+    {id:'jh-1-2', name:'Ⅰ-2. 강점과 가능성',            topic:'강점 발견·자기 효능감·목표 설정',       area:'Ⅰ'},
+    {id:'jh-1-3', name:'Ⅰ-3. 관계와 협력',              topic:'대인 관계·팀워크·리더십',               area:'Ⅰ'},
+    {id:'jh-2-1', name:'Ⅱ-1. 직업의 세계',              topic:'직업 역할·직업 윤리·직업 다양성',       area:'Ⅱ'},
+    {id:'jh-2-2', name:'Ⅱ-2. 직업 정보와 탐색',         topic:'직업 정보 수집·분석·활용',              area:'Ⅱ'},
+    {id:'jh-2-3', name:'Ⅱ-3. 변화하는 직업 세계',       topic:'AI·디지털 전환·미래 직업 전망',         area:'Ⅱ'},
+    {id:'jh-3-1', name:'Ⅲ-1. 합리적 진로 의사결정',     topic:'진로 의사결정 과정·고려 요소',          area:'Ⅲ'},
+    {id:'jh-3-2', name:'Ⅲ-2. 진로 경로와 계획',         topic:'진로 경로·진학 정보·계획 수립',         area:'Ⅲ'},
+    {id:'jh-3-3', name:'Ⅲ-3. 진로 준비 실천',           topic:'학습 전략·진로 포트폴리오·실천',        area:'Ⅲ'},
+  ],
+  kyo:[
+    {id:'ky-1-1', name:'1. 나를 알아가기',               topic:'자아 이해·흥미·적성·가치관',            area:'Ⅰ'},
+    {id:'ky-1-2', name:'2. 긍정적 자아 만들기',          topic:'자아 존중·감정 조절·자기 관리',         area:'Ⅰ'},
+    {id:'ky-1-3', name:'3. 함께하는 나',                  topic:'대인 관계·협력·봉사와 공감',            area:'Ⅰ'},
+    {id:'ky-2-1', name:'4. 직업의 의미와 세계',          topic:'직업의 가치·직업 윤리·직업 종류',       area:'Ⅱ'},
+    {id:'ky-2-2', name:'5. 직업 정보 찾기',              topic:'직업 정보 탐색·분석·인터뷰',            area:'Ⅱ'},
+    {id:'ky-2-3', name:'6. 미래와 직업',                  topic:'기술 혁신·미래 사회·창업',              area:'Ⅱ'},
+    {id:'ky-3-1', name:'7. 나의 진로 결정',              topic:'진로 의사결정·고등학교 선택',           area:'Ⅲ'},
+    {id:'ky-3-2', name:'8. 진로 설계하기',               topic:'진로 목표·진로 계획서',                 area:'Ⅲ'},
+    {id:'ky-3-3', name:'9. 나의 진로 실천',              topic:'학습 계획·자기 주도 학습·실천',         area:'Ⅲ'},
+  ],
+  sam:[
+    {id:'sm-1-1', name:'1단원. 자아 이해',               topic:'흥미·적성·성격·직업 가치관 탐색',       area:'Ⅰ'},
+    {id:'sm-1-2', name:'2단원. 자기 개발',               topic:'자아 존중감·강점 강화·자기 관리',       area:'Ⅰ'},
+    {id:'sm-1-3', name:'3단원. 사회적 역량',             topic:'의사소통·협력·리더십',                  area:'Ⅰ'},
+    {id:'sm-2-1', name:'4단원. 일과 직업',               topic:'일의 의미·직업 역할·직업 윤리',         area:'Ⅱ'},
+    {id:'sm-2-2', name:'5단원. 직업 탐색',               topic:'직업 분류·체험·직업 정보',              area:'Ⅱ'},
+    {id:'sm-2-3', name:'6단원. 미래 직업',               topic:'4차 산업혁명·미래 직업·창업',           area:'Ⅱ'},
+    {id:'sm-3-1', name:'7단원. 진로 의사결정',           topic:'합리적 의사결정·갈등 해결',             area:'Ⅲ'},
+    {id:'sm-3-2', name:'8단원. 진로 계획',               topic:'진로 목표·진로 계획서·학교 선택',       area:'Ⅲ'},
+    {id:'sm-3-3', name:'9단원. 진로 실천',               topic:'학습 계획·포트폴리오·졸업 후 경로',     area:'Ⅲ'},
+  ],
+};
+
+// ════════════════════════════════════════════════════════════
+//  공유 문제 풀 (영역별)
+// ════════════════════════════════════════════════════════════
+const SHARED = {
+  '자아이해': [
+    {type:'자아이해', q:'자신의 흥미, 적성, 가치관 등을 파악하는 활동을 무엇이라 하는가?', answer:'자기 이해(자아 탐색)', choices:['자기 이해(자아 탐색)','진로 설계','직업 탐색','의사결정']},
+    {type:'자아이해', q:'적성(aptitude)의 정의로 가장 옳은 것은?', answer:'특정 분야에서 잘할 수 있는 타고난 잠재 능력', choices:['특정 분야에서 잘할 수 있는 타고난 잠재 능력','단순히 좋아하는 활동','학교 성적','노력으로만 얻는 기술']},
+    {type:'자아이해', q:'흥미(interest)란 무엇인가?', answer:'즐거움을 느끼며 지속적으로 관심을 갖는 활동이나 분야', choices:['즐거움을 느끼며 지속적으로 관심을 갖는 활동이나 분야','잘할 수 있는 능력','수입이 높은 일','부모님이 원하는 직업']},
+    {type:'자아이해', q:'직업 가치관이란?', answer:'직업 선택 시 중요하게 생각하는 가치 기준', choices:['직업 선택 시 중요하게 생각하는 가치 기준','학교 성적표','직업의 종류','급여 수준']},
+    {type:'자아이해', q:'자아 존중감이 높은 사람의 특징으로 옳은 것은?', answer:'자신을 가치 있고 능력 있는 존재로 여긴다', choices:['자신을 가치 있고 능력 있는 존재로 여긴다','항상 1등을 해야 한다','자신의 단점을 숨긴다','타인과 비교하여 자신을 평가한다']},
+    {type:'자아이해', q:'강점 기반 진로 설계의 핵심은?', answer:'자신의 강점을 파악하고 이를 직업에 연결하는 것', choices:['자신의 강점을 파악하고 이를 직업에 연결하는 것','단점을 완전히 없애는 것','돈을 많이 버는 직업 선택','부모님의 조언만 따르는 것']},
+    {type:'자아이해', q:'다중 지능 이론을 제안한 학자는?', answer:'하워드 가드너(Howard Gardner)', choices:['하워드 가드너(Howard Gardner)','지그문트 프로이트','에릭 에릭슨','빅터 프랭클']},
+    {type:'자아이해', q:'MBTI 성격 유형 검사에서 E와 I가 나타내는 것은?', answer:'외향(E)과 내향(I) — 에너지 방향', choices:['외향(E)과 내향(I) — 에너지 방향','감각(S)과 직관(N)','사고(T)와 감정(F)','판단(J)과 인식(P)']},
+  ],
+  '직업세계': [
+    {type:'직업세계', q:'직업이 갖는 기능이 아닌 것은?', answer:'타인에게 피해를 주는 활동', choices:['타인에게 피해를 주는 활동','경제적 소득 획득','자아 실현','사회 기여']},
+    {type:'직업세계', q:'직업 윤리의 핵심 내용으로 옳은 것은?', answer:'직업 활동에서 지켜야 할 도덕적 기준과 책임', choices:['직업 활동에서 지켜야 할 도덕적 기준과 책임','최대한 많은 급여를 받는 것','빠른 승진','야근 거부']},
+    {type:'직업세계', q:'직업 분류 기준 중 한국 표준 직업 분류(KSCO)의 주요 기준은?', answer:'직무 내용과 수행되는 기술 수준', choices:['직무 내용과 수행되는 기술 수준','급여 수준','근무 시간','회사 규모']},
+    {type:'직업세계', q:'4차 산업혁명으로 새롭게 등장하거나 성장이 예상되는 직업 유형은?', answer:'AI·데이터·콘텐츠·친환경 관련 직업', choices:['AI·데이터·콘텐츠·친환경 관련 직업','단순 반복 제조업','아날로그 미디어','전통 사무직']},
+    {type:'직업세계', q:'창업가 정신(기업가 정신)의 핵심 요소가 아닌 것은?', answer:'실패에 대한 두려움', choices:['실패에 대한 두려움','혁신','도전 정신','위험 감수']},
+    {type:'직업세계', q:'직업 체험 활동의 목적으로 가장 적절한 것은?', answer:'직업에 대한 실제적 이해와 진로 탐색', choices:['직업에 대한 실제적 이해와 진로 탐색','돈을 버는 것','대학 입시 스펙 쌓기','선생님의 명령 이행']},
+    {type:'직업세계', q:'미래 사회에서 필요한 핵심 역량이 아닌 것은?', answer:'단순 암기 능력', choices:['단순 암기 능력','창의적 사고','비판적 사고','협업 능력']},
+    {type:'직업세계', q:'워크넷(worknet.go.kr)은 어떤 기관에서 운영하는 직업 정보 사이트인가?', answer:'고용노동부', choices:['고용노동부','교육부','문화체육관광부','보건복지부']},
+  ],
+  '진로탐색': [
+    {type:'진로탐색', q:'진로 의사결정 과정의 첫 번째 단계는?', answer:'목표 설정 및 문제 인식', choices:['목표 설정 및 문제 인식','실행','평가','대안 탐색']},
+    {type:'진로탐색', q:'고등학교 유형 중 특정 분야의 전문 교육을 집중적으로 하는 학교는?', answer:'특성화고등학교', choices:['특성화고등학교','일반고등학교','외국어고등학교','자율고등학교']},
+    {type:'진로탐색', q:'진로 포트폴리오에 포함되는 내용이 아닌 것은?', answer:'다른 사람의 성적표', choices:['다른 사람의 성적표','자기 이해 자료','진로 활동 기록','진로 계획서']},
+    {type:'진로탐색', q:'SWOT 분석에서 T(Threat)가 의미하는 것은?', answer:'위협 — 외부 환경의 불리한 요인', choices:['위협 — 외부 환경의 불리한 요인','강점 — 자신의 내부 강점','약점 — 자신의 내부 약점','기회 — 외부 환경의 유리한 요인']},
+    {type:'진로탐색', q:'자기 주도 학습의 핵심 요소가 아닌 것은?', answer:'선생님이 모든 것을 결정해 준다', choices:['선생님이 모든 것을 결정해 준다','학습 목표 스스로 설정','학습 방법 선택','자기 평가와 반성']},
+    {type:'진로탐색', q:'진로 탐색 도구 중 커리어넷(career.go.kr)에서 제공하는 것이 아닌 것은?', answer:'대학 입학 원서 접수', choices:['대학 입학 원서 접수','직업 흥미 검사','직업 적성 검사','진로 상담']},
+    {type:'진로탐색', q:'진로 계획서에 반드시 포함해야 할 내용은?', answer:'목표·현재 상황·실천 계획·점검 방법', choices:['목표·현재 상황·실천 계획·점검 방법','용돈 계획','친구 명단','여행 계획']},
+    {type:'진로탐색', q:'좋은 진로 목표의 조건으로 가장 적절한 것은?', answer:'구체적·측정가능·달성가능·현실적·기간이 있는 목표(SMART)', choices:['구체적·측정가능·달성가능·현실적·기간이 있는 목표(SMART)','막연히 멋있어 보이는 목표','남이 정해 준 목표','가장 어려운 목표']},
+  ],
+  '사회역량': [
+    {type:'사회역량', q:'효과적인 의사소통의 요소가 아닌 것은?', answer:'상대방 말을 무시하기', choices:['상대방 말을 무시하기','경청','명확한 표현','공감']},
+    {type:'사회역량', q:'갈등 해결의 바람직한 방법은?', answer:'대화와 타협을 통한 win-win 해결', choices:['대화와 타협을 통한 win-win 해결','힘으로 제압','무조건 양보','무시하기']},
+    {type:'사회역량', q:'팀워크(Teamwork)에서 가장 중요한 것은?', answer:'공동 목표를 향한 협력과 역할 분담', choices:['공동 목표를 향한 협력과 역할 분담','개인의 성과만 강조','팀장이 모두 결정','경쟁심 자극']},
+    {type:'사회역량', q:'디지털 리터러시(Digital Literacy)란?', answer:'디지털 기기·정보를 올바르게 이해·활용·창작하는 능력', choices:['디지털 기기·정보를 올바르게 이해·활용·창작하는 능력','컴퓨터 게임 실력','SNS 팔로워 수','프로그래밍 전문 기술']},
+    {type:'사회역량', q:'봉사 활동이 진로와 연결되는 이유로 가장 적절한 것은?', answer:'직업 현장 체험과 사회 역량을 키울 수 있어서', choices:['직업 현장 체험과 사회 역량을 키울 수 있어서','성적을 높이기 위해','시간을 때우기 위해','부모님이 강요해서']},
+  ],
+};
+
+function getPoolForUnit(uid) {
+  const pools = [];
+  const area = (() => {
+    const u = Object.values(CURRICULUM).flat().find(u=>u.id===uid);
+    return u ? u.area : '';
+  })();
+  const topic = (() => {
+    const u = Object.values(CURRICULUM).flat().find(u=>u.id===uid);
+    return u ? u.topic : '';
+  })();
+
+  if (area === 'Ⅰ') pools.push(...(SHARED['자아이해']||[]), ...(SHARED['사회역량']||[]));
+  if (area === 'Ⅱ') pools.push(...(SHARED['직업세계']||[]));
+  if (area === 'Ⅲ') pools.push(...(SHARED['진로탐색']||[]));
+
+  // 키워드 기반 추가
+  if (topic.includes('의사소통') || topic.includes('협력') || topic.includes('대인')) pools.push(...(SHARED['사회역량']||[]));
+  if (topic.includes('직업') || topic.includes('미래') || topic.includes('AI')) pools.push(...(SHARED['직업세계']||[]));
+  if (topic.includes('진로') || topic.includes('계획') || topic.includes('의사결정')) pools.push(...(SHARED['진로탐색']||[]));
+
+  if (pools.length < 8) Object.values(SHARED).forEach(p => pools.push(...p));
+
+  const seen = new Set();
+  return pools.filter(q => { if(seen.has(q.q)) return false; seen.add(q.q); return true; });
+}
+
+// ════════════════════════════════════════════════════════════
+//  상태
+// ════════════════════════════════════════════════════════════
+let state = {pub:'cmass', units:new Set(), count:10};
+let curQs=[], userAns={}, submitted=false, timerSec=0, timerInterval;
+const NUMS=['①','②','③','④'];
+const CHIP_COLOR = {
+  '자아이해':'#0369a1','직업세계':'#166534','진로탐색':'#92400e','사회역량':'#6d28d9'
+};
+
+// ════════════════════════════════════════════════════════════
+//  초기화
+// ════════════════════════════════════════════════════════════
+window.onload = () => {
+  renderPubs();
+  renderUnits();
+};
+
+function renderPubs(){
+  document.getElementById('pub-grid').innerHTML = PUBLISHERS.map(p=>`
+    <button class="pub-btn${p.id===state.pub?' active':''}" onclick="selectPub('${p.id}',this)">
+      <span class="pub-icon">${p.icon}</span>
+      <span class="pub-name">${p.name}</span>
+      <span class="pub-author">${p.author}</span>
+    </button>`).join('');
+}
+
+function selectPub(id, btn){
+  state.pub = id;
+  state.units.clear();
+  document.querySelectorAll('.pub-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderUnits();
+}
+
+function sel(key, val, btn){
+  state[key] = val;
+  btn.parentElement.querySelectorAll('.cnt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function renderUnits(){
+  const units = CURRICULUM[state.pub] || [];
+  state.units.clear();
+  let prevArea = '';
+  let html = '';
+  units.forEach(u => {
+    if(u.area !== prevArea){
+      const areaLabel = u.area==='Ⅰ'?'Ⅰ. 진로와 나의 이해':u.area==='Ⅱ'?'Ⅱ. 직업 세계와 진로 탐색':'Ⅲ. 진로 설계와 실천';
+      const areaColor = u.area==='Ⅰ'?'#0369a1':u.area==='Ⅱ'?'#166534':'#92400e';
+      if(prevArea) html += '</div>';
+      html += `<div style="grid-column:1/-1;margin-top:${prevArea?'12px':'0'};padding:6px 10px;background:${areaColor}15;border-left:3px solid ${areaColor};border-radius:4px;font-size:11px;font-weight:700;color:${areaColor};letter-spacing:.06em;">${areaLabel}</div>`;
+      prevArea = u.area;
+    }
+    html += `<button class="unit-btn" data-id="${u.id}" onclick="toggleUnit('${u.id}',this)">
+      <span class="u-no">${u.area} · ${u.topic.slice(0,15)}${u.topic.length>15?'…':''}</span>
+      <span class="u-name">${u.name}</span>
+    </button>`;
+  });
+  document.getElementById('unit-wrap').innerHTML = html || '<div class="empty-msg">단원 데이터가 없습니다</div>';
+  document.getElementById('sel-hint').textContent='';
+}
+
+function toggleUnit(id, btn){
+  if(state.units.has(id)){state.units.delete(id);btn.classList.remove('active');}
+  else{state.units.add(id);btn.classList.add('active');}
+  const n = state.units.size;
+  document.getElementById('sel-hint').textContent = n>0 ? `${n}개 단원 선택됨` : '';
+}
+
+// ════════════════════════════════════════════════════════════
+//  퀴즈 시작
+// ════════════════════════════════════════════════════════════
+function startQuiz(){
+  if(state.units.size===0){alert('단원을 하나 이상 선택해 주세요.');return;}
+  const pub = PUBLISHERS.find(p=>p.id===state.pub);
+  const allUnits = CURRICULUM[state.pub] || [];
+
+  let pool = [];
+  state.units.forEach(uid=>{
+    const p = getPoolForUnit(uid);
+    pool = [...pool, ...p.map(q=>({...q, unitId:uid}))];
+  });
+
+  const seen = new Set();
+  pool = pool.filter(q=>{ const k=q.q; if(seen.has(k))return false; seen.add(k); return true; });
+
+  if(pool.length===0){alert('해당 단원의 문제 데이터가 없습니다.');return;}
+
+  const shuffled = [...pool].sort(()=>Math.random()-.5);
+  curQs = shuffled.slice(0, Math.min(state.count, shuffled.length)).map((q,i)=>({
+    ...q, index:i+1, choices:[...q.choices].sort(()=>Math.random()-.5)
+  }));
+  userAns={}; submitted=false;
+
+  const unitNames = Array.from(state.units).map(id=>{
+    const u=allUnits.find(u=>u.id===id); return u?u.name:'';
+  }).filter(Boolean).join(' · ');
+
+  document.getElementById('hdr-pub').textContent = `${pub.name}(${pub.author})`;
+  document.getElementById('hdr-unit').textContent = unitNames.length > 30 ? unitNames.slice(0,30)+'…' : unitNames;
+  document.getElementById('ei-unit').textContent = unitNames.length > 30 ? unitNames.slice(0,30)+'…' : unitNames;
+
+  const label = document.getElementById('exam-pub-label');
+  label.textContent = pub.name;
+  label.style.background = pub.color;
+  document.getElementById('exam-main-title').textContent = '진로와 직업 단원별 시험지';
+  document.getElementById('ei-pub').textContent = `${pub.name}(${pub.author})`;
+  document.getElementById('ei-count').textContent = curQs.length + '문항';
+  document.getElementById('ei-score').textContent = `각 ${Math.floor(100/curQs.length)}점`;
+
+  renderQs();
+  document.getElementById('hero').style.display='none';
+  document.getElementById('quiz-page').style.display='block';
+  window.scrollTo(0,0);
+  startTimer();
+}
+
+function renderQs(){
+  const container = document.getElementById('q-container');
+  const groups={};
+  const typeOrder=['자아이해','직업세계','진로탐색','사회역량'];
+  curQs.forEach(q=>{const t=q.type||'기타';if(!groups[t])groups[t]=[];groups[t].push(q);});
+  const icons={'자아이해':'🪞','직업세계':'🏢','진로탐색':'🗺️','사회역량':'🤝','기타':'📝'};
+  const bgColors={'자아이해':'rgba(3,105,161,.07)','직업세계':'rgba(22,101,52,.07)','진로탐색':'rgba(146,64,14,.07)','사회역량':'rgba(109,40,217,.07)','기타':'rgba(0,0,0,.04)'};
+
+  let html='';
+  const orderedTypes=[...typeOrder,...Object.keys(groups).filter(t=>!typeOrder.includes(t))];
+  orderedTypes.forEach(t=>{
+    if(!groups[t]||!groups[t].length)return;
+    const qs=groups[t];
+    html+=`
+      <div class="sec-hdr" style="background:${bgColors[t]||'rgba(0,0,0,.04)'}">
+        <span class="sec-icon">${icons[t]||'📝'}</span>
+        <span class="sec-title-text">${t}</span>
+        <span class="sec-nums">${qs.map(q=>q.index+'번').join(' · ')}</span>
+      </div>
+      <div class="q-grid">${qs.map(renderCard).join('')}</div>`;
+  });
+  container.innerHTML = html||'<div class="empty-msg">문제를 불러오지 못했습니다</div>';
+}
+
+function renderCard(q){
+  const color = CHIP_COLOR[q.type]||'#334155';
+  return `
+    <div class="q-card" id="qcard-${q.index}">
+      <div class="q-num-badge">${q.index}</div>
+      <div class="q-body">
+        <span class="type-chip" style="background:${color}">${q.type}</span>
+        <div class="q-text">${q.q}</div>
+        <div class="choices" id="ch-${q.index}">
+          ${q.choices.map((c,ci)=>`
+            <div class="choice" id="ci-${q.index}-${ci}" onclick="pick(${q.index},${ci})">
+              <span class="choice-n">${NUMS[ci]}</span><span>${c}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="ans-mark" id="mk-${q.index}"></div>
+    </div>`;
+}
+
+function pick(qi, ci){
+  if(submitted)return;
+  userAns[qi]=ci;
+  document.querySelectorAll(`#ch-${qi} .choice`).forEach((c,i)=>c.classList.toggle('sel',i===ci));
+  document.getElementById('prog').style.width=(Object.keys(userAns).length/curQs.length*100)+'%';
+}
+
+function startTimer(){
+  timerSec=0; clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    timerSec++;
+    const m=String(Math.floor(timerSec/60)).padStart(2,'0');
+    const s=String(timerSec%60).padStart(2,'0');
+    document.getElementById('timer').textContent=`${m}:${s}`;
+  },1000);
+}
+
+function submitQuiz(){
+  const ans=Object.keys(userAns).length;
+  if(!submitted&&ans<curQs.length)
+    if(!confirm(`${curQs.length-ans}문항이 미응답입니다. 채점할까요?`))return;
+  submitted=true; clearInterval(timerInterval);
+
+  let correct=0;
+  curQs.forEach(q=>{
+    const card=document.getElementById(`qcard-${q.index}`);
+    const cIdx=q.choices.indexOf(q.answer);
+    const uIdx=userAns[q.index];
+    card.querySelectorAll('.choice').forEach((c,i)=>{
+      c.classList.remove('sel');
+      if(i===cIdx)c.classList.add('ok');
+      else if(i===uIdx&&uIdx!==cIdx)c.classList.add('ng');
+    });
+    const mk=document.getElementById(`mk-${q.index}`);
+    if(uIdx===cIdx){correct++;card.classList.add('gc');mk.textContent='✓';mk.style.color='var(--green)';}
+    else{card.classList.add('gw');mk.textContent='✗';mk.style.color='var(--red)';}
+  });
+
+  const total=curQs.length, wrong=ans-correct, unanswered=total-ans;
+  const score=Math.round(correct/total*100);
+  document.getElementById('r-score').innerHTML=`${score}<span>점</span>`;
+  document.getElementById('s-co').textContent=correct;
+  document.getElementById('s-wr').textContent=wrong;
+  document.getElementById('s-un').textContent=unanswered;
+
+  let emoji,grade,desc;
+  if(score>=90){emoji='🏆';grade='최우수! 진로 전문가 수준!';desc='자신의 진로를 체계적으로 설계할 준비가 되었습니다.';}
+  else if(score>=80){emoji='🥇';grade='우수! 진로 이해도가 높아요!';desc='오답 단원을 한 번 더 확인하면 완벽해요.';}
+  else if(score>=70){emoji='🎯';grade='양호! 조금만 더 노력해요!';desc:'진로 탐색 활동을 꾸준히 이어가 보세요.';}
+  else if(score>=60){emoji='📚';grade:'보통, 더 노력이 필요해요!';desc:'커리어넷 등 진로 탐색 도구를 활용해 보세요.';}
+  else{emoji='💪';grade:'분발이 필요해요!';desc:'나를 이해하는 것부터 차근차근 시작해 봐요.';}
+
+  document.getElementById('r-emoji').textContent=emoji;
+  document.getElementById('r-grade').textContent=grade;
+  document.getElementById('r-desc').textContent=desc;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function reviewAns(){document.getElementById('overlay').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'});}
+function retryQuiz(){document.getElementById('overlay').classList.remove('show');startQuiz();}
+function goBack(){
+  clearInterval(timerInterval);
+  document.getElementById('quiz-page').style.display='none';
+  document.getElementById('hero').style.display='flex';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
