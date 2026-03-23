@@ -1,0 +1,2 @@
+# API 키가 포함된 Apps Script 파일 - GitHub 업로드 제외
+*.gs
