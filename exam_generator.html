@@ -329,21 +329,28 @@ header::before{
         <select id="sel-sem">
           <option value="1" selected>1학기</option>
           <option value="2">2학기</option>
+          <option value="mid1">1학기 중간고사</option>
+          <option value="final1">1학기 기말고사</option>
+          <option value="mid2">2학기 중간고사</option>
+          <option value="final2">2학기 기말고사</option>
         </select>
       </div>
       <div class="cfg-item">
         <label>교재(출판사)</label>
-        <select id="sel-pub"></select>
+        <div id="sel-pub" style="display:flex;flex-direction:column;gap:5px;padding:8px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);max-height:140px;overflow-y:auto;"></div>
       </div>
       <div class="cfg-item">
         <label>단원</label>
-        <select id="sel-unit"></select>
+        <div id="sel-unit" style="display:flex;flex-direction:column;gap:5px;padding:8px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);max-height:160px;overflow-y:auto;"></div>
       </div>
       <div class="cfg-item">
         <label>문항 수</label>
         <select id="sel-count">
+          <option value="5">5문항</option>
           <option value="10">10문항</option>
+          <option value="15">15문항</option>
           <option value="20" selected>20문항</option>
+          <option value="25">25문항</option>
           <option value="30">30문항</option>
         </select>
       </div>
@@ -642,19 +649,24 @@ function updateUnits(){
   const sel = document.getElementById('sel-unit');
   sel.innerHTML = units.map((u,i)=>`<option value="${i===0?'all':i}">${u}</option>`).join('');
 }
-['sel-grade','sel-sem','sel-pub'].forEach(id=>{
+['sel-grade','sel-sem'].forEach(id=>{
   document.getElementById(id).addEventListener('change',updateUnits);
 });
+document.getElementById('sel-pub').addEventListener('change',updateUnits);
 
 // ── 시험지 생성 ──
 async function generateExam(){
   if (!currentSubj) { alert('과목을 먼저 선택해 주세요.'); return; }
   const s  = SUBJECTS[currentSubj];
   const grade = document.getElementById('sel-grade').value;
-  const sem   = document.getElementById('sel-sem').value;
-  const pub   = document.getElementById('sel-pub').value;
-  const unitEl= document.getElementById('sel-unit');
-  const unit  = unitEl.options[unitEl.selectedIndex].text;
+  const semVal = document.getElementById('sel-sem').value;
+  const sem = semVal.includes('1')?'1':semVal.includes('2')?'2':semVal;
+  const semLabel = semVal==='mid1'?'1학기 중간고사':semVal==='final1'?'1학기 기말고사':semVal==='mid2'?'2학기 중간고사':semVal==='final2'?'2학기 기말고사':sem+'학기';
+  const pubChecked=[...document.querySelectorAll('input[name=pub]:checked')].map(e=>e.value);
+  const pub = pubChecked.length ? pubChecked.join(', ') : Object.keys(SUBJECTS[currentSubj].publishers)[0];
+  const pubFirst = pubChecked[0] || Object.keys(SUBJECTS[currentSubj].publishers)[0];
+  const unitChecked=[...document.querySelectorAll('input[name=unit]:checked')].map(e=>e.closest('label').textContent.trim());
+  const unit=unitChecked.length?unitChecked.join(', '):'전체';
   const count = document.getElementById('sel-count').value;
   const level = document.getElementById('sel-level').value;
   const qtypes=[...document.querySelectorAll('input[name=qtype]:checked')].map(e=>e.value);
@@ -691,8 +703,8 @@ async function generateExam(){
 조건:
 - 과목: ${s.name} (${SUBJ_PROMPTS[currentSubj]})
 - 학년: 중학교 ${grade}학년
-- 학기: ${sem}학기
-- 교재: ${s.publishers[pub]}
+- 학기/시험: ${semVal.includes('mid')?'중간고사':semVal.includes('final')?'기말고사':sem+'학기'}
+- 교재: ${s.publishers[pubFirst]||pub}
 - 단원/범위: ${unit}
 - 난이도: ${LEVEL_NAME[level]}
 - 문제 유형(균등 배분): ${qtypes.join(', ')}
@@ -767,7 +779,7 @@ function renderExam({s,grade,sem,pub,unit,count,level}){
   document.getElementById('ep-title').textContent=`중학교 ${grade}학년 ${sem}학기 ${s.name} 시험`;
   document.getElementById('em-grade').textContent=`중${grade}학년`;
   document.getElementById('em-sem').textContent=`${sem}학기`;
-  document.getElementById('em-pub').textContent=s.publishers[pub];
+  document.getElementById('em-pub').textContent=s.publishers[pubFirst]||pub;
   document.getElementById('em-unit').textContent=unit;
   document.getElementById('em-cnt').textContent=`${currentQuestions.length}문항`;
   document.getElementById('ep-date').textContent=`생성일: ${dt} · 난이도: ${LEVEL_NAME[level]}`;
