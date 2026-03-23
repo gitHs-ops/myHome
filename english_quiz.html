@@ -445,7 +445,7 @@ const CURRICULUM={
       {id:'chun-1-1-6',name:'Lesson 6: Amazing Animals',        topic:'동물·미래시제',            exam:'final'},
     ],2:[
       {id:'chun-1-2-1',name:'Lesson 7: Save Our Earth',         topic:'환경·접속사',              exam:'mid'},
-      {id:'chun-1-2-2',name:'Lesson 8: Let's Make Art',        topic:'예술·to부정사 기초',       exam:'mid'},
+      {id:'chun-1-2-2',name:"Lesson 8: Let's Make Art",        topic:'예술·to부정사 기초',       exam:'mid'},
     ]},
     2:{1:[
       {id:'chun-2-1-1',name:'Lesson 1: Know Yourself',          topic:'자아·동명사',              exam:'mid'},
@@ -472,12 +472,12 @@ const CURRICULUM={
   },
   vis:{
     1:{1:[
-      {id:'vis-1-1-1',name:'Lesson 1: Hello, I'm New Here',    topic:'자기소개·be동사',          exam:'mid'},
+      {id:'vis-1-1-1',name:"Lesson 1: Hello, I'm New Here",    topic:'자기소개·be동사',          exam:'mid'},
       {id:'vis-1-1-2',name:'Lesson 2: My Busy School Life',     topic:'학교생활·일반동사',        exam:'mid'},
       {id:'vis-1-1-3',name:'Lesson 3: Family Is Everything',    topic:'가족·현재진행형',          exam:'mid'},
       {id:'vis-1-1-4',name:'Lesson 4: Food Is Culture',         topic:'음식·비교급',              exam:'final'},
       {id:'vis-1-1-5',name:'Lesson 5: My Fun Weekend',          topic:'주말·과거시제',            exam:'final'},
-      {id:'vis-1-1-6',name:'Lesson 6: Let's Go Outside',       topic:'야외활동·미래시제',        exam:'final'},
+      {id:'vis-1-1-6',name:"Lesson 6: Let's Go Outside",       topic:'야외활동·미래시제',        exam:'final'},
     ],2:[
       {id:'vis-1-2-1',name:'Lesson 7: Keep Our Earth Clean',    topic:'환경·접속사',              exam:'mid'},
       {id:'vis-1-2-2',name:'Lesson 8: Art Is Everywhere',       topic:'예술·to부정사',            exam:'mid'},
@@ -501,7 +501,7 @@ const CURRICULUM={
     ],2:[
       {id:'vis-3-2-1',name:'Lesson 5: Think for Yourself',      topic:'비판적 사고',              exam:'mid'},
       {id:'vis-3-2-2',name:'Lesson 6: Make a Difference',       topic:'변화·심화 독해',           exam:'mid'},
-      {id:'vis-3-2-3',name:'Lesson 7: Tomorrow's World',       topic:'미래·종합',                exam:'final'},
+      {id:'vis-3-2-3',name:"Lesson 7: Tomorrow's World",       topic:'미래·종합',                exam:'final'},
       {id:'vis-3-2-4',name:'Lesson 8: Unforgettable Stories',   topic:'이야기·심화',              exam:'final'},
     ]},
   },
@@ -510,7 +510,7 @@ const CURRICULUM={
       {id:'dong-1-1-1',name:'Lesson 1: Nice to Meet You!',      topic:'인사·자기소개·be동사',     exam:'mid'},
       {id:'dong-1-1-2',name:'Lesson 2: School Days',            topic:'학교생활·일반동사·조동사', exam:'mid'},
       {id:'dong-1-1-3',name:'Lesson 3: Family and Friends',     topic:'가족·친구·현재진행형',     exam:'mid'},
-      {id:'dong-1-1-4',name:'Lesson 4: Let's Eat!',            topic:'음식·비교급·권유 표현',    exam:'final'},
+      {id:'dong-1-1-4',name:"Lesson 4: Let's Eat!",            topic:'음식·비교급·권유 표현',    exam:'final'},
       {id:'dong-1-1-5',name:'Lesson 5: My Free Time',           topic:'여가·과거시제',            exam:'final'},
       {id:'dong-1-1-6',name:'Lesson 6: Our Planet',             topic:'환경·미래시제·접속사',     exam:'final'},
     ],2:[
@@ -561,7 +561,7 @@ const CURRICULUM={
       {id:'neun-2-2-1',name:'Unit 5: Technology and Us',         topic:'기술·분사',                exam:'mid'},
       {id:'neun-2-2-2',name:'Unit 6: Helping Others',            topic:'봉사·접속사 심화',         exam:'mid'},
       {id:'neun-2-2-3',name:'Unit 7: Making Good Choices',       topic:'선택·간접의문문',          exam:'final'},
-      {id:'neun-2-2-4',name:'Unit 8: Nature's Wonders',         topic:'자연·복합 문장',           exam:'final'},
+      {id:'neun-2-2-4',name:"Unit 8: Nature's Wonders",         topic:'자연·복합 문장',           exam:'final'},
     ]},
     3:{1:[
       {id:'neun-3-1-1',name:'Unit 1: Chasing Your Dream',        topic:'꿈·복합 구문',             exam:'mid'},
@@ -646,7 +646,7 @@ window.onload = () => {
 
 function renderPubs(){
   document.getElementById('pub-grid').innerHTML = PUBLISHERS.map(p=>`
-    <button class="pub-btn${p.id===state.pub?' active':''}" onclick="selectPub('${p.id}',this)">
+    <button class="pub-btn${p.id===state.pub?' active':''}" data-pub="${p.id}" onclick="selectPub(this.dataset.pub,this)">
       <span class="pub-icon">${p.icon}</span>
       <span class="pub-name">${p.name}</span>
       <span class="pub-author">${p.author}</span>
@@ -679,7 +679,7 @@ function renderUnits(){
   const units = (CURRICULUM[state.pub]?.[state.grade]?.[state.sem]) || [];
   state.units.clear();
   document.getElementById('unit-wrap').innerHTML = units.length ? units.map(u=>`
-    <button class="unit-btn" data-id="${u.id}" onclick="toggleUnit('${u.id}',this)">
+    <button class="unit-btn" data-id="${u.id}" onclick="toggleUnit(this.dataset.id,this)">
       <span class="u-no">${u.exam==='mid'?'[중간]':'[기말]'} · ${u.topic}</span>
       <span class="u-name">${u.name}</span>
     </button>`).join('') : '<div class="empty-msg">해당 단원 정보가 없습니다</div>';
