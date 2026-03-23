@@ -1,5 +1,6 @@
 // ============================================================
 //  시험지 생성 프록시 — Google Apps Script (청크 방식)
+//  ver1.8 — 토큰 사용량 반환 추가 (usage 포함)
 //  ★ Apps Script에 붙여넣고 새 버전으로 재배포
 // ============================================================
 
@@ -64,6 +65,39 @@ function doGet(e) {
       }
       return ContentService
         .createTextOutput(JSON.stringify({ text: text }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // ── prompt: 직접 Claude 호출 (exam_generator.html 호환) ──
+    if (e.parameter.prompt) {
+      const prompt = e.parameter.prompt;
+      const response = UrlFetchApp.fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01"
+        },
+        payload: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 5000,
+          messages: [{ role: "user", content: prompt }]
+        }),
+        muteHttpExceptions: true
+      });
+      const result = JSON.parse(response.getContentText());
+      let text = "";
+      if (result.content) {
+        result.content.forEach(function(b) {
+          if (b.type === "text") text += b.text;
+        });
+      }
+      return ContentService
+        .createTextOutput(JSON.stringify({
+          text: text,
+          usage: result.usage || null,
+          error: result.error ? result.error.message : null
+        }))
         .setMimeType(ContentService.MimeType.JSON);
     }
 

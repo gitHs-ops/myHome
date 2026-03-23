@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>중학교 전과목 시험지 생성기 ver1.7</title>
+<title>중학교 전과목 시험지 생성기 ver1.8</title>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -237,6 +237,26 @@ header::before{
 .ans-reveal{display:none;margin-top:9px;padding:7px 11px;background:rgba(26,92,46,.07);border-left:3px solid #1a5c2e;border-radius:0 5px 5px 0;font-size:.79rem;color:#1a5c2e;font-weight:600;line-height:1.6;}
 .ans-reveal.show{display:block;}
 
+/* ── 토큰 사용량 표시 ── */
+.token-tracker{
+  margin-top:14px;padding:12px 16px;
+  background:#f8f7ff;border:1px solid rgba(124,58,237,.2);
+  border-radius:var(--radius-sm);font-size:.78rem;color:#4a3f6e;
+  display:none;
+}
+.token-tracker.show{display:block;}
+.token-row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;}
+.token-label{font-weight:600;color:#6b5f8a;}
+.token-val{font-weight:700;color:#1a1630;}
+.token-bar-wrap{height:5px;background:rgba(124,58,237,.12);border-radius:3px;margin-top:8px;overflow:hidden;}
+.token-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,#7c3aed,#4a9eff);transition:width .4s;}
+.token-warn{
+  margin-top:8px;padding:6px 10px;border-radius:5px;
+  font-size:.76rem;font-weight:600;display:none;
+}
+.token-warn.yellow{background:rgba(240,160,48,.12);color:#b87800;border:1px solid rgba(240,160,48,.3);display:block;}
+.token-warn.red{background:rgba(220,38,38,.1);color:#b91c1c;border:1px solid rgba(220,38,38,.25);display:block;}
+
 @media(max-width:600px){
   .exam-paper{padding:24px 16px;}
   .q-choices{grid-template-columns:1fr;}
@@ -257,8 +277,8 @@ header::before{
 <header>
   <div class="hdr-inner">
     <a href="index.html" class="btn-home">← 홈으로</a>
-    <div class="hdr-label">AI-Powered · 교육부 2015·2022 개정 기준 ver1.7</div>
-    <h1 class="hdr-title">중학교 <span>전과목</span> 시험지 생성기 </h1>
+    <div class="hdr-label">AI-Powered · 교육부 2015·2022 개정 기준 ver1.8</div>
+    <h1 class="hdr-title">중학교 <span>전과목</span> 시험지 생성기 <sup style="font-size:.45em;font-family:'Pretendard',sans-serif;font-weight:700;background:rgba(124,58,237,.15);color:#7c3aed;padding:3px 8px;border-radius:10px;vertical-align:middle;letter-spacing:.04em;">v1.8</sup></h1>
     <p class="hdr-sub">과목·학년·학기·단원을 선택하면 AI가 맞춤형 시험지를 즉시 생성합니다</p>
     <div class="hdr-stats">
       <div class="hdr-stat">📚 지원 과목 <span>6과목</span></div>
@@ -372,6 +392,19 @@ header::before{
     <button class="btn-gen" id="btn-gen" onclick="generateExam()">
       <span id="btn-text">✦ 시험지 생성하기</span>
     </button>
+    <div class="token-tracker" id="token-tracker">
+      <div class="token-row">
+        <span class="token-label">이번 요청 토큰</span>
+        <span class="token-val" id="tk-req">-</span>
+      </div>
+      <div class="token-row" style="margin-top:5px;">
+        <span class="token-label">오늘 누적 토큰</span>
+        <span class="token-val" id="tk-total">-</span>
+        <span style="color:#9b8fb8;font-size:.72rem;" id="tk-reset-btn" onclick="resetTokenCount()" title="초기화" style="cursor:pointer;">↺ 초기화</span>
+      </div>
+      <div class="token-bar-wrap"><div class="token-bar" id="tk-bar" style="width:0%"></div></div>
+      <div class="token-warn" id="tk-warn"></div>
+    </div>
   </div>
 
   <!-- 로딩 -->
@@ -752,6 +785,7 @@ JSON 형식 (배열):
       if (data.error) throw new Error('proxy: ' + data.error);
       raw = data.text || '';
       if (!raw) throw new Error('empty response from proxy');
+      if (data.usage) updateTokenTracker(data.usage);
     } else {
       // ── 직접 호출 (로컬 환경) ──
       const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -891,6 +925,80 @@ function toggleAnswers(){
   answersShown=!answersShown;
   document.querySelectorAll('.ans-reveal').forEach(el=>el.classList.toggle('show',answersShown));
 }
+
+// ── 토큰 사용량 추적 ──
+const TOKEN_WARN_YELLOW = 50000;   // 5만 토큰: 주의
+const TOKEN_WARN_RED    = 100000;  // 10만 토큰: 위험
+
+function getTodayKey(){ return 'tokenUsage_' + new Date().toISOString().slice(0,10); }
+
+function updateTokenTracker(usage){
+  const inp = usage.input_tokens  || 0;
+  const out = usage.output_tokens || 0;
+  const req = inp + out;
+
+  // 오늘 누적 저장
+  const key = getTodayKey();
+  const prev = parseInt(localStorage.getItem(key) || '0');
+  const total = prev + req;
+  localStorage.setItem(key, total);
+
+  // UI 갱신
+  const tracker = document.getElementById('token-tracker');
+  tracker.classList.add('show');
+  document.getElementById('tk-req').textContent =
+    `입력 ${inp.toLocaleString()} + 출력 ${out.toLocaleString()} = ${req.toLocaleString()} 토큰`;
+  document.getElementById('tk-total').textContent = total.toLocaleString() + ' 토큰';
+
+  // 진행 바 (10만 기준)
+  const pct = Math.min(total / TOKEN_WARN_RED * 100, 100);
+  document.getElementById('tk-bar').style.width = pct + '%';
+  if (pct >= 70) document.getElementById('tk-bar').style.background = 'linear-gradient(90deg,#f0a030,#ef4444)';
+
+  // 경고 메시지
+  const warn = document.getElementById('tk-warn');
+  warn.className = 'token-warn';
+  if (total >= TOKEN_WARN_RED) {
+    warn.className = 'token-warn red';
+    warn.textContent = '⚠️ 오늘 사용량이 10만 토큰을 넘었습니다. API 크레딧 잔액을 확인하세요.';
+  } else if (total >= TOKEN_WARN_YELLOW) {
+    warn.className = 'token-warn yellow';
+    warn.textContent = '⚡ 오늘 사용량이 5만 토큰을 넘었습니다. 크레딧 잔액을 확인하는 것을 권장합니다.';
+  }
+}
+
+function resetTokenCount(){
+  localStorage.removeItem(getTodayKey());
+  document.getElementById('tk-req').textContent = '-';
+  document.getElementById('tk-total').textContent = '-';
+  document.getElementById('tk-bar').style.width = '0%';
+  document.getElementById('tk-bar').style.background = 'linear-gradient(90deg,#7c3aed,#4a9eff)';
+  document.getElementById('tk-warn').className = 'token-warn';
+  document.getElementById('token-tracker').classList.remove('show');
+}
+
+// 페이지 로드 시 오늘 누적 이미 있으면 표시
+(function(){
+  const key = getTodayKey();
+  const saved = parseInt(localStorage.getItem(key) || '0');
+  if (saved > 0) {
+    const tracker = document.getElementById('token-tracker');
+    tracker.classList.add('show');
+    document.getElementById('tk-req').textContent = '-';
+    document.getElementById('tk-total').textContent = saved.toLocaleString() + ' 토큰 (이전 기록)';
+    const pct = Math.min(saved / TOKEN_WARN_RED * 100, 100);
+    document.getElementById('tk-bar').style.width = pct + '%';
+    if (pct >= 70) document.getElementById('tk-bar').style.background = 'linear-gradient(90deg,#f0a030,#ef4444)';
+    const warn = document.getElementById('tk-warn');
+    if (saved >= TOKEN_WARN_RED) {
+      warn.className = 'token-warn red';
+      warn.textContent = '⚠️ 오늘 사용량이 10만 토큰을 넘었습니다. API 크레딧 잔액을 확인하세요.';
+    } else if (saved >= TOKEN_WARN_YELLOW) {
+      warn.className = 'token-warn yellow';
+      warn.textContent = '⚡ 오늘 사용량이 5만 토큰을 넘었습니다. 크레딧 잔액을 확인하는 것을 권장합니다.';
+    }
+  }
+})();
 </script>
 </body>
 </html>
