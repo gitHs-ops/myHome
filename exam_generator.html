@@ -37,6 +37,8 @@ header::before{
   pointer-events:none;
 }
 .hdr-inner{max-width:980px;margin:0 auto;position:relative;}
+.btn-home{display:inline-flex;align-items:center;gap:6px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.25);color:#7c3aed;padding:7px 16px;border-radius:20px;font-size:.82rem;font-weight:600;text-decoration:none;transition:all .2s;margin-bottom:16px;}
+.btn-home:hover{background:rgba(124,58,237,.18);border-color:#7c3aed;}
 .hdr-label{font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:#7c3aed;margin-bottom:12px;font-weight:600;}
 .hdr-title{font-family:'Nanum Myeongjo',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.15;letter-spacing:-.03em;margin-bottom:10px;color:#1a1630;}
 .hdr-title span{
@@ -254,6 +256,7 @@ header::before{
 
 <header>
   <div class="hdr-inner">
+    <a href="index.html" class="btn-home">← 홈으로</a>
     <div class="hdr-label">AI-Powered · 교육부 2015·2022 개정 기준 ver1.7</div>
     <h1 class="hdr-title">중학교 <span>전과목</span> 시험지 생성기 </h1>
     <p class="hdr-sub">과목·학년·학기·단원을 선택하면 AI가 맞춤형 시험지를 즉시 생성합니다</p>
