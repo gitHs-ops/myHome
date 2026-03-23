@@ -6,7 +6,6 @@
 <title>중학교 전과목 시험지 생성기</title>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-
 :root{
   --bg:#f5f7ff;--bg2:#edf0fb;--surface:#ffffff;--surface2:#f0f2fa;
   --border:rgba(0,0,0,.1);--border2:rgba(0,0,0,.18);
@@ -249,202 +248,134 @@ header::before{
   .ans-reveal{display:none!important;}
   #exam-area{display:block!important;}
 }
-
-
-/* ── 화면 전환 ── */
-#page-subject { display:block; }
-#page-config  { display:none; }
-#page-exam    { display:none; }
-
-/* ── 과목 선택 화면 ── */
-.subject-page-inner {
-  max-width:720px; margin:0 auto; padding:60px 5% 80px;
-  text-align:center;
-}
-.subject-page-title {
-  font-family:'Nanum Myeongjo',serif;
-  font-size:clamp(1.8rem,4vw,2.8rem);
-  font-weight:800; margin-bottom:8px; color:var(--text);
-}
-.subject-page-sub {
-  font-size:.9rem; color:var(--muted); margin-bottom:48px;
-}
-.subject-select-grid {
-  display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
-}
-.subject-btn {
-  background:var(--surface); border:2px solid var(--border);
-  border-radius:var(--radius); padding:28px 16px 22px;
-  cursor:pointer; transition:all .2s;
-  display:flex; flex-direction:column; align-items:center; gap:10px;
-  font-family:'Pretendard',sans-serif;
-}
-.subject-btn:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,.1); }
-.subject-btn .s-icon { font-size:2.2rem; line-height:1; }
-.subject-btn .s-name { font-size:1rem; font-weight:700; color:var(--text); }
-.subject-btn .s-en   { font-size:.7rem; color:var(--muted); letter-spacing:.08em; }
-.subject-btn.c-korean:hover  { border-color:#f06090; background:rgba(240,96,144,.05); }
-.subject-btn.c-english:hover { border-color:#4a9eff; background:rgba(74,158,255,.05); }
-.subject-btn.c-math:hover    { border-color:#f0a030; background:rgba(240,160,48,.05); }
-.subject-btn.c-science:hover { border-color:#40c888; background:rgba(64,200,136,.05); }
-.subject-btn.c-history:hover { border-color:#c87840; background:rgba(200,120,64,.05); }
-.subject-btn.c-hanmun:hover  { border-color:#a878f0; background:rgba(168,120,240,.05); }
-
-/* ── 설정 화면 ── */
-.config-page-inner { max-width:780px; margin:0 auto; padding:40px 5% 80px; }
-.back-btn {
-  display:inline-flex; align-items:center; gap:6px;
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:8px; padding:8px 16px; font-size:.83rem;
-  font-weight:600; cursor:pointer; color:var(--muted);
-  margin-bottom:24px; transition:all .15s;
-  font-family:'Pretendard',sans-serif;
-}
-.back-btn:hover { border-color:var(--ac,#888); color:var(--text); }
-.config-card {
-  background:var(--surface); border:1px solid var(--border);
-  border-radius:var(--radius); padding:28px;
-  box-shadow:0 2px 16px rgba(0,0,0,.06);
-}
-.config-card-title {
-  font-size:1.1rem; font-weight:700; margin-bottom:20px;
-  padding-bottom:14px; border-bottom:1px solid var(--border);
-  display:flex; align-items:center; gap:10px;
-}
-
-@media(max-width:600px){
-  .subject-select-grid { grid-template-columns:repeat(2,1fr); }
-  .config-grid { grid-template-columns:1fr 1fr; }
-  .exam-paper { padding:20px 16px; }
-  .q-choices { grid-template-columns:1fr; }
-}
-@media print {
-  #page-subject, #page-config .back-btn,
-  #page-config .config-card,
-  .action-bar, .score-card { display:none!important; }
-  .exam-paper { box-shadow:none!important; padding:0!important; }
-  .ans-reveal { display:none!important; }
-  #page-exam { display:block!important; }
-  body { background:#fff!important; }
-}
 </style>
 </head>
 <body>
 
-<!-- ══════════ 1. 과목 선택 화면 ══════════ -->
-<div id="page-subject">
-  <header>
-    <div class="hdr-inner">
-      <div class="hdr-label">AI-Powered · 교육부 2015·2022 개정 기준</div>
-      <h1 class="hdr-title">중학교 <span>전과목</span> 시험지 생성기</h1>
-      <p class="hdr-sub">과목을 선택하면 학년·학기·단원별 맞춤 시험지를 즉시 생성합니다</p>
-    </div>
-  </header>
-  <div class="subject-page-inner">
-    <p class="subject-page-title">📚 과목을 선택하세요</p>
-    <p class="subject-page-sub">중학교 1~3학년 · 6개 과목 · 5~6개 출판사 지원</p>
-    <div class="subject-select-grid">
-      <button class="subject-btn c-korean"  onclick="goConfig('korean')">
-        <span class="s-icon">📖</span>
-        <span class="s-name">국 어</span>
-        <span class="s-en">KOREAN</span>
-      </button>
-      <button class="subject-btn c-english" onclick="goConfig('english')">
-        <span class="s-icon">🔤</span>
-        <span class="s-name">영 어</span>
-        <span class="s-en">ENGLISH</span>
-      </button>
-      <button class="subject-btn c-math"    onclick="goConfig('math')">
-        <span class="s-icon">📐</span>
-        <span class="s-name">수 학</span>
-        <span class="s-en">MATH</span>
-      </button>
-      <button class="subject-btn c-science" onclick="goConfig('science')">
-        <span class="s-icon">🔬</span>
-        <span class="s-name">과 학</span>
-        <span class="s-en">SCIENCE</span>
-      </button>
-      <button class="subject-btn c-history" onclick="goConfig('history')">
-        <span class="s-icon">🏛️</span>
-        <span class="s-name">역 사</span>
-        <span class="s-en">HISTORY</span>
-      </button>
-      <button class="subject-btn c-hanmun"  onclick="goConfig('hanmun')">
-        <span class="s-icon">漢</span>
-        <span class="s-name">한 문</span>
-        <span class="s-en">HANMUN</span>
-      </button>
+<header>
+  <div class="hdr-inner">
+    <div class="hdr-label">AI-Powered · 교육부 2015·2022 개정 기준</div>
+    <h1 class="hdr-title">중학교 <span>전과목</span> 시험지 생성기</h1>
+    <p class="hdr-sub">과목·학년·학기·단원을 선택하면 AI가 맞춤형 시험지를 즉시 생성합니다</p>
+    <div class="hdr-stats">
+      <div class="hdr-stat">📚 지원 과목 <span>6과목</span></div>
+      <div class="hdr-stat">🏫 대상 <span>중1·2·3학년</span></div>
+      <div class="hdr-stat">📋 문항 수 <span>10·20·30문항</span></div>
+      <div class="hdr-stat">📖 교재 <span>5~6개 출판사</span></div>
     </div>
   </div>
-</div>
+</header>
 
-<!-- ══════════ 2. 설정 화면 ══════════ -->
-<div id="page-config">
-  <div class="config-page-inner">
-    <button class="back-btn" onclick="goSubject()">← 과목 선택으로</button>
-    <div class="config-card">
-      <div class="config-card-title">
-        <span id="cfg-icon">📖</span>
-        <span id="cfg-title">시험지 설정</span>
-      </div>
-      <div class="config-grid">
-        <div class="cfg-item">
-          <label>학년</label>
-          <select id="sel-grade">
-            <option value="1">중학교 1학년</option>
-            <option value="2" selected>중학교 2학년</option>
-            <option value="3">중학교 3학년</option>
-          </select>
-        </div>
-        <div class="cfg-item">
-          <label>학기</label>
-          <select id="sel-sem">
-            <option value="1" selected>1학기</option>
-            <option value="2">2학기</option>
-          </select>
-        </div>
-        <div class="cfg-item">
-          <label>교재(출판사) <span style="font-weight:400;color:var(--muted);font-size:.75em;">(복수 선택)</span></label>
-          <div id="sel-pub" style="display:flex;flex-direction:column;gap:5px;padding:8px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);max-height:130px;overflow-y:auto;"></div>
-        </div>
-        <div class="cfg-item">
-          <label>단원 <span style="font-weight:400;color:var(--muted);font-size:.75em;">(복수 선택)</span></label>
-          <div id="sel-unit" style="display:flex;flex-direction:column;gap:5px;padding:8px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);max-height:150px;overflow-y:auto;"></div>
-        </div>
-        <div class="cfg-item">
-          <label>문항 수</label>
-          <select id="sel-count">
-            <option value="10">10문항</option>
-            <option value="20" selected>20문항</option>
-            <option value="30">30문항</option>
-          </select>
-        </div>
-        <div class="cfg-item">
-          <label>난이도</label>
-          <select id="sel-level">
-            <option value="easy">하 (기본)</option>
-            <option value="mid" selected>중 (보통)</option>
-            <option value="hard">상 (심화)</option>
-            <option value="mix">혼합</option>
-          </select>
-        </div>
-      </div>
-      <div class="qtype-section" style="margin-top:18px;">
-        <span style="font-size:.78rem;color:var(--muted2);font-weight:500;letter-spacing:.04em;display:block;margin-bottom:10px;">문제 유형 (복수 선택)</span>
-        <div class="qtype-chips" id="qtype-chips"></div>
-      </div>
-      <button class="btn-gen" id="btn-gen" onclick="generateExam()">
-        <span id="btn-text">✦ 시험지 생성하기</span>
-      </button>
+<div class="wrap">
+
+  <!-- STEP 1: 과목 선택 -->
+  <p class="step-label">STEP 1 · 과목 선택</p>
+  <div class="subject-grid">
+    <div class="subj-card c-korean" onclick="selectSubject('korean',this)">
+      <div class="subj-check">✓</div>
+      <div class="subj-icon">📖</div>
+      <div class="subj-name">국 어</div>
+      <div class="subj-en">KOREAN</div>
+    </div>
+    <div class="subj-card c-english" onclick="selectSubject('english',this)">
+      <div class="subj-check">✓</div>
+      <div class="subj-icon">🔤</div>
+      <div class="subj-name">영 어</div>
+      <div class="subj-en">ENGLISH</div>
+    </div>
+    <div class="subj-card c-math" onclick="selectSubject('math',this)">
+      <div class="subj-check">✓</div>
+      <div class="subj-icon">📐</div>
+      <div class="subj-name">수 학</div>
+      <div class="subj-en">MATH</div>
+    </div>
+    <div class="subj-card c-science" onclick="selectSubject('science',this)">
+      <div class="subj-check">✓</div>
+      <div class="subj-icon">🔬</div>
+      <div class="subj-name">과 학</div>
+      <div class="subj-en">SCIENCE</div>
+    </div>
+    <div class="subj-card c-history" onclick="selectSubject('history',this)">
+      <div class="subj-check">✓</div>
+      <div class="subj-icon">🏛️</div>
+      <div class="subj-name">역 사</div>
+      <div class="subj-en">HISTORY</div>
+    </div>
+    <div class="subj-card c-hanmun" onclick="selectSubject('hanmun',this)">
+      <div class="subj-check">✓</div>
+      <div class="subj-icon">漢</div>
+      <div class="subj-name">한 문</div>
+      <div class="subj-en">HANMUN</div>
     </div>
   </div>
-</div>
 
-<!-- ══════════ 3. 시험지 화면 ══════════ -->
-<div id="page-exam">
-  <div style="max-width:900px;margin:0 auto;padding:32px 5% 80px;">
+  <!-- STEP 2: 상세 설정 (과목 선택 시 표시) -->
+  <div id="config-panel" class="config-panel">
+    <div class="config-header">
+      <span class="icon" id="cfg-icon">📖</span>
+      <h3 id="cfg-title">국어 시험지 설정</h3>
+    </div>
+    <div class="config-grid">
+      <div class="cfg-item">
+        <label>학년</label>
+        <select id="sel-grade">
+          <option value="1">중학교 1학년</option>
+          <option value="2" selected>중학교 2학년</option>
+          <option value="3">중학교 3학년</option>
+        </select>
+      </div>
+      <div class="cfg-item">
+        <label>학기</label>
+        <select id="sel-sem">
+          <option value="1" selected>1학기</option>
+          <option value="2">2학기</option>
+        </select>
+      </div>
+      <div class="cfg-item">
+        <label>교재(출판사)</label>
+        <select id="sel-pub"></select>
+      </div>
+      <div class="cfg-item">
+        <label>단원</label>
+        <select id="sel-unit"></select>
+      </div>
+      <div class="cfg-item">
+        <label>문항 수</label>
+        <select id="sel-count">
+          <option value="10">10문항</option>
+          <option value="20" selected>20문항</option>
+          <option value="30">30문항</option>
+        </select>
+      </div>
+      <div class="cfg-item">
+        <label>난이도</label>
+        <select id="sel-level">
+          <option value="easy">하 (기본)</option>
+          <option value="mid" selected>중 (보통)</option>
+          <option value="hard">상 (심화)</option>
+          <option value="mix">혼합</option>
+        </select>
+      </div>
+    </div>
+    <div class="qtype-section">
+      <span class="qtype-label">문제 유형 (복수 선택)</span>
+      <div class="qtype-chips" id="qtype-chips"></div>
+    </div>
+    <button class="btn-gen" id="btn-gen" onclick="generateExam()">
+      <span id="btn-text">✦ 시험지 생성하기</span>
+    </button>
+  </div>
+
+  <!-- 로딩 -->
+  <div class="loading-wrap" id="loading-wrap">
+    <div class="loading-icons" id="loading-icon">📚</div>
+    <div class="loading-msg" id="loading-msg">AI가 문제를 생성하고 있습니다...</div>
+    <div class="loading-bar"><div class="loading-progress" id="lp"></div></div>
+  </div>
+
+  <!-- 시험지 -->
+  <div id="exam-area">
     <div class="action-bar">
-      <button class="btn-act" onclick="goConfig2()">← 설정으로</button>
       <button class="btn-act primary" onclick="checkAnswers()">✅ 채점하기</button>
       <button class="btn-act" onclick="toggleAnswers()">🔑 정답 보기/숨기기</button>
       <button class="btn-act" onclick="window.print()">🖨️ 인쇄하기</button>
@@ -456,11 +387,7 @@ header::before{
       <div><div class="sc-num" id="sc-pt" style="color:#f0a030">0점</div><div class="sc-lbl">점수</div></div>
       <div style="flex:1;font-size:.84rem;color:var(--muted2);line-height:1.7;" id="sc-msg"></div>
     </div>
-    <div id="loading-wrap" style="display:none;text-align:center;padding:48px 20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);">
-      <div id="loading-icon" style="font-size:2.5rem;animation:fadeInOut 1.4s ease-in-out infinite;">📚</div>
-      <div id="loading-msg" style="margin-top:14px;color:var(--muted2);font-size:.88rem;"></div>
-    </div>
-    <div class="exam-paper" id="exam-paper" style="display:none;">
+    <div class="exam-paper" id="exam-paper">
       <div class="ep-header">
         <div class="ep-title" id="ep-title">시험지</div>
         <div class="ep-meta">
@@ -476,11 +403,17 @@ header::before{
       <div class="q-list" id="q-list"></div>
     </div>
   </div>
-</div>
+
+</div><!-- /wrap -->
 
 <script>
+// ── 프록시 URL 설정 ──
+// exam-proxy.gs를 Apps Script에 배포한 후 아래 URL을 입력하세요
 const EXAM_PROXY_URL = "https://script.google.com/macros/s/AKfycbyerp68kb7NQ1N-Gc4X6MIww9gaURnMIZAjDWIW3lvyrJpP07QDvCAK5_SwVQcEmDCu/exec";
 
+// ══════════════════════════════════════════
+//  과목 데이터
+// ══════════════════════════════════════════
 const SUBJECTS = {
   korean:{
     name:'국어',icon:'📖',color:'#f06090',
@@ -654,91 +587,74 @@ const SUBJECTS = {
     ]
   }
 };
+
 const LEVEL_NAME={easy:'하(기본)',mid:'중(보통)',hard:'상(심화)',mix:'혼합'};
+const SUBJ_PROMPTS={
+  korean:'국어 교과서',english:'영어 교과서',math:'수학 교과서',
+  science:'과학 교과서',history:'역사 교과서(한국사/세계사)',hanmun:'한문 교과서'
+};
 
 let currentSubj = null;
 let currentQuestions = [];
 let answersShown = false;
 
-// ── 화면 전환 ──
-function goSubject() {
-  document.getElementById('page-subject').style.display = 'block';
-  document.getElementById('page-config').style.display  = 'none';
-  document.getElementById('page-exam').style.display    = 'none';
-  window.scrollTo(0, 0);
-}
-
-function goConfig(subj) {
+// ── 과목 선택 ──
+function selectSubject(subj, el) {
+  // 토글
+  if (currentSubj === subj && el.classList.contains('active')) {
+    el.classList.remove('active');
+    currentSubj = null;
+    document.getElementById('config-panel').classList.remove('show');
+    return;
+  }
+  document.querySelectorAll('.subj-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
   currentSubj = subj;
+
   const s = SUBJECTS[subj];
+  const panel = document.getElementById('config-panel');
+  panel.className = `config-panel show c-${subj}`;
 
-  document.getElementById('page-subject').style.display = 'none';
-  document.getElementById('page-config').style.display  = 'block';
-  document.getElementById('page-exam').style.display    = 'none';
+  document.getElementById('cfg-icon').textContent = s.icon;
+  document.getElementById('cfg-title').textContent = `${s.name} 시험지 설정`;
 
-  // 과목 색상 적용
-  document.getElementById('page-config').className = 'c-' + subj;
+  // 출판사 셀렉트
+  const pubSel = document.getElementById('sel-pub');
+  pubSel.innerHTML = Object.entries(s.publishers).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
 
-  document.getElementById('cfg-icon').textContent  = s.icon;
-  document.getElementById('cfg-title').textContent = s.name + ' 시험지 설정';
-
-  // 출판사 체크박스
-  const pubDiv = document.getElementById('sel-pub');
-  pubDiv.innerHTML = Object.entries(s.publishers).map(([k,v]) =>
-    `<label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;">
-      <input type="checkbox" name="pub" value="${k}" checked style="accent-color:#7c3aed;width:14px;height:14px;"> ${v}
-    </label>`).join('');
-
-  // 문제 유형 체크박스
+  // 문제 유형 칩
   const chips = document.getElementById('qtype-chips');
-  chips.innerHTML = s.qtypes.map(q =>
-    `<label class="qtype-check-item"><input type="checkbox" name="qtype" value="${q.v}" checked> ${q.l}</label>`
-  ).join('');
+  chips.innerHTML = s.qtypes.map(q=>`<label class="qtype-check-item"><input type="checkbox" name="qtype" value="${q.v}" checked> ${q.l}</label>`).join('');
 
+  // 단원 업데이트
   updateUnits();
-  window.scrollTo(0, 0);
-}
 
-function goConfig2() {
-  document.getElementById('page-subject').style.display = 'none';
-  document.getElementById('page-config').style.display  = 'block';
-  document.getElementById('page-exam').style.display    = 'none';
-  document.getElementById('score-card').style.display   = 'none';
-  window.scrollTo(0, 0);
+  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 // ── 단원 업데이트 ──
-function updateUnits() {
+function updateUnits(){
   if (!currentSubj) return;
-  const g = document.getElementById('sel-grade').value;
-  const s = document.getElementById('sel-sem').value;
-  // 체크된 출판사들 가져오기
-  const checkedPubs = [...document.querySelectorAll('input[name=pub]:checked')].map(e=>e.value);
-  const pub = checkedPubs[0] || Object.keys(SUBJECTS[currentSubj].publishers)[0];
-  // 첫 번째 선택 출판사 기준으로 단원 목록 생성
-  const units = SUBJECTS[currentSubj].units?.[pub]?.[g]?.[s] || ['전체'];
-  const unitDiv = document.getElementById('sel-unit');
-  unitDiv.innerHTML = units.map((u, i) =>
-    `<label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;">
-      <input type="checkbox" name="unit" value="${i===0?'all':i}" ${i===0?'checked':''} style="accent-color:#7c3aed;width:14px;height:14px;"> ${u}
-    </label>`).join('');
+  const g=document.getElementById('sel-grade').value;
+  const s=document.getElementById('sel-sem').value;
+  const p=document.getElementById('sel-pub').value;
+  const units = SUBJECTS[currentSubj].units?.[p]?.[g]?.[s] || ['전체'];
+  const sel = document.getElementById('sel-unit');
+  sel.innerHTML = units.map((u,i)=>`<option value="${i===0?'all':i}">${u}</option>`).join('');
 }
-['sel-grade','sel-sem'].forEach(id => {
-  document.getElementById(id).addEventListener('change', updateUnits);
+['sel-grade','sel-sem','sel-pub'].forEach(id=>{
+  document.getElementById(id).addEventListener('change',updateUnits);
 });
-document.getElementById('sel-pub').addEventListener('change', updateUnits);
 
+// ── 시험지 생성 ──
 async function generateExam(){
   if (!currentSubj) { alert('과목을 먼저 선택해 주세요.'); return; }
   const s  = SUBJECTS[currentSubj];
   const grade = document.getElementById('sel-grade').value;
   const sem   = document.getElementById('sel-sem').value;
-  const pubChecked = [...document.querySelectorAll('input[name=pub]:checked')].map(e=>e.value);
-  const pub = pubChecked.length ? pubChecked.join(', ') : Object.keys(SUBJECTS[currentSubj].publishers)[0];
-  const pubFirst = [...document.querySelectorAll('input[name=pub]:checked')].map(e=>e.value)[0]
-                || Object.keys(SUBJECTS[currentSubj].publishers)[0];
-  const unitChecked=[...document.querySelectorAll('input[name=unit]:checked')].map(e=>e.closest('label').textContent.trim());
-  const unit = unitChecked.length ? unitChecked.join(', ') : '전체';
+  const pub   = document.getElementById('sel-pub').value;
+  const unitEl= document.getElementById('sel-unit');
+  const unit  = unitEl.options[unitEl.selectedIndex].text;
   const count = document.getElementById('sel-count').value;
   const level = document.getElementById('sel-level').value;
   const qtypes=[...document.querySelectorAll('input[name=qtype]:checked')].map(e=>e.value);
@@ -776,7 +692,7 @@ async function generateExam(){
 - 과목: ${s.name} (${SUBJ_PROMPTS[currentSubj]})
 - 학년: 중학교 ${grade}학년
 - 학기: ${sem}학기
-- 교재: ${s.publishers[pubFirst] || pub}
+- 교재: ${s.publishers[pub]}
 - 단원/범위: ${unit}
 - 난이도: ${LEVEL_NAME[level]}
 - 문제 유형(균등 배분): ${qtypes.join(', ')}
@@ -851,7 +767,7 @@ function renderExam({s,grade,sem,pub,unit,count,level}){
   document.getElementById('ep-title').textContent=`중학교 ${grade}학년 ${sem}학기 ${s.name} 시험`;
   document.getElementById('em-grade').textContent=`중${grade}학년`;
   document.getElementById('em-sem').textContent=`${sem}학기`;
-  document.getElementById('em-pub').textContent=s.publishers[pubFirst] || pub;
+  document.getElementById('em-pub').textContent=s.publishers[pub];
   document.getElementById('em-unit').textContent=unit;
   document.getElementById('em-cnt').textContent=`${currentQuestions.length}문항`;
   document.getElementById('ep-date').textContent=`생성일: ${dt} · 난이도: ${LEVEL_NAME[level]}`;
@@ -938,17 +854,6 @@ function checkAnswers(){
 function toggleAnswers(){
   answersShown=!answersShown;
   document.querySelectorAll('.ans-reveal').forEach(el=>el.classList.toggle('show',answersShown));
-}
-
-// generateExam 안에서 exam 화면 전환 추가 (renderExam 호출 전)
-const _origRenderExam = renderExam;
-function renderExam(opts) {
-  document.getElementById('page-subject').style.display = 'none';
-  document.getElementById('page-config').style.display  = 'none';
-  document.getElementById('page-exam').style.display    = 'block';
-  document.getElementById('exam-paper').style.display   = 'block';
-  _origRenderExam(opts);
-  window.scrollTo(0, 0);
 }
 </script>
 </body>
