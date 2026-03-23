@@ -25,7 +25,7 @@ git commit -m "%COMMIT_MSG%"
 
 echo.
 echo [4] Pushing to GitHub...
-git push origin main
+git push origin master
 
 echo.
 if errorlevel 1 (

@@ -30,7 +30,7 @@ git commit -m "$CommitMsg"
 
 Write-Host ""
 Write-Host "[4] Pushing to GitHub..."
-git push origin main
+git push origin master
 
 Write-Host ""
 if ($LASTEXITCODE -eq 0) {
