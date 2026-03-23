@@ -121,6 +121,9 @@ header::before{
 .qtype-check-item:hover{color:#7c3aed;}
 
 /* ── 생성 버튼 ── */
+.qtype-chips{display:flex;flex-direction:column;gap:6px;}
+.qtype-check-item{display:flex;align-items:center;gap:8px;font-size:.88rem;color:var(--text);cursor:pointer;padding:4px 2px;user-select:none;}
+.qtype-check-item input[type=checkbox]{width:16px;height:16px;accent-color:#7c3aed;cursor:pointer;flex-shrink:0;}
 .btn-gen{
   width:100%;padding:16px;border:none;border-radius:var(--radius);
   font-family:'Pretendard',sans-serif;font-size:1rem;font-weight:700;
@@ -624,10 +627,7 @@ function selectSubject(subj, el) {
 
   // 문제 유형 칩
   const chips = document.getElementById('qtype-chips');
-  chips.innerHTML = s.qtypes.map(q=>`
-    <label class="qtype-check-item">
-      <input type="checkbox" name="qtype" value="${q.v}" checked> ${q.l}
-    </label>`).join('');
+        chips.innerHTML = s.qtypes.map(q=>`<label class="qtype-check-item"><input type="checkbox" name="qtype" value="${q.v}" checked> ${q.l}</label>`).join('');
 
   // 단원 업데이트
   updateUnits();
