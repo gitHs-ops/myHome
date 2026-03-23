@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중학교 한문 교재별 단원별 시험지</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1209; --rice:#fdf8ef; --gold:#b8860b; --gold-lt:#e8c060;
+  --red:#8b1a2a; --teal:#0d6b5e; --blue:#1d4ed8; --purple:#5b21b6;
+  --gray:#64748b; --green:#166534; --white:#fff;
+  --shadow: 0 4px 24px rgba(0,0,0,.09);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--rice);color:var(--ink);min-height:100vh;}
+
+/* ══════════ HERO ══════════ */
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;padding:48px 20px 60px;
+  background:linear-gradient(160deg,#fdf8ef 0%,#f5ead8 100%);
+  position:relative;overflow:hidden;
+}
+#hero::before{
+  content:"漢 文";
+  position:fixed;bottom:-60px;right:-40px;
+  font-family:'Noto Serif KR',serif;font-size:clamp(160px,22vw,320px);
+  font-weight:900;color:rgba(184,134,11,.055);pointer-events:none;
+  letter-spacing:.1em;z-index:0;
+}
+.hero-inner{position:relative;z-index:1;width:100%;max-width:680px;}
+
+.hero-top{text-align:center;margin-bottom:40px;}
+.site-tag{
+  display:inline-block;background:var(--red);color:#fff;
+  font-size:11px;font-weight:700;letter-spacing:.18em;
+  padding:5px 16px;border-radius:2px;margin-bottom:18px;
+}
+.hero-title{
+  font-family:'Noto Serif KR',serif;
+  font-size:clamp(30px,6vw,58px);font-weight:900;line-height:1.15;
+}
+.hero-title em{color:var(--gold);font-style:normal;}
+.hero-sub{font-size:14px;color:var(--gray);font-weight:300;margin-top:8px;letter-spacing:.05em;}
+
+/* 선택 카드 */
+.card{
+  background:var(--white);border-radius:14px;padding:28px 28px 24px;
+  box-shadow:var(--shadow);border:1px solid rgba(0,0,0,.06);
+  margin-bottom:16px;position:relative;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:14px 14px 0 0;
+}
+.card.pub::before{background:linear-gradient(90deg,var(--gold),#d4a832);}
+.card.grp::before{background:linear-gradient(90deg,var(--teal),#1a9b8c);}
+.card.unit::before{background:linear-gradient(90deg,var(--blue),#3b82f6);}
+.card.cnt::before{background:linear(90deg,#334155,#64748b);}
+
+.step-label{
+  font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--gray);
+  margin-bottom:12px;display:flex;align-items:center;gap:6px;
+}
+.step-num{
+  width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:#fff;
+}
+.step-label.s1 .step-num{background:var(--gold);}
+.step-label.s2 .step-num{background:var(--teal);}
+.step-label.s3 .step-num{background:var(--blue);}
+.step-label.s4 .step-num{background:var(--red);}
+.step-label.s5 .step-num{background:#334155;}
+
+/* 출판사 선택 */
+.pub-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+@media(max-width:560px){.pub-grid{grid-template-columns:repeat(3,1fr);}}
+.pub-btn{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:12px 6px;border:2px solid #e2d8c8;border-radius:10px;
+  background:white;cursor:pointer;transition:all .17s;
+}
+.pub-btn .pub-icon{font-size:22px;}
+.pub-btn .pub-name{font-size:11px;font-weight:700;color:var(--gray);letter-spacing:.04em;}
+.pub-btn .pub-author{font-size:10px;color:#aaa;}
+.pub-btn:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 4px 12px rgba(184,134,11,.18);}
+.pub-btn.active{border-color:var(--gold);background:linear-gradient(135deg,#fff9ed,#fef3c7);box-shadow:0 4px 16px rgba(184,134,11,.25);}
+.pub-btn.active .pub-name{color:var(--gold);}
+
+/* 학년·학기 */
+.row-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.sel-btn{
+  flex:1;min-width:60px;padding:10px 12px;
+  border:2px solid #e2d8c8;border-radius:8px;background:white;
+  font-family:'Noto Serif KR',serif;font-size:14px;font-weight:600;
+  color:var(--gray);cursor:pointer;transition:all .17s;text-align:center;
+}
+.sel-btn:hover{border-color:var(--teal);color:var(--teal);background:#f0fafa;}
+.sel-btn.active{border-color:var(--teal);background:var(--teal);color:white;box-shadow:0 3px 10px rgba(13,107,94,.3);}
+
+/* 단원 그리드 */
+.unit-wrap{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+@media(max-width:400px){.unit-wrap{grid-template-columns:1fr;}}
+.unit-btn{
+  padding:11px 14px;border:2px solid #e2d8c8;border-radius:9px;
+  background:white;cursor:pointer;transition:all .17s;text-align:left;
+}
+.unit-btn:hover{border-color:var(--blue);background:#eff6ff;transform:translateY(-1px);}
+.unit-btn.active{border-color:var(--blue);background:var(--blue);color:white;}
+.unit-btn .u-no{font-size:10px;font-weight:700;opacity:.65;letter-spacing:.08em;display:block;margin-bottom:3px;}
+.unit-btn .u-name{font-size:13px;font-weight:600;line-height:1.3;}
+.unit-btn .u-topic{font-size:11px;opacity:.7;line-height:1.3;margin-top:2px;}
+.unit-btn.active .u-topic{opacity:.85;}
+
+/* 문항수 */
+.cnt-row{display:flex;gap:8px;}
+.cnt-btn{
+  flex:1;padding:10px;border:2px solid #e2d8c8;border-radius:8px;background:white;
+  font-family:'Noto Serif KR',serif;font-size:14px;font-weight:700;
+  color:var(--gray);cursor:pointer;transition:all .17s;text-align:center;
+}
+.cnt-btn:hover{border-color:var(--red);color:var(--red);}
+.cnt-btn.active{border-color:var(--red);background:var(--red);color:white;box-shadow:0 3px 10px rgba(139,26,42,.3);}
+
+.start-btn{
+  width:100%;padding:16px;margin-top:16px;
+  background:linear-gradient(135deg,var(--ink) 0%,#2c3e50 100%);
+  color:white;border:none;border-radius:10px;
+  font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;
+  letter-spacing:.12em;cursor:pointer;transition:all .2s;
+  position:relative;box-shadow:0 4px 20px rgba(0,0,0,.25);
+}
+.start-btn::after{content:'→';position:absolute;right:22px;top:50%;transform:translateY(-50%);transition:right .2s;}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.3);}
+.start-btn:hover::after{right:16px;}
+.start-btn:disabled{background:#aaa;box-shadow:none;cursor:not-allowed;transform:none;}
+
+/* ══════════ QUIZ ══════════ */
+#quiz-page{display:none;min-height:100vh;background:var(--rice);}
+.qhdr{
+  background:var(--ink);color:white;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 20px rgba(0,0,0,.35);
+}
+.qhdr-inner{
+  max-width:980px;margin:0 auto;padding:13px 22px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.qhdr-title{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;}
+.qhdr-title span{color:var(--gold-lt);}
+.qhdr-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.mbadge{background:rgba(255,255,255,.12);padding:4px 11px;border-radius:20px;font-size:12px;}
+.mbadge.pub-tag{background:rgba(232,192,96,.2);color:var(--gold-lt);font-weight:700;}
+.timer{
+  font-family:monospace;font-size:13px;color:#ffd;letter-spacing:.1em;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  padding:4px 13px;border-radius:20px;
+}
+.back-btn{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:white;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;
+}
+.back-btn:hover{background:rgba(255,255,255,.2);}
+.prog-wrap{background:rgba(255,255,255,.1);height:4px;}
+.prog-fill{height:100%;background:var(--gold-lt);transition:width .3s;}
+
+/* 시험지 */
+.exam-sheet{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
+.exam-header-row{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  border-bottom:2.5px solid var(--ink);padding-bottom:14px;margin-bottom:28px;flex-wrap:wrap;gap:12px;
+}
+.exam-title-block .exam-pub-label{
+  font-size:11px;font-weight:700;letter-spacing:.12em;
+  padding:3px 10px;border-radius:10px;color:white;display:inline-block;margin-bottom:6px;
+}
+.exam-title-block .exam-main-title{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;}
+.exam-info-row{display:flex;gap:22px;font-size:12px;color:var(--gray);}
+.exam-info-row strong{color:var(--ink);}
+
+/* 섹션 */
+.sec-hdr{
+  display:flex;align-items:center;gap:10px;padding:9px 14px;
+  margin:28px 0 12px;border-radius:6px;
+}
+.sec-icon{font-size:18px;}
+.sec-title-text{font-family:'Noto Serif KR',serif;font-size:14px;font-weight:700;}
+.sec-nums{font-size:11px;color:var(--gray);margin-left:auto;}
+
+/* 문제 그리드 */
+.q-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+@media(max-width:600px){.q-grid{grid-template-columns:1fr;}}
+
+/* 문제 카드 */
+.q-card{
+  background:white;border:1px solid #e8e0d0;border-radius:10px;
+  padding:15px 17px;display:flex;align-items:flex-start;gap:12px;
+  position:relative;transition:box-shadow .15s;
+}
+.q-card:hover{box-shadow:0 3px 14px rgba(0,0,0,.08);}
+.q-card.gc{border:2px solid var(--green);}
+.q-card.gw{border:2px solid var(--red);}
+.q-num-badge{
+  font-family:'Noto Serif KR',serif;font-size:11px;font-weight:700;
+  color:white;background:var(--ink);width:25px;height:25px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.q-body{flex:1;}
+.type-chip{
+  display:inline-block;font-size:10px;font-weight:700;letter-spacing:.06em;
+  padding:2px 8px;border-radius:10px;margin-bottom:7px;color:white;
+}
+.q-passage{
+  font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;
+  color:var(--ink);line-height:1.6;margin-bottom:3px;letter-spacing:.04em;
+}
+.q-passage.sm{font-size:14px;}
+.q-source{font-size:10px;color:#aaa;margin-bottom:6px;font-style:italic;}
+.q-text{font-size:12px;color:var(--gray);margin-bottom:9px;}
+.choices{display:flex;flex-direction:column;gap:4px;}
+.choice{
+  display:flex;align-items:center;gap:7px;padding:6px 9px;
+  border:1px solid #ece7df;border-radius:6px;cursor:pointer;
+  transition:all .12s;font-size:13px;
+}
+.choice:hover{background:#fffbf0;border-color:var(--gold);}
+.choice.sel{background:var(--gold);border-color:var(--gold);color:white;}
+.choice.ok{background:var(--green);border-color:var(--green);color:white;}
+.choice.ng{background:var(--red);border-color:var(--red);color:white;text-decoration:line-through;opacity:.7;}
+.choice-n{font-weight:700;font-size:11px;opacity:.7;min-width:13px;}
+.ans-mark{position:absolute;top:9px;right:11px;font-size:14px;display:none;}
+.q-card.gc .ans-mark,.q-card.gw .ans-mark{display:block;}
+
+/* 제출 */
+.submit-wrap{margin-top:36px;text-align:center;}
+.submit-btn{
+  padding:15px 48px;background:linear-gradient(135deg,var(--red),#6b1220);
+  color:white;border:none;border-radius:9px;
+  font-family:'Noto Serif KR',serif;font-size:16px;font-weight:700;
+  letter-spacing:.1em;cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 16px rgba(139,26,42,.35);
+}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(139,26,42,.4);}
+
+/* 결과 모달 */
+.overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);
+  z-index:200;align-items:center;justify-content:center;padding:20px;
+}
+.overlay.show{display:flex;}
+.result-box{
+  background:white;border-radius:16px;padding:44px 32px;
+  max-width:400px;width:100%;text-align:center;
+  animation:pop .3s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.r-emoji{font-size:52px;margin-bottom:8px;}
+.r-score{font-family:'Noto Serif KR',serif;font-size:52px;font-weight:900;line-height:1;}
+.r-score span{font-size:20px;color:var(--gray);font-weight:400;}
+.r-grade{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:700;margin:10px 0 4px;}
+.r-desc{font-size:12px;color:var(--gray);margin-bottom:22px;}
+.r-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0;padding:14px 0;border-top:1px solid #eee;border-bottom:1px solid #eee;}
+.r-stat{text-align:center;}
+.r-stat-n{font-family:'Noto Serif KR',serif;font-size:22px;font-weight:700;}
+.r-stat-l{font-size:10px;color:var(--gray);margin-top:2px;}
+.co .r-stat-n{color:var(--green);}
+.wr .r-stat-n{color:var(--red);}
+.r-btns{display:flex;gap:10px;}
+.r-btn{flex:1;padding:11px;border-radius:8px;font-family:'Noto Serif KR',serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;border:2px solid;}
+.r-btn.pri{background:var(--ink);color:white;border-color:var(--ink);}
+.r-btn.sec{background:white;color:var(--ink);border-color:#ddd;}
+.r-btn:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,.15);}
+
+/* 유틸 */
+.empty-msg{text-align:center;padding:36px;color:var(--gray);font-family:'Noto Serif KR',serif;}
+.sel-hint{font-size:11px;color:var(--gray);margin-top:6px;text-align:right;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section id="hero">
+<div class="hero-inner">
+
+  <div class="hero-top">
+    <div class="site-tag">2022 개정 교육과정</div>
+    <h1 class="hero-title">중학교 <em>한문</em><br>교재별 단원 시험지</h1>
+    <p class="hero-sub">교재 · 학년 · 학기 · 단원을 선택하면 기출 유형 문제를 랜덤으로 출제합니다</p>
+  </div>
+
+  <!-- STEP 1: 출판사 -->
+  <div class="card pub">
+    <div class="step-label s1"><span class="step-num">1</span> 교재(출판사) 선택</div>
+    <div class="pub-grid" id="pub-grid"></div>
+  </div>
+
+  <!-- STEP 2: 학년 + 학기 -->
+  <div class="card grp">
+    <div class="step-label s2"><span class="step-num">2</span> 학년 · 학기 선택</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:140px;">
+        <div style="font-size:11px;color:var(--gray);margin-bottom:7px;font-weight:600;">학년</div>
+        <div class="row-btns" id="grade-row">
+          <button class="sel-btn active" onclick="sel('grade',1,this)">중 1</button>
+          <button class="sel-btn" onclick="sel('grade',2,this)">중 2</button>
+          <button class="sel-btn" onclick="sel('grade',3,this)">중 3</button>
+        </div>
+      </div>
+      <div style="flex:1;min-width:140px;">
+        <div style="font-size:11px;color:var(--gray);margin-bottom:7px;font-weight:600;">학기</div>
+        <div class="row-btns" id="sem-row">
+          <button class="sel-btn active" onclick="sel('sem',1,this)">1 학기</button>
+          <button class="sel-btn" onclick="sel('sem',2,this)">2 학기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: 단원 -->
+  <div class="card unit">
+    <div class="step-label s3"><span class="step-num">3</span> 단원 선택 <span style="font-weight:400;font-size:11px;margin-left:4px;">(복수 선택 가능)</span></div>
+    <div class="unit-wrap" id="unit-wrap"><div class="empty-msg">교재와 학년·학기를 먼저 선택하세요</div></div>
+    <p class="sel-hint" id="sel-hint"></p>
+  </div>
+
+  <!-- STEP 4: 시험 유형 -->
+  <div class="card" style="border-top:3px solid var(--red);">
+    <div class="step-label s4"><span class="step-num">4</span> 시험 종류</div>
+    <div class="row-btns" id="exam-type-row">
+      <button class="sel-btn active" onclick="sel('examType','all',this)">전체 유형</button>
+      <button class="sel-btn" onclick="sel('examType','mid',this)">중간고사</button>
+      <button class="sel-btn" onclick="sel('examType','final',this)">기말고사</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: 문항수 -->
+  <div class="card" style="border-top:3px solid #334155;">
+    <div class="step-label s5"><span class="step-num">5</span> 문항 수</div>
+    <div class="cnt-row">
+      <button class="cnt-btn" onclick="sel('count',10,this)">10문항</button>
+      <button class="cnt-btn active" onclick="sel('count',20,this)">20문항</button>
+      <button class="cnt-btn" onclick="sel('count',30,this)">30문항</button>
+    </div>
+  </div>
+
+  <button class="start-btn" id="start-btn" onclick="startQuiz()">시험 시작하기</button>
+</div>
+</section>
+
+<!-- ══════════════ QUIZ PAGE ══════════════ -->
+<div id="quiz-page">
+  <div class="qhdr">
+    <div class="qhdr-inner">
+      <div class="qhdr-title">중학교 <span>한문</span> 단원별 시험</div>
+      <div class="qhdr-meta">
+        <span class="mbadge pub-tag" id="hdr-pub"></span>
+        <span class="mbadge" id="hdr-grade"></span>
+        <span class="mbadge" id="hdr-unit"></span>
+        <span class="timer" id="timer">00:00</span>
+        <button class="back-btn" onclick="goBack()">← 처음으로</button>
+      </div>
+    </div>
+    <div class="prog-wrap"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+  </div>
+
+  <div class="exam-sheet">
+    <div class="exam-header-row">
+      <div class="exam-title-block">
+        <span class="exam-pub-label" id="exam-pub-label">미래엔</span>
+        <div class="exam-main-title" id="exam-main-title">漢文 試驗紙</div>
+      </div>
+      <div class="exam-info-row">
+        <div>교재: <strong id="ei-pub"></strong></div>
+        <div>학년: <strong id="ei-grade"></strong></div>
+        <div>문항: <strong id="ei-count"></strong></div>
+        <div>배점: <strong id="ei-score"></strong></div>
+      </div>
+    </div>
+    <div id="q-container"></div>
+    <div class="submit-wrap">
+      <button class="submit-btn" onclick="submitQuiz()">✓ 채점하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 결과 모달 -->
+<div class="overlay" id="overlay">
+  <div class="result-box">
+    <div class="r-emoji" id="r-emoji">🎉</div>
+    <div class="r-score" id="r-score">80<span>점</span></div>
+    <div class="r-grade" id="r-grade">잘했어요!</div>
+    <div class="r-desc" id="r-desc"></div>
+    <div class="r-stats">
+      <div class="r-stat co"><div class="r-stat-n" id="s-co">0</div><div class="r-stat-l">정답</div></div>
+      <div class="r-stat wr"><div class="r-stat-n" id="s-wr">0</div><div class="r-stat-l">오답</div></div>
+      <div class="r-stat"><div class="r-stat-n" id="s-un">0</div><div class="r-stat-l">미응답</div></div>
+    </div>
+    <div class="r-btns">
+      <button class="r-btn sec" onclick="reviewAns()">오답 확인</button>
+      <button class="r-btn pri" onclick="retryQuiz()">다시 풀기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  출판사 정의
+// ════════════════════════════════════════════════════════════
+const PUBLISHERS = [
+  {id:'mirae',  name:'미래엔',  author:'송혁기',  icon:'📘', color:'#1d4ed8'},
+  {id:'chunjae',name:'천재교육',author:'안대회',  icon:'📗', color:'#166534'},
+  {id:'visang', name:'비상교육',author:'이동재',  icon:'📙', color:'#92400e'},
+  {id:'kyohak', name:'교학사',  author:'조영호',  icon:'📕', color:'#881337'},
+  {id:'darakwon',name:'다락원', author:'송재소',  icon:'📓', color:'#4c1d95'},
+];
+
+// ════════════════════════════════════════════════════════════
+//  교육과정 구조: pub → grade → sem → units
+// ════════════════════════════════════════════════════════════
+const CURRICULUM = {
+  mirae: {
+    1:{
+      1:[
+        {id:'m-1-1-1',name:'한자의 짜임과 뜻',      topic:'상형·지사·회의·형성',    exam:'mid'},
+        {id:'m-1-1-2',name:'단어의 짜임',           topic:'주술·술목·수식·병렬',    exam:'mid'},
+        {id:'m-1-1-3',name:'일상의 한자 어휘',      topic:'생활 속 한자어',         exam:'mid'},
+        {id:'m-1-1-4',name:'가족과 인간관계',       topic:'父母兄弟 관련 단문',     exam:'final'},
+        {id:'m-1-1-5',name:'배움과 성장',           topic:'학습·수양 명언',         exam:'final'},
+        {id:'m-1-1-6',name:'명심보감 — 계선편',     topic:'선을 행하라는 교훈',     exam:'final'},
+      ],
+      2:[
+        {id:'m-1-2-1',name:'자연과 사계절',         topic:'자연 소재 단문',         exam:'mid'},
+        {id:'m-1-2-2',name:'삶의 지혜',            topic:'명심보감 입교·정기편',   exam:'mid'},
+        {id:'m-1-2-3',name:'허사의 기초',           topic:'之·而·不·乎 용법',      exam:'final'},
+        {id:'m-1-2-4',name:'한시 감상 (1)',        topic:'당시(唐詩) 기초',        exam:'final'},
+      ]
+    },
+    2:{
+      1:[
+        {id:'m-2-1-1',name:'부수와 자전 활용',      topic:'부수 찾기·자전',         exam:'mid'},
+        {id:'m-2-1-2',name:'도리와 덕목',          topic:'인의예지 단문',          exam:'mid'},
+        {id:'m-2-1-3',name:'논어 — 학이·위정편',   topic:'학이·위정 핵심 구절',    exam:'final'},
+        {id:'m-2-1-4',name:'고사성어 (1)',         topic:'고사에서 유래한 성어',   exam:'final'},
+      ],
+      2:[
+        {id:'m-2-2-1',name:'사회와 역사 속 한문',  topic:'사회·역사 소재 단문',    exam:'mid'},
+        {id:'m-2-2-2',name:'명심보감 — 근학·입교', topic:'근학·입교편 구절',       exam:'mid'},
+        {id:'m-2-2-3',name:'허사 심화',            topic:'於·以·則·雖 용법',      exam:'final'},
+        {id:'m-2-2-4',name:'한문 문장 구조',       topic:'주술·술목·술보 분석',   exam:'final'},
+      ]
+    },
+    3:{
+      1:[
+        {id:'m-3-1-1',name:'한자어 어휘 확장',     topic:'한자어 짜임과 의미',     exam:'mid'},
+        {id:'m-3-1-2',name:'논어 고급편',          topic:'옹야·술이·자한편',       exam:'mid'},
+        {id:'m-3-1-3',name:'고사성어 (2)',         topic:'사자성어 응용·심화',     exam:'final'},
+        {id:'m-3-1-4',name:'산문 읽기',           topic:'한문 단편 산문',         exam:'final'},
+      ],
+      2:[
+        {id:'m-3-2-1',name:'명심보감 — 성심·천명',topic:'성심·천명편 구절',       exam:'mid'},
+        {id:'m-3-2-2',name:'한시 감상 (2)',       topic:'한시 형식·의미 심화',    exam:'mid'},
+        {id:'m-3-2-3',name:'허사 종합 정리',      topic:'전체 허사 종합',         exam:'final'},
+        {id:'m-3-2-4',name:'인물과 역사',         topic:'고전 속 인물·역사',      exam:'final'},
+      ]
+    }
+  },
+  chunjae: {
+    1:{
+      1:[
+        {id:'c-1-1-1',name:'한자와 어휘 (1)',      topic:'한자의 짜임·기초 어휘',  exam:'mid'},
+        {id:'c-1-1-2',name:'생활 속의 한자',       topic:'일상 한자어 활용',       exam:'mid'},
+        {id:'c-1-1-3',name:'나와 가족',           topic:'가족·효도 단문',         exam:'final'},
+        {id:'c-1-1-4',name:'배움의 즐거움',        topic:'논어 학이·술이편',       exam:'final'},
+        {id:'c-1-1-5',name:'사자성어 — 학습편',   topic:'배움 관련 사자성어',     exam:'final'},
+      ],
+      2:[
+        {id:'c-1-2-1',name:'자연의 아름다움',      topic:'자연 소재 한문',         exam:'mid'},
+        {id:'c-1-2-2',name:'명심보감 — 효행편',    topic:'효도·우애 구절',        exam:'mid'},
+        {id:'c-1-2-3',name:'한문의 문법 기초',     topic:'실사·허사·어조사',       exam:'final'},
+        {id:'c-1-2-4',name:'한시 읽기',           topic:'당·송 시 기초',         exam:'final'},
+      ]
+    },
+    2:{
+      1:[
+        {id:'c-2-1-1',name:'한자와 어휘 (2)',      topic:'단어 짜임 심화',         exam:'mid'},
+        {id:'c-2-1-2',name:'인륜과 도덕',         topic:'인의예지 관련 단문',     exam:'mid'},
+        {id:'c-2-1-3',name:'논어 — 위정·이인편',  topic:'위정·이인편 구절',       exam:'final'},
+        {id:'c-2-1-4',name:'고사성어 — 지혜편',   topic:'지혜·처세 고사성어',     exam:'final'},
+      ],
+      2:[
+        {id:'c-2-2-1',name:'역사 속의 인물',      topic:'역사 인물 관련 단문',    exam:'mid'},
+        {id:'c-2-2-2',name:'명심보감 — 존심편',   topic:'마음 다스리기 구절',     exam:'mid'},
+        {id:'c-2-2-3',name:'허사의 쓰임',         topic:'허사 용법 심화',         exam:'final'},
+        {id:'c-2-2-4',name:'한시 감상 심화',      topic:'오언·칠언 절구·율시',   exam:'final'},
+      ]
+    },
+    3:{
+      1:[
+        {id:'c-3-1-1',name:'한자어와 성어',       topic:'한자어·성어 심화',       exam:'mid'},
+        {id:'c-3-1-2',name:'논어·맹자 읽기',      topic:'사서 주요 구절',         exam:'mid'},
+        {id:'c-3-1-3',name:'고사성어 — 인생편',   topic:'삶의 지혜 고사성어',     exam:'final'},
+        {id:'c-3-1-4',name:'산문과 수필',         topic:'고전 수필·산문',         exam:'final'},
+      ],
+      2:[
+        {id:'c-3-2-1',name:'선현의 가르침',       topic:'명심보감·격언 종합',     exam:'mid'},
+        {id:'c-3-2-2',name:'우리 한시',          topic:'조선 시대 한시',         exam:'mid'},
+        {id:'c-3-2-3',name:'한문 독해 종합',      topic:'독해 전략·허사 종합',   exam:'final'},
+        {id:'c-3-2-4',name:'전통 문화와 한문',    topic:'세시풍속·전통 문화',     exam:'final'},
+      ]
+    }
+  },
+  visang: {
+    1:{
+      1:[
+        {id:'v-1-1-1',name:'한자의 이해',         topic:'한자 짜임·획순·부수',    exam:'mid'},
+        {id:'v-1-1-2',name:'한자어의 세계',        topic:'한자어 짜임과 어휘',     exam:'mid'},
+        {id:'v-1-1-3',name:'가정과 효도',         topic:'가족 관련 단문·격언',   exam:'final'},
+        {id:'v-1-1-4',name:'친구와 우정',         topic:'붕우 관련 단문',        exam:'final'},
+        {id:'v-1-1-5',name:'사자성어 기초',        topic:'기초 사자성어 20선',    exam:'final'},
+      ],
+      2:[
+        {id:'v-1-2-1',name:'자연과 계절',         topic:'계절·자연 관련 단문',   exam:'mid'},
+        {id:'v-1-2-2',name:'명심보감 핵심',        topic:'명심보감 대표 구절',    exam:'mid'},
+        {id:'v-1-2-3',name:'한문의 허사',          topic:'주요 허사 기초 용법',   exam:'final'},
+        {id:'v-1-2-4',name:'시로 만나는 한문',     topic:'한시 입문',            exam:'final'},
+      ]
+    },
+    2:{
+      1:[
+        {id:'v-2-1-1',name:'한자와 생활 어휘',    topic:'생활 한자어 활용',       exam:'mid'},
+        {id:'v-2-1-2',name:'예의와 도덕',         topic:'예의·도덕 단문',        exam:'mid'},
+        {id:'v-2-1-3',name:'공자의 가르침',       topic:'논어 학이·위정·옹야편', exam:'final'},
+        {id:'v-2-1-4',name:'재미있는 고사성어',   topic:'유래 있는 고사성어',    exam:'final'},
+      ],
+      2:[
+        {id:'v-2-2-1',name:'역사와 사회',         topic:'역사 소재 한문',        exam:'mid'},
+        {id:'v-2-2-2',name:'삶의 지혜 — 명심보감',topic:'명심보감 심화',         exam:'mid'},
+        {id:'v-2-2-3',name:'한문 문법 심화',      topic:'허사·문장 구조 심화',   exam:'final'},
+        {id:'v-2-2-4',name:'한시 감상',          topic:'한시 형식과 주제',      exam:'final'},
+      ]
+    },
+    3:{
+      1:[
+        {id:'v-3-1-1',name:'어휘력 키우기',       topic:'한자어 어휘 심화',       exam:'mid'},
+        {id:'v-3-1-2',name:'사서(四書) 읽기',     topic:'논어·맹자·대학·중용',   exam:'mid'},
+        {id:'v-3-1-3',name:'고사성어 심화',       topic:'사자성어 고급편',       exam:'final'},
+        {id:'v-3-1-4',name:'고전 산문 읽기',      topic:'고전 산문 독해',        exam:'final'},
+      ],
+      2:[
+        {id:'v-3-2-1',name:'고전의 향기',         topic:'명심보감·도덕 격언',    exam:'mid'},
+        {id:'v-3-2-2',name:'한시의 멋',          topic:'한시 심화 감상',        exam:'mid'},
+        {id:'v-3-2-3',name:'한문 종합 정리',      topic:'전체 범위 종합',        exam:'final'},
+        {id:'v-3-2-4',name:'전통 문화와 한자',    topic:'전통 문화 한자어',      exam:'final'},
+      ]
+    }
+  },
+  kyohak: {
+    1:{
+      1:[
+        {id:'k-1-1-1',name:'한자 익히기',         topic:'한자의 짜임과 필순',     exam:'mid'},
+        {id:'k-1-1-2',name:'한자어 다지기',        topic:'일상 한자어',           exam:'mid'},
+        {id:'k-1-1-3',name:'우리 생활과 한자',     topic:'생활 속 한자 단문',     exam:'final'},
+        {id:'k-1-1-4',name:'배움의 길',           topic:'학습·노력 관련 구절',   exam:'final'},
+      ],
+      2:[
+        {id:'k-1-2-1',name:'자연과 인간',         topic:'자연·인간 관련 단문',   exam:'mid'},
+        {id:'k-1-2-2',name:'명심보감 — 선행편',   topic:'착한 행동의 교훈',      exam:'mid'},
+        {id:'k-1-2-3',name:'한문 기초 문법',      topic:'품사·허사 기초',        exam:'final'},
+        {id:'k-1-2-4',name:'한시 첫걸음',        topic:'한시 기초 감상',        exam:'final'},
+      ]
+    },
+    2:{
+      1:[
+        {id:'k-2-1-1',name:'한자와 어휘 탐구',    topic:'단어 짜임 탐구',        exam:'mid'},
+        {id:'k-2-1-2',name:'인간의 도리',         topic:'효·제·충·신 단문',     exam:'mid'},
+        {id:'k-2-1-3',name:'논어 배우기',         topic:'논어 기초 구절',        exam:'final'},
+        {id:'k-2-1-4',name:'고사와 성어',         topic:'역사 고사 유래 성어',   exam:'final'},
+      ],
+      2:[
+        {id:'k-2-2-1',name:'역사와 문화',         topic:'역사·문화 관련 단문',   exam:'mid'},
+        {id:'k-2-2-2',name:'명심보감 — 천명편',   topic:'하늘의 이치 구절',      exam:'mid'},
+        {id:'k-2-2-3',name:'허사와 문장',         topic:'허사·문장 구조',       exam:'final'},
+        {id:'k-2-2-4',name:'한시 즐기기',        topic:'한시 감상',            exam:'final'},
+      ]
+    },
+    3:{
+      1:[
+        {id:'k-3-1-1',name:'한자어 완성',         topic:'한자어 심화 학습',      exam:'mid'},
+        {id:'k-3-1-2',name:'고전 읽기 — 사서',   topic:'논어·맹자 심화',        exam:'mid'},
+        {id:'k-3-1-3',name:'성어와 삶',          topic:'성어 응용·생활화',      exam:'final'},
+        {id:'k-3-1-4',name:'고전 산문',          topic:'산문 독해',            exam:'final'},
+      ],
+      2:[
+        {id:'k-3-2-1',name:'선인의 지혜',         topic:'명심보감 종합',         exam:'mid'},
+        {id:'k-3-2-2',name:'한시의 세계',        topic:'한시 형식·주제 심화',   exam:'mid'},
+        {id:'k-3-2-3',name:'한문 독해 완성',      topic:'종합 독해·허사',        exam:'final'},
+        {id:'k-3-2-4',name:'한자 문화',          topic:'한자 문화권 이해',      exam:'final'},
+      ]
+    }
+  },
+  darakwon: {
+    1:{
+      1:[
+        {id:'d-1-1-1',name:'한자의 세계',         topic:'한자 성립 원리·짜임',   exam:'mid'},
+        {id:'d-1-1-2',name:'한자어와 우리말',      topic:'한자어·고유어 관계',    exam:'mid'},
+        {id:'d-1-1-3',name:'나와 가족 이야기',     topic:'가족 소재 단문',       exam:'final'},
+        {id:'d-1-1-4',name:'공부하는 기쁨',       topic:'학습 격언·사자성어',   exam:'final'},
+      ],
+      2:[
+        {id:'d-1-2-1',name:'계절과 자연',         topic:'사계절 소재 단문',      exam:'mid'},
+        {id:'d-1-2-2',name:'명심보감 (1)',        topic:'계선·효행·정기편',      exam:'mid'},
+        {id:'d-1-2-3',name:'한문 기초 문법',      topic:'기초 허사·어조사',      exam:'final'},
+        {id:'d-1-2-4',name:'한시 맛보기',        topic:'한시 입문·감상',        exam:'final'},
+      ]
+    },
+    2:{
+      1:[
+        {id:'d-2-1-1',name:'한자어 탐구',         topic:'어휘 짜임·의미',        exam:'mid'},
+        {id:'d-2-1-2',name:'예의 바른 삶',        topic:'예절·도덕 관련 단문',  exam:'mid'},
+        {id:'d-2-1-3',name:'논어 속의 지혜',      topic:'논어 대표 구절',       exam:'final'},
+        {id:'d-2-1-4',name:'고사성어 탐험',       topic:'고사성어 유래·뜻',     exam:'final'},
+      ],
+      2:[
+        {id:'d-2-2-1',name:'역사의 교훈',         topic:'역사 소재 한문',        exam:'mid'},
+        {id:'d-2-2-2',name:'명심보감 (2)',        topic:'근학·존심·천명편',      exam:'mid'},
+        {id:'d-2-2-3',name:'허사 이해',          topic:'허사 심화 용법',        exam:'final'},
+        {id:'d-2-2-4',name:'한시 감상',          topic:'한시 형식·내용',        exam:'final'},
+      ]
+    },
+    3:{
+      1:[
+        {id:'d-3-1-1',name:'어휘와 표현',         topic:'한자어 심화·표현력',    exam:'mid'},
+        {id:'d-3-1-2',name:'고전의 가르침',       topic:'논어·맹자·노자 구절',  exam:'mid'},
+        {id:'d-3-1-3',name:'성어의 지혜',         topic:'사자성어 종합 심화',   exam:'final'},
+        {id:'d-3-1-4',name:'산문 독해',          topic:'고전 산문 해석',       exam:'final'},
+      ],
+      2:[
+        {id:'d-3-2-1',name:'명심보감 종합',       topic:'명심보감 전편 종합',    exam:'mid'},
+        {id:'d-3-2-2',name:'한시의 정수',        topic:'한시 심화·창작',        exam:'mid'},
+        {id:'d-3-2-3',name:'한문 독해 완성',      topic:'허사·독해 종합',       exam:'final'},
+        {id:'d-3-2-4',name:'한자 문화와 생활',    topic:'한자 문화 종합',        exam:'final'},
+      ]
+    }
+  }
+};
+
+// ════════════════════════════════════════════════════════════
+//  문제 DB  — 단원 ID 기반 (핵심 단원 풍부하게)
+// ════════════════════════════════════════════════════════════
+// 공유 문제 풀 (출판사 공통 교육과정 내용)
+const SHARED = {
+  hanjaForm:[
+    {type:'한자의 짜임', passage:'山(메 산)', q:'「山」의 짜임 방식은?', answer:'상형(象形) — 산의 모양을 본뜸',
+     choices:['상형(象形) — 산의 모양을 본뜸','지사(指事) — 점으로 표현','회의(會意) — 두 글자 합성','형성(形聲) — 뜻+소리']},
+    {type:'한자의 짜임', passage:'明(밝을 명)', q:'「明」의 짜임 방식은?', answer:'회의(會意) — 日+月, 밝음을 나타냄',
+     choices:['회의(會意) — 日+月, 밝음을 나타냄','상형(象形)','지사(指事)','형성(形聲)']},
+    {type:'한자의 짜임', passage:'江(강 강)', q:'「江」의 짜임 방식은?', answer:'형성(形聲) — 氵(뜻)+工(소리)',
+     choices:['형성(形聲) — 氵(뜻)+工(소리)','상형(象形)','회의(會意)','지사(指事)']},
+    {type:'한자의 짜임', passage:'上(위 상)', q:'「上」의 짜임 방식은?', answer:'지사(指事) — 기준선 위에 점',
+     choices:['지사(指事) — 기준선 위에 점','상형(象形)','회의(會意)','형성(形聲)']},
+    {type:'한자의 짜임', passage:'信(믿을 신)', q:'「信」이 회의자인 이유는?', answer:'人(사람)+言(말) — 사람의 말은 믿을 수 있다',
+     choices:['人(사람)+言(말) — 사람의 말은 믿을 수 있다','소리를 빌림','모양을 본뜸','기호로 표현']},
+    {type:'한자의 짜임', q:'형성자(形聲字)에 해당하는 것은?', answer:'語(말씀 어) — 言(뜻)+吾(소리)',
+     choices:['語(말씀 어) — 言(뜻)+吾(소리)','山(메 산)','明(밝을 명)','上(위 상)']},
+    {type:'한자의 짜임', q:'상형자(象形字)가 아닌 것은?', answer:'信(믿을 신)',
+     choices:['信(믿을 신)','日(해 일)','月(달 월)','水(물 수)']},
+  ],
+  wordForm:[
+    {type:'단어의 짜임', passage:'登山(등산)', q:'「登山」의 단어 짜임은?', answer:'술목 관계 — 오르다(登)+산(山)',
+     choices:['술목 관계 — 오르다(登)+산(山)','주술 관계','수식 관계','병렬 관계']},
+    {type:'단어의 짜임', passage:'日出(일출)', q:'「日出」의 단어 짜임은?', answer:'주술 관계 — 해(日)가 뜬다(出)',
+     choices:['주술 관계 — 해(日)가 뜬다(出)','술목 관계','수식 관계','병렬 관계']},
+    {type:'단어의 짜임', passage:'山水(산수)', q:'「山水」의 단어 짜임은?', answer:'병렬 관계 — 산(山)과 물(水)',
+     choices:['병렬 관계 — 산(山)과 물(水)','주술 관계','술목 관계','수식 관계']},
+    {type:'단어의 짜임', passage:'高山(고산)', q:'「高山」의 단어 짜임은?', answer:'수식 관계 — 높은(高) 산(山)',
+     choices:['수식 관계 — 높은(高) 산(山)','주술 관계','술목 관계','병렬 관계']},
+    {type:'단어의 짜임', passage:'讀書(독서)', q:'「讀書」의 단어 짜임은?', answer:'술목 관계 — 읽다(讀)+책(書)',
+     choices:['술목 관계 — 읽다(讀)+책(書)','주술 관계','수식 관계','병렬 관계']},
+    {type:'단어의 짜임', q:'주술 관계 단어는?', answer:'地動(지동) — 땅이 움직인다',
+     choices:['地動(지동) — 땅이 움직인다','父子(부자)','讀書(독서)','高山(고산)']},
+    {type:'단어의 짜임', q:'병렬 관계 단어는?', answer:'父母(부모) — 아버지와 어머니',
+     choices:['父母(부모) — 아버지와 어머니','登山(등산)','日出(일출)','高山(고산)']},
+  ],
+  danmun:[
+    {type:'단문 해석', passage:'學而時習之', source:'논어 학이편', q:'이 구절의 뜻은?', answer:'배우고 때때로 익힌다',
+     choices:['배우고 때때로 익힌다','배울 때 시간이 필요하다','배워서 남을 가르친다','배우면 기쁘다']},
+    {type:'단문 해석', passage:'溫故而知新', source:'논어 위정편', q:'이 구절의 뜻은?', answer:'옛것을 익히고 새것을 안다',
+     choices:['옛것을 익히고 새것을 안다','따뜻하게 대하면 새롭다','고전을 읽어야 한다','옛날을 그리워한다']},
+    {type:'단문 해석', passage:'己所不欲 勿施於人', source:'논어 안연편', q:'이 구절의 교훈은?', answer:'자기가 싫은 것을 남에게 베풀지 마라',
+     choices:['자기가 싫은 것을 남에게 베풀지 마라','남을 먼저 생각하라','욕심을 버려야 한다','사람에게 친절해야 한다']},
+    {type:'단문 해석', passage:'父慈子孝', source:'명심보감', q:'이 구절의 뜻은?', answer:'아버지는 자애롭고 자식은 효도한다',
+     choices:['아버지는 자애롭고 자식은 효도한다','부자가 함께 일한다','자식은 아버지를 따른다','자애로운 부모가 효자를 만든다']},
+    {type:'단문 해석', passage:'德不孤 必有隣', source:'논어 이인편', q:'이 구절의 뜻은?', answer:'덕 있는 사람은 외롭지 않고 반드시 이웃이 생긴다',
+     choices:['덕 있는 사람은 외롭지 않고 반드시 이웃이 생긴다','덕이 있으면 혼자도 된다','이웃을 사랑해야 덕이 생긴다','덕은 혼자 쌓아야 한다']},
+    {type:'단문 해석', passage:'三人行 必有我師焉', source:'논어 술이편', q:'이 구절의 교훈은?', answer:'누구에게서나 배울 점이 있다',
+     choices:['누구에게서나 배울 점이 있다','세 사람이 가면 안전하다','다수결이 중요하다','선생님을 모시고 다녀야 한다']},
+    {type:'단문 해석', passage:'知之者 不如好之者 好之者 不如樂之者', source:'논어 옹야편', q:'학습의 최고 단계는?', answer:'즐기는 것(樂之者)',
+     choices:['즐기는 것(樂之者)','아는 것(知之者)','좋아하는 것(好之者)','열심히 하는 것']},
+    {type:'단문 해석', passage:'學而不思則罔 思而不學則殆', source:'논어 위정편', q:'「思而不學則殆」의 뜻은?', answer:'생각만 하고 배우지 않으면 위태롭다',
+     choices:['생각만 하고 배우지 않으면 위태롭다','생각하면 배울 수 없다','배우면 위험하다','생각이 더 중요하다']},
+    {type:'단문 해석', passage:'吾日三省吾身', source:'논어 학이편', q:'「三省」에 포함되지 않는 것은?', answer:'건강하게 지냈는가',
+     choices:['건강하게 지냈는가','남을 위해 충성하였는가','친구와 신의를 지켰는가','배운 것을 익혔는가']},
+    {type:'단문 해석', passage:'歲月不待人', source:'도연명 雜詩', q:'이 구절의 교훈은?', answer:'세월은 사람을 기다리지 않으니 시간을 아껴야 한다',
+     choices:['세월은 사람을 기다리지 않으니 시간을 아껴야 한다','세월이 약이다','사람은 세월을 이긴다','시간은 공평하다']},
+  ],
+  sajasungeoh:[
+    {type:'사자성어', q:'螢雪之功의 뜻은?', answer:'어려운 환경에서도 열심히 공부한 공적',
+     choices:['어려운 환경에서도 열심히 공부한 공적','빛나는 재능','깨끗한 마음','빛이 나는 공부'], note:'반딧불·눈빛으로 공부한 차윤·손강 고사'},
+    {type:'사자성어', q:'守株待兔의 뜻은?', answer:'요행만 바라며 노력하지 않음',
+     choices:['요행만 바라며 노력하지 않음','기회를 잘 잡음','한 가지에 집중함','기다리면 온다'], note:'나무 그루터기를 지키며 토끼를 기다린 고사'},
+    {type:'사자성어', q:'漁父之利의 뜻은?', answer:'두 사람이 다투는 틈에 제3자가 이익을 얻음',
+     choices:['두 사람이 다투는 틈에 제3자가 이익을 얻음','어부는 이득을 본다','남의 싸움에 끼지 마라','조개와 새가 싸운다'], note:'도요새와 조개 고사(전국책)'},
+    {type:'사자성어', q:'矛盾의 뜻은?', answer:'말이나 행동이 앞뒤가 맞지 않음',
+     choices:['말이나 행동이 앞뒤가 맞지 않음','창과 방패로 싸운다','무기를 잘 다룬다','강한 것끼리 충돌'], note:'창장수 고사(한비자)'},
+    {type:'사자성어', q:'臥薪嘗膽의 뜻은?', answer:'원수를 갚기 위해 고난을 참고 견딤',
+     choices:['원수를 갚기 위해 고난을 참고 견딤','편안함을 버리고 노력한다','고생 끝에 낙이 온다','목표를 잊지 않는다'], note:'월왕 구천의 복수 고사'},
+    {type:'사자성어', q:'靑出於藍의 뜻은?', answer:'제자가 스승보다 뛰어남',
+     choices:['제자가 스승보다 뛰어남','청색이 더 짙다','스승을 뛰어넘으면 안 된다','교육의 효과'], note:'순자 권학편'},
+    {type:'사자성어', q:'過猶不及의 뜻은?', answer:'지나침은 미치지 못함과 같다',
+     choices:['지나침은 미치지 못함과 같다','조금 부족한 것이 낫다','중용이 중요하다','모자라는 것이 더 나쁘다']},
+    {type:'사자성어', q:'四面楚歌의 뜻은?', answer:'사방이 적에게 둘러싸여 고립된 처지',
+     choices:['사방이 적에게 둘러싸여 고립된 처지','사방에서 노래가 들린다','외로운 처지','초나라 노래를 좋아한다'], note:'해하 전투에서 항우 고사'},
+    {type:'사자성어', q:'結草報恩의 뜻은?', answer:'죽어서도 은혜를 잊지 않고 갚음',
+     choices:['죽어서도 은혜를 잊지 않고 갚음','풀을 묶어 덫을 놓는다','감사함을 표현한다','풀로 만든 집'], note:'좌전 — 혼령이 풀을 묶어 은인을 도운 고사'},
+    {type:'사자성어', q:'他山之石의 뜻은?', answer:'남의 하찮은 행동도 자신의 수양에 도움이 됨',
+     choices:['남의 하찮은 행동도 자신의 수양에 도움이 됨','다른 산의 돌은 쓸모없다','타지의 것은 좋아 보인다','가져오면 안 된다'], note:'시경 소아'},
+  ],
+  myungsim:[
+    {type:'명심보감·논어', passage:'見善如不及 見惡如探湯', source:'명심보감 繼善篇', q:'이 구절의 교훈은?', answer:'선은 적극적으로 행하고, 악은 끓는 물처럼 피하라',
+     choices:['선은 적극적으로 행하고, 악은 끓는 물처럼 피하라','선악을 모두 경험해야 한다','선한 일을 미루지 마라','악인을 탕약으로 치료한다']},
+    {type:'명심보감·논어', passage:'禍福無門 惟人自召', source:'명심보감 繼善篇', q:'이 구절의 핵심 교훈은?', answer:'화와 복은 자기 행동에 달려 있다',
+     choices:['화와 복은 자기 행동에 달려 있다','운명은 하늘이 결정한다','복은 문으로 들어온다','화는 피할 수 없다']},
+    {type:'명심보감·논어', passage:'莫道今日不學有來日', source:'명심보감 勤學篇', q:'이 구절의 교훈은?', answer:'오늘 배우지 않는 것을 내일이 있다고 미루지 마라',
+     choices:['오늘 배우지 않는 것을 내일이 있다고 미루지 마라','내년에 더 열심히 하자','학문은 평생이다','최선을 다하라']},
+    {type:'명심보감·논어', passage:'玉不琢 不成器 人不學 不知道', source:'예기 학기편', q:'인간의 배움을 무엇에 비유했는가?', answer:'옥(玉)을 다듬는 것',
+     choices:['옥(玉)을 다듬는 것','씨앗을 심는 것','강물','불을 피우는 것']},
+    {type:'명심보감·논어', passage:'一日不讀書 口中生荊棘', source:'명심보감 勤學篇', q:'이 구절의 교훈은?', answer:'하루도 글을 읽지 않으면 입에 가시가 돋는다(독서의 중요성)',
+     choices:['하루도 글을 읽지 않으면 입에 가시가 돋는다(독서의 중요성)','매일 독서해야 한다','말을 조심해야 한다','글을 읽으면 말이 늘어난다']},
+    {type:'명심보감·논어', passage:'福生於淸儉 德生於卑退', source:'명심보감 正己篇', q:'복(福)이 생기는 조건은?', answer:'청렴하고 검소함(淸儉)',
+     choices:['청렴하고 검소함(淸儉)','용감하고 적극적임','성실하고 근면함','배움에 힘씀']},
+    {type:'명심보감·논어', passage:'孝順還生孝順子 忤逆還生忤逆兒', source:'명심보감 孝行篇', q:'이 구절의 핵심 교훈은?', answer:'부모에게 한 대로 자식도 똑같이 한다(인과응보)',
+     choices:['부모에게 한 대로 자식도 똑같이 한다(인과응보)','효도는 자연스러운 것','부모의 행동이 자녀에게 영향을 준다','효도와 불효는 유전된다']},
+    {type:'명심보감·논어', passage:'過而不改 是謂過矣', source:'논어 위령공편', q:'이 구절의 교훈은?', answer:'잘못을 하고도 고치지 않는 것이 진짜 잘못이다',
+     choices:['잘못을 하고도 고치지 않는 것이 진짜 잘못이다','과거의 잘못은 잊어야 한다','잘못은 숨겨야 한다','잘못을 인정하면 된다']},
+  ],
+  heo:[
+    {type:'허사', q:'「之」가 관형격 조사로 쓰인 예는?', answer:'君子之道(군자의 도)',
+     choices:['君子之道(군자의 도)','往之(가다)','吾愛之(나는 그것을 사랑한다)','學而知之']},
+    {type:'허사', q:'「而」가 순접으로 쓰인 문장은?', answer:'學而時習之(배우고 때때로 익힌다)',
+     choices:['學而時習之(배우고 때때로 익힌다)','人而無信(사람이면서 믿음이 없다)','學而不思(배우지만 생각하지 않는다)','勇而無謀']},
+    {type:'허사', q:'문장 끝에서 의문·감탄을 나타내는 어조사는?', answer:'乎',
+     choices:['乎','也','矣','哉']},
+    {type:'허사', passage:'不亦樂乎', q:'「不亦~乎」 구문의 의미는?', answer:'또한 ~하지 않겠는가(반어·강조)',
+     choices:['또한 ~하지 않겠는가(반어·강조)','즐겁지 않다','결코 즐겁지 않은가','이미 즐거움이 없다']},
+    {type:'허사', q:'「非」와 「不」의 차이는?', answer:'非는 명사 앞, 不은 동사·형용사 앞에서 부정',
+     choices:['非는 명사 앞, 不은 동사·형용사 앞에서 부정','非가 더 강한 부정','不은 과거 부정','둘은 같다']},
+    {type:'허사', q:'「於」의 용법이 아닌 것은?', answer:'부정(~하지 않다)',
+     choices:['부정(~하지 않다)','~에서(장소)','~보다(비교)','~에게(대상)']},
+    {type:'허사', q:'「則」의 기능은?', answer:'~하면 곧(조건·결과 연결)',
+     choices:['~하면 곧(조건·결과 연결)','~의(관형격)','~하지만(역접)','단정 어조사']},
+    {type:'허사', q:'「雖」의 뜻은?', answer:'비록 ~하더라도(양보 접속사)',
+     choices:['비록 ~하더라도(양보 접속사)','만약 ~하면(가정)','~하지 않으면','~이므로(원인)']},
+    {type:'허사', q:'「矣」의 기능은?', answer:'문장 끝 단정·완료 어조사',
+     choices:['문장 끝 단정·완료 어조사','문장 앞 주제 제시','강조 부사','의문 어조사']},
+  ],
+  hansi:[
+    {type:'한시', passage:'牀前明月光 疑是地上霜', source:'이백 靜夜思', q:'「疑是地上霜」의 뜻은?', answer:'마치 땅 위의 서리인가 의심된다',
+     choices:['마치 땅 위의 서리인가 의심된다','서리가 내렸다','달빛이 차갑다','방 앞에 서리가 쌓였다']},
+    {type:'한시', passage:'舉頭望明月 低頭思故鄕', source:'이백 靜夜思', q:'이 시에서 시인의 감정은?', answer:'고향에 대한 그리움',
+     choices:['고향에 대한 그리움','달밤의 즐거움','새벽의 외로움','여행의 설렘']},
+    {type:'한시', passage:'春眠不覺曉 處處聞啼鳥', source:'맹호연 春曉', q:'이 시의 계절과 배경은?', answer:'봄날 새벽',
+     choices:['봄날 새벽','여름날 낮','가을 저녁','겨울 아침']},
+    {type:'한시', q:'5언 절구(五言絶句)의 형식은?', answer:'한 구가 5자, 4구(起承轉結)',
+     choices:['한 구가 5자, 4구(起承轉結)','한 구가 7자, 4구','한 구가 5자, 8구','한 구가 7자, 8구']},
+    {type:'한시', q:'한시에서 대구(對句)란?', answer:'두 구절이 형식과 내용이 서로 짝을 이루는 것',
+     choices:['두 구절이 형식과 내용이 서로 짝을 이루는 것','같은 글자를 반복','운(韻)을 맞추는 것','한 구절이 두 가지 뜻']},
+    {type:'한시', passage:'工欲善其事 必先利其器', source:'논어 위령공편', q:'이 구절의 교훈은?', answer:'일을 잘하려면 먼저 도구(준비)를 갖춰야 한다',
+     choices:['일을 잘하려면 먼저 도구(준비)를 갖춰야 한다','장인은 도구가 좋아야 한다','기술보다 도구가 중요하다','도구를 먼저 선택하라']},
+  ],
+};
+
+// 단원 ID → 공유 문제 풀 매핑 (핵심 패턴)
+function getPoolForUnit(uid){
+  const pools = [];
+  // 한자의 짜임 관련
+  if(/1-1/.test(uid) && (uid.endsWith('1')||uid.endsWith('2'))) {
+    pools.push(...SHARED.hanjaForm,...SHARED.wordForm);
+  }
+  // 어휘·일상 단문
+  if(/1-1-[345]/.test(uid)||/1-1-[34]/.test(uid)) {
+    pools.push(...SHARED.danmun.slice(0,5),...SHARED.myungsim.slice(0,3));
+  }
+  // 가족·인간관계
+  if(uid.includes('가족')||uid.endsWith('3')&&uid.includes('1-1')) {
+    pools.push(...SHARED.danmun.slice(3,7));
+  }
+  // 사자성어
+  if(uid.includes('사자성어')||uid.endsWith('4')&&uid.includes('1-1')) {
+    pools.push(...SHARED.sajasungeoh);
+  }
+  // 자연·계절
+  if(uid.includes('1-2-1')) {
+    pools.push(...SHARED.danmun.slice(8),...SHARED.hansi.slice(2));
+  }
+  // 명심보감·논어
+  if(uid.includes('1-2-2')||uid.includes('2-2')||uid.includes('3-2-1')) {
+    pools.push(...SHARED.myungsim,...SHARED.danmun.slice(2,6));
+  }
+  // 허사
+  if(uid.includes('1-2-3')||uid.includes('2-2-3')||uid.includes('3-2-3')) {
+    pools.push(...SHARED.heo);
+  }
+  // 한시
+  if(uid.includes('1-2-4')||uid.includes('2-2-4')||uid.includes('3-2-2')) {
+    pools.push(...SHARED.hansi,...SHARED.danmun.slice(0,3));
+  }
+  // 논어
+  if(uid.includes('2-1-3')||uid.includes('3-1-2')) {
+    pools.push(...SHARED.danmun,...SHARED.myungsim.slice(4));
+  }
+  // 고사성어
+  if(uid.includes('2-1-4')||uid.includes('3-1-3')) {
+    pools.push(...SHARED.sajasungeoh,...SHARED.danmun.slice(0,4));
+  }
+  // 도리·덕목
+  if(uid.includes('2-1-2')) {
+    pools.push(...SHARED.danmun,...SHARED.myungsim.slice(0,4));
+  }
+  // 문장구조
+  if(uid.includes('2-2-4')) {
+    pools.push(...SHARED.danmun,...SHARED.heo.slice(0,4));
+  }
+  // 산문·어휘
+  if(uid.includes('3-1-1')||uid.includes('3-1-4')) {
+    pools.push(...SHARED.danmun,...SHARED.sajasungeoh.slice(4));
+  }
+  // 종합
+  if(uid.includes('3-2-3')||uid.includes('3-2-4')) {
+    pools.push(...SHARED.heo,...SHARED.danmun,...SHARED.sajasungeoh.slice(0,5));
+  }
+  // fallback
+  if(pools.length < 8) {
+    pools.push(...SHARED.danmun,...SHARED.sajasungeoh,...SHARED.myungsim,...SHARED.heo);
+  }
+  return pools;
+}
+
+// ════════════════════════════════════════════════════════════
+//  상태
+// ════════════════════════════════════════════════════════════
+let state = {pub:'mirae', grade:1, sem:1, units:new Set(), examType:'all', count:20};
+let curQs=[], userAns={}, submitted=false, timerSec=0, timerInterval;
+const NUMS=['①','②','③','④'];
+const CHIP_COLOR = {'한자의 짜임':'#4e5ba6','단어의 짜임':'#4e5ba6','단문 해석':'#166534','사자성어':'#92400e','명심보감·논어':'#1d4ed8','허사':'#6d28d9','한시':'#0d6b5e'};
+
+// ════════════════════════════════════════════════════════════
+//  초기화
+// ════════════════════════════════════════════════════════════
+window.onload = () => {
+  renderPubs();
+  renderUnits();
+};
+
+function renderPubs(){
+  document.getElementById('pub-grid').innerHTML = PUBLISHERS.map(p=>`
+    <button class="pub-btn${p.id===state.pub?' active':''}" onclick="selectPub('${p.id}',this)">
+      <span class="pub-icon">${p.icon}</span>
+      <span class="pub-name">${p.name}</span>
+      <span class="pub-author">${p.author}</span>
+    </button>`).join('');
+}
+
+function selectPub(id, btn){
+  state.pub = id;
+  state.units.clear();
+  document.querySelectorAll('.pub-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderUnits();
+}
+
+function sel(key, val, btn){
+  state[key] = val;
+  if(key==='grade'||key==='sem'){
+    state.units.clear();
+    const rowId = key==='grade'?'grade-row':'sem-row';
+    document.getElementById(rowId).querySelectorAll('.sel-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderUnits();
+  } else {
+    btn.parentElement.querySelectorAll('.sel-btn,.cnt-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+}
+
+function renderUnits(){
+  const units = (CURRICULUM[state.pub]?.[state.grade]?.[state.sem]) || [];
+  state.units.clear();
+  document.getElementById('unit-wrap').innerHTML = units.length ? units.map(u=>`
+    <button class="unit-btn" data-id="${u.id}" onclick="toggleUnit('${u.id}',this)">
+      <span class="u-no">${u.exam==='mid'?'[중간]':'[기말]'} · ${u.topic}</span>
+      <span class="u-name">${u.name}</span>
+    </button>`).join('') : '<div class="empty-msg">해당 단원 정보가 없습니다</div>';
+  document.getElementById('sel-hint').textContent='';
+}
+
+function toggleUnit(id, btn){
+  if(state.units.has(id)){state.units.delete(id);btn.classList.remove('active');}
+  else{state.units.add(id);btn.classList.add('active');}
+  const n = state.units.size;
+  document.getElementById('sel-hint').textContent = n>0 ? `${n}개 단원 선택됨` : '';
+}
+
+// ════════════════════════════════════════════════════════════
+//  퀴즈 시작
+// ════════════════════════════════════════════════════════════
+function startQuiz(){
+  if(state.units.size===0){alert('단원을 하나 이상 선택해 주세요.');return;}
+  const pub = PUBLISHERS.find(p=>p.id===state.pub);
+  const units = CURRICULUM[state.pub][state.grade][state.sem];
+
+  // 선택 단원 문제 수집
+  let pool = [];
+  state.units.forEach(uid=>{
+    const p = getPoolForUnit(uid);
+    pool = [...pool, ...p.map(q=>({...q, unitId:uid}))];
+  });
+
+  // 중복 제거 (같은 question 텍스트)
+  const seen = new Set();
+  pool = pool.filter(q=>{ const k=q.q; if(seen.has(k))return false; seen.add(k); return true; });
+
+  // 시험 유형 필터 (단원 exam 기반)
+  if(state.examType !== 'all'){
+    const unitExamMap = {};
+    units.forEach(u=>unitExamMap[u.id]=u.exam);
+    pool = pool.filter(q=>{
+      const ex = unitExamMap[q.unitId];
+      if(state.examType==='mid') return ex==='mid';
+      if(state.examType==='final') return ex==='final';
+      return true;
+    });
+    if(pool.length < 5){
+      // fallback: 전체 사용
+      pool = [];
+      state.units.forEach(uid=>{pool=[...pool,...getPoolForUnit(uid).map(q=>({...q,unitId:uid}))];});
+      const seen2=new Set();
+      pool=pool.filter(q=>{const k=q.q;if(seen2.has(k))return false;seen2.add(k);return true;});
+    }
+  }
+
+  if(pool.length===0){alert('해당 단원·유형의 문제 데이터가 없습니다.');return;}
+
+  // 랜덤 추출
+  const shuffled = [...pool].sort(()=>Math.random()-.5);
+  curQs = shuffled.slice(0, Math.min(state.count, shuffled.length)).map((q,i)=>({
+    ...q, index:i+1, choices:[...q.choices].sort(()=>Math.random()-.5)
+  }));
+  userAns={}; submitted=false;
+
+  const unitNames = Array.from(state.units).map(id=>{
+    const u=units.find(u=>u.id===id); return u?u.name:'';
+  }).filter(Boolean).join(' · ');
+  const gradeLabel = `중${state.grade} ${state.sem}학기`;
+  const pubColor = pub.color;
+
+  // 헤더
+  document.getElementById('hdr-pub').textContent = `${pub.name}(${pub.author})`;
+  document.getElementById('hdr-grade').textContent = gradeLabel;
+  document.getElementById('hdr-unit').textContent = unitNames;
+  // 시험지 상단
+  const label = document.getElementById('exam-pub-label');
+  label.textContent = `${pub.name} · ${gradeLabel}`;
+  label.style.background = pubColor;
+  document.getElementById('exam-main-title').textContent = `漢文 單元別 試驗紙`;
+  document.getElementById('ei-pub').textContent = `${pub.name}(${pub.author})`;
+  document.getElementById('ei-grade').textContent = gradeLabel;
+  document.getElementById('ei-count').textContent = curQs.length + '문항';
+  document.getElementById('ei-score').textContent = `각 ${Math.floor(100/curQs.length)}점`;
+
+  renderQs();
+  document.getElementById('hero').style.display='none';
+  document.getElementById('quiz-page').style.display='block';
+  window.scrollTo(0,0);
+  startTimer();
+}
+
+function renderQs(){
+  const container = document.getElementById('q-container');
+  const groups={};
+  const typeOrder=['한자의 짜임','단어의 짜임','단문 해석','사자성어','명심보감·논어','허사','한시'];
+  curQs.forEach(q=>{const t=q.type||'기타';if(!groups[t])groups[t]=[];groups[t].push(q);});
+  const icons={'한자의 짜임':'🔡','단어의 짜임':'🔤','단문 해석':'📜','사자성어':'🀄','명심보감·논어':'📖','허사':'✨','한시':'🎋','기타':'📝'};
+  const bgColors={'한자의 짜임':'rgba(78,91,166,.07)','단어의 짜임':'rgba(78,91,166,.07)','단문 해석':'rgba(22,101,52,.07)','사자성어':'rgba(146,64,14,.07)','명심보감·논어':'rgba(29,78,216,.07)','허사':'rgba(109,40,217,.07)','한시':'rgba(13,107,94,.07)','기타':'rgba(0,0,0,.04)'};
+
+  let html='';
+  const orderedTypes=[...typeOrder,...Object.keys(groups).filter(t=>!typeOrder.includes(t))];
+  orderedTypes.forEach(t=>{
+    if(!groups[t]||!groups[t].length)return;
+    const qs=groups[t];
+    html+=`
+      <div class="sec-hdr" style="background:${bgColors[t]||'rgba(0,0,0,.04)'}">
+        <span class="sec-icon">${icons[t]||'📝'}</span>
+        <span class="sec-title-text">${t}</span>
+        <span class="sec-nums">${qs.map(q=>q.index+'번').join(' · ')}</span>
+      </div>
+      <div class="q-grid">${qs.map(renderCard).join('')}</div>`;
+  });
+  container.innerHTML = html||'<div class="empty-msg">문제를 불러오지 못했습니다</div>';
+}
+
+function renderCard(q){
+  const color = CHIP_COLOR[q.type]||'#334155';
+  const hasP = q.passage && q.passage.length>0;
+  return `
+    <div class="q-card" id="qcard-${q.index}">
+      <div class="q-num-badge">${q.index}</div>
+      <div class="q-body">
+        <span class="type-chip" style="background:${color}">${q.type}</span>
+        ${hasP?`<div class="q-passage${q.passage.length>22?' sm':''}">${q.passage}</div>`:''}
+        ${q.source?`<div class="q-source">출전: ${q.source}</div>`:''}
+        <div class="q-text">${q.q}</div>
+        <div class="choices" id="ch-${q.index}">
+          ${q.choices.map((c,ci)=>`
+            <div class="choice" id="ci-${q.index}-${ci}" onclick="pick(${q.index},${ci})">
+              <span class="choice-n">${NUMS[ci]}</span><span>${c}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="ans-mark" id="mk-${q.index}"></div>
+    </div>`;
+}
+
+function pick(qi, ci){
+  if(submitted)return;
+  userAns[qi]=ci;
+  document.querySelectorAll(`#ch-${qi} .choice`).forEach((c,i)=>c.classList.toggle('sel',i===ci));
+  document.getElementById('prog').style.width=(Object.keys(userAns).length/curQs.length*100)+'%';
+}
+
+function startTimer(){
+  timerSec=0; clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    timerSec++;
+    const m=String(Math.floor(timerSec/60)).padStart(2,'0');
+    const s=String(timerSec%60).padStart(2,'0');
+    document.getElementById('timer').textContent=`${m}:${s}`;
+  },1000);
+}
+
+function submitQuiz(){
+  const ans=Object.keys(userAns).length;
+  if(!submitted&&ans<curQs.length)
+    if(!confirm(`${curQs.length-ans}문항이 미응답입니다. 채점할까요?`))return;
+  submitted=true; clearInterval(timerInterval);
+
+  let correct=0;
+  curQs.forEach(q=>{
+    const card=document.getElementById(`qcard-${q.index}`);
+    const cIdx=q.choices.indexOf(q.answer);
+    const uIdx=userAns[q.index];
+    card.querySelectorAll('.choice').forEach((c,i)=>{
+      c.classList.remove('sel');
+      if(i===cIdx)c.classList.add('ok');
+      else if(i===uIdx&&uIdx!==cIdx)c.classList.add('ng');
+    });
+    const mk=document.getElementById(`mk-${q.index}`);
+    if(uIdx===cIdx){correct++;card.classList.add('gc');mk.textContent='✓';mk.style.color='var(--green)';}
+    else{card.classList.add('gw');mk.textContent='✗';mk.style.color='var(--red)';}
+  });
+
+  const total=curQs.length, wrong=ans-correct, unanswered=total-ans;
+  const score=Math.round(correct/total*100);
+  document.getElementById('r-score').innerHTML=`${score}<span>점</span>`;
+  document.getElementById('s-co').textContent=correct;
+  document.getElementById('s-wr').textContent=wrong;
+  document.getElementById('s-un').textContent=unanswered;
+
+  let emoji,grade,desc;
+  if(score>=90){emoji='🏆';grade='최우수! 완벽에 가까운 실력!';desc='한문을 자유롭게 읽을 수 있는 수준입니다.';}
+  else if(score>=80){emoji='🥇';grade='우수! 핵심을 잘 이해했어요!';desc='오답 문제를 한 번 더 확인하면 완벽해요.';}
+  else if(score>=70){emoji='🎯';grade='양호! 조금만 더 노력하세요!';desc='틀린 문제의 출전을 소리 내어 읽어 보세요.';}
+  else if(score>=60){emoji='📚';grade='보통, 기초부터 다시 다져요!';desc='교과서 원문을 꼼꼼히 반복해 보세요.';}
+  else{emoji='💪';grade='분발이 필요해요!';desc='한자의 짜임과 기초 단문부터 시작해 봐요.';}
+
+  document.getElementById('r-emoji').textContent=emoji;
+  document.getElementById('r-grade').textContent=grade;
+  document.getElementById('r-desc').textContent=desc;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function reviewAns(){document.getElementById('overlay').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'});}
+function retryQuiz(){document.getElementById('overlay').classList.remove('show');startQuiz();}
+function goBack(){
+  clearInterval(timerInterval);
+  document.getElementById('quiz-page').style.display='none';
+  document.getElementById('hero').style.display='flex';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>

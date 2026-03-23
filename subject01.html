@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중학교 과목별 단원 시험지</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1209; --rice:#fdf8ef; --gold:#b8860b; --gold-lt:#e8c060;
+  --red:#8b1a2a; --teal:#0d6b5e; --blue:#1d4ed8; --purple:#5b21b6;
+  --gray:#64748b; --green:#166534; --white:#fff;
+  --shadow: 0 4px 24px rgba(0,0,0,.09);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--rice);color:var(--ink);min-height:100vh;}
+
+/* ══════════ HERO ══════════ */
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;padding:48px 20px 60px;
+  background:linear-gradient(160deg,#fdf8ef 0%,#f5ead8 100%);
+  position:relative;overflow:hidden;
+}
+#hero::before{
+  content:"漢 文";
+  position:fixed;bottom:-60px;right:-40px;
+  font-family:'Noto Serif KR',serif;font-size:clamp(160px,22vw,320px);
+  font-weight:900;color:rgba(184,134,11,.055);pointer-events:none;
+  letter-spacing:.1em;z-index:0;
+}
+.hero-inner{position:relative;z-index:1;width:100%;max-width:680px;}
+
+.hero-top{text-align:center;margin-bottom:40px;}
+.site-tag{
+  display:inline-block;background:var(--red);color:#fff;
+  font-size:11px;font-weight:700;letter-spacing:.18em;
+  padding:5px 16px;border-radius:2px;margin-bottom:18px;
+}
+.hero-title{
+  font-family:'Noto Serif KR',serif;
+  font-size:clamp(30px,6vw,58px);font-weight:900;line-height:1.15;
+}
+.hero-title em{color:var(--gold);font-style:normal;}
+.hero-sub{font-size:14px;color:var(--gray);font-weight:300;margin-top:8px;letter-spacing:.05em;}
+
+/* 선택 카드 */
+.card{
+  background:var(--white);border-radius:14px;padding:28px 28px 24px;
+  box-shadow:var(--shadow);border:1px solid rgba(0,0,0,.06);
+  margin-bottom:16px;position:relative;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:14px 14px 0 0;
+}
+.card.pub::before{background:linear-gradient(90deg,var(--gold),#d4a832);}
+.card.grp::before{background:linear-gradient(90deg,var(--teal),#1a9b8c);}
+.card.unit::before{background:linear-gradient(90deg,var(--blue),#3b82f6);}
+.card.cnt::before{background:linear(90deg,#334155,#64748b);}
+
+.step-label{
+  font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--gray);
+  margin-bottom:12px;display:flex;align-items:center;gap:6px;
+}
+.step-num{
+  width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:#fff;
+}
+.step-label.s1 .step-num{background:var(--gold);}
+.step-label.s2 .step-num{background:var(--teal);}
+.step-label.s3 .step-num{background:var(--blue);}
+.step-label.s4 .step-num{background:var(--red);}
+.step-label.s5 .step-num{background:#334155;}
+
+/* 출판사 선택 */
+.pub-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+@media(max-width:560px){.pub-grid{grid-template-columns:repeat(3,1fr);}}
+.pub-btn{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:12px 6px;border:2px solid #e2d8c8;border-radius:10px;
+  background:white;cursor:pointer;transition:all .17s;
+}
+.pub-btn .pub-icon{font-size:22px;}
+.pub-btn .pub-name{font-size:11px;font-weight:700;color:var(--gray);letter-spacing:.04em;}
+.pub-btn .pub-author{font-size:10px;color:#aaa;}
+.pub-btn:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 4px 12px rgba(184,134,11,.18);}
+.pub-btn.active{border-color:var(--gold);background:linear-gradient(135deg,#fff9ed,#fef3c7);box-shadow:0 4px 16px rgba(184,134,11,.25);}
+.pub-btn.active .pub-name{color:var(--gold);}
+
+/* 학년·학기 */
+.row-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.sel-btn{
+  flex:1;min-width:60px;padding:10px 12px;
+  border:2px solid #e2d8c8;border-radius:8px;background:white;
+  font-family:'Noto Serif KR',serif;font-size:14px;font-weight:600;
+  color:var(--gray);cursor:pointer;transition:all .17s;text-align:center;
+}
+.sel-btn:hover{border-color:var(--teal);color:var(--teal);background:#f0fafa;}
+.sel-btn.active{border-color:var(--teal);background:var(--teal);color:white;box-shadow:0 3px 10px rgba(13,107,94,.3);}
+
+/* 단원 그리드 */
+.unit-wrap{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+@media(max-width:400px){.unit-wrap{grid-template-columns:1fr;}}
+.unit-btn{
+  padding:11px 14px;border:2px solid #e2d8c8;border-radius:9px;
+  background:white;cursor:pointer;transition:all .17s;text-align:left;
+}
+.unit-btn:hover{border-color:var(--blue);background:#eff6ff;transform:translateY(-1px);}
+.unit-btn.active{border-color:var(--blue);background:var(--blue);color:white;}
+.unit-btn .u-no{font-size:10px;font-weight:700;opacity:.65;letter-spacing:.08em;display:block;margin-bottom:3px;}
+.unit-btn .u-name{font-size:13px;font-weight:600;line-height:1.3;}
+.unit-btn .u-topic{font-size:11px;opacity:.7;line-height:1.3;margin-top:2px;}
+.unit-btn.active .u-topic{opacity:.85;}
+
+/* 문항수 */
+.cnt-row{display:flex;gap:8px;}
+.cnt-btn{
+  flex:1;padding:10px;border:2px solid #e2d8c8;border-radius:8px;background:white;
+  font-family:'Noto Serif KR',serif;font-size:14px;font-weight:700;
+  color:var(--gray);cursor:pointer;transition:all .17s;text-align:center;
+}
+.cnt-btn:hover{border-color:var(--red);color:var(--red);}
+.cnt-btn.active{border-color:var(--red);background:var(--red);color:white;box-shadow:0 3px 10px rgba(139,26,42,.3);}
+
+.start-btn{
+  width:100%;padding:16px;margin-top:16px;
+  background:linear-gradient(135deg,var(--ink) 0%,#2c3e50 100%);
+  color:white;border:none;border-radius:10px;
+  font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;
+  letter-spacing:.12em;cursor:pointer;transition:all .2s;
+  position:relative;box-shadow:0 4px 20px rgba(0,0,0,.25);
+}
+.start-btn::after{content:'→';position:absolute;right:22px;top:50%;transform:translateY(-50%);transition:right .2s;}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.3);}
+.start-btn:hover::after{right:16px;}
+.start-btn:disabled{background:#aaa;box-shadow:none;cursor:not-allowed;transform:none;}
+
+/* ══════════ QUIZ ══════════ */
+#quiz-page{display:none;min-height:100vh;background:var(--rice);}
+.qhdr{
+  background:var(--ink);color:white;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 20px rgba(0,0,0,.35);
+}
+.qhdr-inner{
+  max-width:980px;margin:0 auto;padding:13px 22px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.qhdr-title{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;}
+.qhdr-title span{color:var(--gold-lt);}
+.qhdr-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.mbadge{background:rgba(255,255,255,.12);padding:4px 11px;border-radius:20px;font-size:12px;}
+.mbadge.pub-tag{background:rgba(232,192,96,.2);color:var(--gold-lt);font-weight:700;}
+.timer{
+  font-family:monospace;font-size:13px;color:#ffd;letter-spacing:.1em;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  padding:4px 13px;border-radius:20px;
+}
+.back-btn{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:white;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;
+}
+.back-btn:hover{background:rgba(255,255,255,.2);}
+.prog-wrap{background:rgba(255,255,255,.1);height:4px;}
+.prog-fill{height:100%;background:var(--gold-lt);transition:width .3s;}
+
+/* 시험지 */
+.exam-sheet{max-width:980px;margin:0 auto;padding:28px 20px 80px;}
+.exam-header-row{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  border-bottom:2.5px solid var(--ink);padding-bottom:14px;margin-bottom:28px;flex-wrap:wrap;gap:12px;
+}
+.exam-title-block .exam-pub-label{
+  font-size:11px;font-weight:700;letter-spacing:.12em;
+  padding:3px 10px;border-radius:10px;color:white;display:inline-block;margin-bottom:6px;
+}
+.exam-title-block .exam-main-title{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;}
+.exam-info-row{display:flex;gap:22px;font-size:12px;color:var(--gray);}
+.exam-info-row strong{color:var(--ink);}
+
+/* 섹션 */
+.sec-hdr{
+  display:flex;align-items:center;gap:10px;padding:9px 14px;
+  margin:28px 0 12px;border-radius:6px;
+}
+.sec-icon{font-size:18px;}
+.sec-title-text{font-family:'Noto Serif KR',serif;font-size:14px;font-weight:700;}
+.sec-nums{font-size:11px;color:var(--gray);margin-left:auto;}
+
+/* 문제 그리드 */
+.q-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+@media(max-width:600px){.q-grid{grid-template-columns:1fr;}}
+
+/* 문제 카드 */
+.q-card{
+  background:white;border:1px solid #e8e0d0;border-radius:10px;
+  padding:15px 17px;display:flex;align-items:flex-start;gap:12px;
+  position:relative;transition:box-shadow .15s;
+}
+.q-card:hover{box-shadow:0 3px 14px rgba(0,0,0,.08);}
+.q-card.gc{border:2px solid var(--green);}
+.q-card.gw{border:2px solid var(--red);}
+.q-num-badge{
+  font-family:'Noto Serif KR',serif;font-size:11px;font-weight:700;
+  color:white;background:var(--ink);width:25px;height:25px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.q-body{flex:1;}
+.type-chip{
+  display:inline-block;font-size:10px;font-weight:700;letter-spacing:.06em;
+  padding:2px 8px;border-radius:10px;margin-bottom:7px;color:white;
+}
+.q-passage{
+  font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;
+  color:var(--ink);line-height:1.6;margin-bottom:3px;letter-spacing:.04em;
+}
+.q-passage.sm{font-size:14px;}
+.q-source{font-size:10px;color:#aaa;margin-bottom:6px;font-style:italic;}
+.q-text{font-size:12px;color:var(--gray);margin-bottom:9px;}
+.choices{display:flex;flex-direction:column;gap:4px;}
+.choice{
+  display:flex;align-items:center;gap:7px;padding:6px 9px;
+  border:1px solid #ece7df;border-radius:6px;cursor:pointer;
+  transition:all .12s;font-size:13px;
+}
+.choice:hover{background:#fffbf0;border-color:var(--gold);}
+.choice.sel{background:var(--gold);border-color:var(--gold);color:white;}
+.choice.ok{background:var(--green);border-color:var(--green);color:white;}
+.choice.ng{background:var(--red);border-color:var(--red);color:white;text-decoration:line-through;opacity:.7;}
+.choice-n{font-weight:700;font-size:11px;opacity:.7;min-width:13px;}
+.ans-mark{position:absolute;top:9px;right:11px;font-size:14px;display:none;}
+.q-card.gc .ans-mark,.q-card.gw .ans-mark{display:block;}
+
+/* 제출 */
+.submit-wrap{margin-top:36px;text-align:center;}
+.submit-btn{
+  padding:15px 48px;background:linear-gradient(135deg,var(--red),#6b1220);
+  color:white;border:none;border-radius:9px;
+  font-family:'Noto Serif KR',serif;font-size:16px;font-weight:700;
+  letter-spacing:.1em;cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 16px rgba(139,26,42,.35);
+}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(139,26,42,.4);}
+
+/* 결과 모달 */
+.overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);
+  z-index:200;align-items:center;justify-content:center;padding:20px;
+}
+.overlay.show{display:flex;}
+.result-box{
+  background:white;border-radius:16px;padding:44px 32px;
+  max-width:400px;width:100%;text-align:center;
+  animation:pop .3s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.r-emoji{font-size:52px;margin-bottom:8px;}
+.r-score{font-family:'Noto Serif KR',serif;font-size:52px;font-weight:900;line-height:1;}
+.r-score span{font-size:20px;color:var(--gray);font-weight:400;}
+.r-grade{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:700;margin:10px 0 4px;}
+.r-desc{font-size:12px;color:var(--gray);margin-bottom:22px;}
+.r-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0;padding:14px 0;border-top:1px solid #eee;border-bottom:1px solid #eee;}
+.r-stat{text-align:center;}
+.r-stat-n{font-family:'Noto Serif KR',serif;font-size:22px;font-weight:700;}
+.r-stat-l{font-size:10px;color:var(--gray);margin-top:2px;}
+.co .r-stat-n{color:var(--green);}
+.wr .r-stat-n{color:var(--red);}
+.r-btns{display:flex;gap:10px;}
+.r-btn{flex:1;padding:11px;border-radius:8px;font-family:'Noto Serif KR',serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;border:2px solid;}
+.r-btn.pri{background:var(--ink);color:white;border-color:var(--ink);}
+.r-btn.sec{background:white;color:var(--ink);border-color:#ddd;}
+.r-btn:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,.15);}
+
+/* 유틸 */
+.empty-msg{text-align:center;padding:36px;color:var(--gray);font-family:'Noto Serif KR',serif;}
+.sel-hint{font-size:11px;color:var(--gray);margin-top:6px;text-align:right;}
+</style>
+</head>
+<body>
+
+
+<!-- ══════════════ 과목 선택 화면 ══════════════ -->
+<section id="subject-page" style="
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:48px 20px 60px;
+  background:linear-gradient(160deg,#fdf8ef 0%,#f5ead8 100%);
+  position:relative; overflow:hidden;
+">
+  <div style="
+    position:fixed; bottom:-60px; right:-40px;
+    font-family:'Noto Serif KR',serif;
+    font-size:clamp(160px,22vw,320px); font-weight:900;
+    color:rgba(184,134,11,.055); pointer-events:none;
+    letter-spacing:.1em; z-index:0;
+  ">學 習</div>
+
+  <div style="position:relative;z-index:1;width:100%;max-width:680px;text-align:center;">
+    <div style="
+      display:inline-block; background:#8b1a2a; color:#fff;
+      font-size:11px; font-weight:700; letter-spacing:.18em;
+      padding:5px 16px; border-radius:2px; margin-bottom:18px;
+    ">2022 개정 교육과정</div>
+
+    <h1 style="
+      font-family:'Noto Serif KR',serif;
+      font-size:clamp(28px,6vw,52px); font-weight:900; line-height:1.2;
+      margin-bottom:10px; color:#1a1209;
+    ">중학교 <em style="color:#b8860b;font-style:normal;">과목 선택</em></h1>
+    <p style="font-size:14px;color:#64748b;font-weight:300;margin-bottom:40px;letter-spacing:.05em;">
+      공부할 과목을 먼저 선택해 주세요
+    </p>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:12px;">
+
+      <!-- 한문 -->
+      <button onclick="window.location.href='hanja_quiz_old'" style="
+        display:flex;flex-direction:column;align-items:center;gap:10px;
+        padding:28px 16px 22px; border:2px solid #e2d8c8; border-radius:16px;
+        background:white; cursor:pointer; transition:all .18s;
+        box-shadow:0 2px 12px rgba(0,0,0,.06);
+      "
+      onmouseover="this.style.borderColor='#b8860b';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(184,134,11,.2)'"
+      onmouseout="this.style.borderColor='#e2d8c8';this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,.06)'">
+        <span style="font-size:40px;">漢</span>
+        <span style="font-size:15px;font-weight:800;color:#1a1209;font-family:'Noto Serif KR',serif;">한 문</span>
+        <span style="font-size:11px;color:#64748b;font-weight:400;">교재별 단원 시험</span>
+        <span style="display:inline-block;background:#b8860b;color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:999px;">이용 가능</span>
+      </button>
+
+      <!-- 국어 -->
+      <button onclick="window.location.href='korean_quiz.html'" style="
+        display:flex;flex-direction:column;align-items:center;gap:10px;
+        padding:28px 16px 22px; border:2px solid #e2d8c8; border-radius:16px;
+        background:white; cursor:pointer; transition:all .18s;
+        box-shadow:0 2px 12px rgba(0,0,0,.06);
+      "
+      onmouseover="this.style.borderColor='#166534';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(22,101,52,.2)'"
+      onmouseout="this.style.borderColor='#e2d8c8';this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,.06)'">
+        <span style="font-size:40px;">📖</span>
+        <span style="font-size:15px;font-weight:800;color:#1a1209;font-family:'Noto Serif KR',serif;">국 어</span>
+        <span style="font-size:11px;color:#64748b;font-weight:400;">교재별 단원 시험</span>
+        <span style="display:inline-block;background:#166534;color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:999px;">이용 가능</span>
+      </button>
+
+      <!-- 수학 -->
+      <button onclick="window.location.href='math_quiz.html'" style="
+        display:flex;flex-direction:column;align-items:center;gap:10px;
+        padding:28px 16px 22px; border:2px solid #e2d8c8; border-radius:16px;
+        background:white; cursor:pointer; transition:all .18s;
+        box-shadow:0 2px 12px rgba(0,0,0,.06);
+      "
+      onmouseover="this.style.borderColor='#dc2626';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(220,38,38,.2)'"
+      onmouseout="this.style.borderColor='#e2d8c8';this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,.06)'">
+        <span style="font-size:40px;">📐</span>
+        <span style="font-size:15px;font-weight:800;color:#1a1209;font-family:'Noto Serif KR',serif;">수 학</span>
+        <span style="font-size:11px;color:#64748b;font-weight:400;">교재별 단원 시험</span>
+        <span style="display:inline-block;background:#dc2626;color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:999px;">이용 가능</span>
+      </button>
+
+      <!-- 영어 -->
+      <button onclick="window.location.href='english_quiz.html'" style="
+        display:flex;flex-direction:column;align-items:center;gap:10px;
+        padding:28px 16px 22px; border:2px solid #e2d8c8; border-radius:16px;
+        background:white; cursor:pointer; transition:all .18s;
+        box-shadow:0 2px 12px rgba(0,0,0,.06);
+      "
+      onmouseover="this.style.borderColor='#1d4ed8';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(29,78,216,.2)'"
+      onmouseout="this.style.borderColor='#e2d8c8';this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,.06)'">
+        <span style="font-size:40px;">🔤</span>
+        <span style="font-size:15px;font-weight:800;color:#1a1209;font-family:'Noto Serif KR',serif;">영 어</span>
+        <span style="font-size:11px;color:#64748b;font-weight:400;">교재별 단원 시험</span>
+        <span style="display:inline-block;background:#1d4ed8;color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:999px;">이용 가능</span>
+      </button>
+
+      <!-- 사회 -->
+      <button onclick="window.location.href='social_quiz.html'" style="
+        display:flex;flex-direction:column;align-items:center;gap:10px;
+        padding:28px 16px 22px; border:2px solid #e2d8c8; border-radius:16px;
+        background:white; cursor:pointer; transition:all .18s;
+        box-shadow:0 2px 12px rgba(0,0,0,.06);
+      "
+      onmouseover="this.style.borderColor='#92400e';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(146,64,14,.2)'"
+      onmouseout="this.style.borderColor='#e2d8c8';this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,.06)'">
+        <span style="font-size:40px;">🌏</span>
+        <span style="font-size:15px;font-weight:800;color:#1a1209;font-family:'Noto Serif KR',serif;">사 회</span>
+        <span style="font-size:11px;color:#64748b;font-weight:400;">교재별 단원 시험</span>
+        <span style="display:inline-block;background:#92400e;color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:999px;">이용 가능</span>
+      </button>
+
+      <!-- 과학 -->
+      <button onclick="window.location.href='science_quiz.html'" style="
+        display:flex;flex-direction:column;align-items:center;gap:10px;
+        padding:28px 16px 22px; border:2px solid #e2d8c8; border-radius:16px;
+        background:white; cursor:pointer; transition:all .18s;
+        box-shadow:0 2px 12px rgba(0,0,0,.06);
+      "
+      onmouseover="this.style.borderColor='#0d6b5e';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(13,107,94,.2)'"
+      onmouseout="this.style.borderColor='#e2d8c8';this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,.06)'">
+        <span style="font-size:40px;">🔬</span>
+        <span style="font-size:15px;font-weight:800;color:#1a1209;font-family:'Noto Serif KR',serif;">과 학</span>
+        <span style="font-size:11px;color:#64748b;font-weight:400;">교재별 단원 시험</span>
+        <span style="display:inline-block;background:#0d6b5e;color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:999px;">이용 가능</span>
+      </button>
+
+    </div>
+    <p style="font-size:11px;color:#94a3b8;margin-top:8px;">* 모든 과목 이용 가능합니다 🎉</p>
+  </div>
+</section>
+
+
+<!-- ══════════════ HERO ══════════════ -->
+<section id="hero" style="display:none;">
+<div class="hero-inner">
+
+  <div style="margin-bottom:16px;">
+    <button onclick="goBackToSubjectFromHero()" style="background:rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.1);border-radius:8px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;color:#64748b;transition:all .15s;" onmouseover="this.style.background='rgba(0,0,0,.1)'" onmouseout="this.style.background='rgba(0,0,0,.06)'">← 과목 선택으로</button>
+  </div>
+
+  
+
+// ════════════════════════════════════════════════════════════
+//  과목 선택
+// ════════════════════════════════════════════════════════════
+function selectSubject(subject) {
+  if (subject === 'hanja') {
+    document.getElementById('subject-page').style.display = 'none';
+    document.getElementById('hero').style.display = 'flex';
+    window.scrollTo(0, 0);
+  }
+}
+
+</script>
+</body>
+</html>
