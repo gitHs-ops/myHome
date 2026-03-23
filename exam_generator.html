@@ -254,7 +254,7 @@ header::before{
 
 <header>
   <div class="hdr-inner">
-    <div class="hdr-label">AI-Powered · 교육부 2015·2022 개정 기준 Ver 1.6</div>
+    <div class="hdr-label">AI-Powered · 교육부 2015·2022 개정 기준</div>
     <h1 class="hdr-title">중학교 <span>전과목</span> 시험지 생성기</h1>
     <p class="hdr-sub">과목·학년·학기·단원을 선택하면 AI가 맞춤형 시험지를 즉시 생성합니다</p>
     <div class="hdr-stats">
@@ -327,8 +327,6 @@ header::before{
       <div class="cfg-item">
         <label>학기</label>
         <select id="sel-sem">
-          <option value="1" selected>1학기</option>
-          <option value="2">2학기</option>
           <option value="mid1">1학기 중간고사</option>
           <option value="final1">1학기 기말고사</option>
           <option value="mid2">2학기 중간고사</option>
@@ -642,14 +640,18 @@ function selectSubject(subj, el) {
 // ── 단원 업데이트 ──
 function updateUnits(){
   if (!currentSubj) return;
-  const g=document.getElementById('sel-grade').value;
-  const s=document.getElementById('sel-sem').value;
-  const p=document.getElementById('sel-pub').value;
+  const g = document.getElementById('sel-grade').value;
+  const semVal = document.getElementById('sel-sem').value;
+  const s = semVal.includes('2') ? '2' : '1';
+  const checkedPubs = [...document.querySelectorAll('input[name=pub]:checked')].map(e=>e.value);
+  const p = checkedPubs[0] || Object.keys(SUBJECTS[currentSubj].publishers)[0];
   const units = SUBJECTS[currentSubj].units?.[p]?.[g]?.[s] || ['전체'];
-  const sel = document.getElementById('sel-unit');
-  sel.innerHTML = units.map((u,i)=>`<option value="${i===0?'all':i}">${u}</option>`).join('');
-}
-['sel-grade','sel-sem'].forEach(id=>{
+  const unitDiv = document.getElementById('sel-unit');
+  unitDiv.innerHTML = units.map((u,i)=>
+    `<label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;padding:2px 0;">
+      <input type="checkbox" name="unit" value="${i===0?'all':i}" ${i===0?'checked':''} style="accent-color:#7c3aed;width:14px;height:14px;flex-shrink:0;"> ${u}
+    </label>`).join('');
+}['sel-grade','sel-sem'].forEach(id=>{
   document.getElementById(id).addEventListener('change',updateUnits);
 });
 document.getElementById('sel-pub').addEventListener('change',updateUnits);
