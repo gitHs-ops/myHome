@@ -623,9 +623,12 @@ function selectSubject(subj, el) {
   document.getElementById('cfg-icon').textContent = s.icon;
   document.getElementById('cfg-title').textContent = `${s.name} 시험지 설정`;
 
-  // 출판사 셀렉트
-  const pubSel = document.getElementById('sel-pub');
-  pubSel.innerHTML = Object.entries(s.publishers).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+  // 출판사 체크박스 (전체 제외, 복수 선택)
+  const pubDiv = document.getElementById('sel-pub');
+  pubDiv.innerHTML = Object.entries(s.publishers).map(([k,v])=>
+    `<label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;padding:3px 0;">
+      <input type="checkbox" name="pub" value="${k}" checked style="accent-color:#7c3aed;width:14px;height:14px;flex-shrink:0;"> ${v}
+    </label>`).join('');
 
   // 문제 유형 칩
   const chips = document.getElementById('qtype-chips');
@@ -647,9 +650,11 @@ function updateUnits(){
   const p = checkedPubs[0] || Object.keys(SUBJECTS[currentSubj].publishers)[0];
   const units = SUBJECTS[currentSubj].units?.[p]?.[g]?.[s] || ['전체'];
   const unitDiv = document.getElementById('sel-unit');
-  unitDiv.innerHTML = units.map((u,i)=>
-    `<label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;padding:2px 0;">
-      <input type="checkbox" name="unit" value="${i===0?'all':i}" ${i===0?'checked':''} style="accent-color:#7c3aed;width:14px;height:14px;flex-shrink:0;"> ${u}
+  // '전체' 항목(인덱스0) 제거하고 나머지만 표시
+  const filteredUnits = units.filter((u,i) => i !== 0);
+  unitDiv.innerHTML = filteredUnits.map((u,i)=>
+    `<label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;padding:3px 0;">
+      <input type="checkbox" name="unit" value="${i+1}" checked style="accent-color:#7c3aed;width:14px;height:14px;flex-shrink:0;"> ${u}
     </label>`).join('');
 }['sel-grade','sel-sem'].forEach(id=>{
   document.getElementById(id).addEventListener('change',updateUnits);
