@@ -407,162 +407,193 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--rice);color:var(--in
 // ════════════════════════════════════════════════════════════
 //  출판사 정의
 // ════════════════════════════════════════════════════════════
-const PUBLISHERS = [{"id": "mir", "name": "미래엔", "author": "최용준", "icon": "📘", "color": "#1d4ed8"}, {"id": "chun", "name": "천재교육", "author": "류희찬", "icon": "📗", "color": "#166534"}, {"id": "vis", "name": "비상교육", "author": "김원경", "icon": "📙", "color": "#92400e"}, {"id": "dong", "name": "동아출판", "author": "우정호", "icon": "📕", "color": "#881337"}, {"id": "sin", "name": "신사고", "author": "박교식", "icon": "📓", "color": "#4c1d95"}];
+const PUBLISHERS = [
+  {id:'mir', name:'미래엔',  author:'강순모', icon:'📘', color:'#1d4ed8'},
+  {id:'chun',name:'천재교육',author:'김화경', icon:'📗', color:'#166534'},
+  {id:'vis', name:'비상교육',author:'김원경', icon:'📙', color:'#92400e'},
+  {id:'dong',name:'동아출판',author:'이준열', icon:'📕', color:'#881337'},
+  {id:'sin', name:'신사고',  author:'박교식', icon:'📓', color:'#4c1d95'},
+];
 
 
-const CURRICULUM={mir:{1:{1:[
-  {id:'mt-1-1-1',name:'소인수분해',topic:'소수·합성수·소인수분해·최대공약수·최소공배수',exam:'mid'},
-  {id:'mt-1-1-2',name:'정수와 유리수',topic:'정수·유리수 개념과 사칙연산',exam:'mid'},
-  {id:'mt-1-1-3',name:'문자와 식',topic:'문자 사용·일차식 계산',exam:'mid'},
-  {id:'mt-1-1-4',name:'일차방정식',topic:'방정식·해·일차방정식 풀이',exam:'final'},
-  {id:'mt-1-1-5',name:'좌표와 그래프',topic:'좌표 평면·정비례·반비례',exam:'final'},
-],2:[
-  {id:'mt-1-2-1',name:'기본 도형',topic:'점·선·면·각·수직·평행',exam:'mid'},
-  {id:'mt-1-2-2',name:'작도와 합동',topic:'삼각형 작도·합동 조건',exam:'mid'},
-  {id:'mt-1-2-3',name:'다각형',topic:'다각형 내각·외각의 합',exam:'final'},
-  {id:'mt-1-2-4',name:'원과 부채꼴',topic:'원·호·현·부채꼴 넓이',exam:'final'},
-  {id:'mt-1-2-5',name:'통계',topic:'줄기잎 그림·도수분포표·히스토그램',exam:'final'},
-]},2:{1:[
-  {id:'mt-2-1-1',name:'유리수와 순환소수',topic:'유한소수·순환소수 변환',exam:'mid'},
-  {id:'mt-2-1-2',name:'식의 계산',topic:'단항식·다항식 덧셈·뺄셈·곱셈',exam:'mid'},
-  {id:'mt-2-1-3',name:'연립방정식',topic:'연립일차방정식 풀이',exam:'final'},
-  {id:'mt-2-1-4',name:'일차함수',topic:'일차함수 그래프·기울기·절편',exam:'final'},
-],2:[
-  {id:'mt-2-2-1',name:'삼각형의 성질',topic:'이등변삼각형·직각삼각형 합동',exam:'mid'},
-  {id:'mt-2-2-2',name:'사각형의 성질',topic:'평행사변형·마름모·직사각형',exam:'mid'},
-  {id:'mt-2-2-3',name:'도형의 닮음',topic:'닮음·닮음비·축도',exam:'final'},
-  {id:'mt-2-2-4',name:'확률',topic:'경우의 수·확률 계산',exam:'final'},
-]},3:{1:[
-  {id:'mt-3-1-1',name:'실수와 그 계산',topic:'제곱근·실수 개념과 연산',exam:'mid'},
-  {id:'mt-3-1-2',name:'인수분해',topic:'인수분해 공식·응용',exam:'mid'},
-  {id:'mt-3-1-3',name:'이차방정식',topic:'이차방정식 풀이법',exam:'final'},
-  {id:'mt-3-1-4',name:'이차함수',topic:'이차함수 그래프·최대최소',exam:'final'},
-],2:[
-  {id:'mt-3-2-1',name:'삼각비',topic:'사인·코사인·탄젠트',exam:'mid'},
-  {id:'mt-3-2-2',name:'원의 성질',topic:'원의 현·접선·내접각',exam:'mid'},
-  {id:'mt-3-2-3',name:'통계 심화',topic:'대푯값·산포도·표준편차',exam:'final'},
-  {id:'mt-3-2-4',name:'피타고라스 정리',topic:'피타고라스 정리 응용',exam:'final'},
-]},chun:{1:{1:[
-  {id:'mtc-1-1-1',name:'소인수분해',topic:'소인수분해·약수',exam:'mid'},
-  {id:'mtc-1-1-2',name:'정수와 유리수',topic:'정수·유리수 연산',exam:'mid'},
-  {id:'mtc-1-1-3',name:'일차방정식',topic:'일차방정식',exam:'final'},
-  {id:'mtc-1-1-4',name:'정비례와 반비례',topic:'정비례·반비례',exam:'final'},
-],2:[
-  {id:'mtc-1-2-1',name:'기본 도형',topic:'도형 기초',exam:'mid'},
-  {id:'mtc-1-2-2',name:'평면도형',topic:'다각형·원',exam:'mid'},
-  {id:'mtc-1-2-3',name:'입체도형',topic:'다면체·회전체',exam:'final'},
-  {id:'mtc-1-2-4',name:'통계',topic:'자료 정리',exam:'final'},
-]},2:{1:[
-  {id:'mtc-2-1-1',name:'유리수와 소수',topic:'유한·순환소수',exam:'mid'},
-  {id:'mtc-2-1-2',name:'식의 계산',topic:'다항식 계산',exam:'mid'},
-  {id:'mtc-2-1-3',name:'연립방정식',topic:'연립방정식',exam:'final'},
-  {id:'mtc-2-1-4',name:'일차함수',topic:'일차함수',exam:'final'},
-],2:[
-  {id:'mtc-2-2-1',name:'삼각형',topic:'삼각형 성질',exam:'mid'},
-  {id:'mtc-2-2-2',name:'사각형',topic:'사각형 성질',exam:'mid'},
-  {id:'mtc-2-2-3',name:'도형의 닮음',topic:'닮음',exam:'final'},
-  {id:'mtc-2-2-4',name:'확률',topic:'확률',exam:'final'},
-]},3:{1:[
-  {id:'mtc-3-1-1',name:'제곱근',topic:'제곱근·실수',exam:'mid'},
-  {id:'mtc-3-1-2',name:'다항식',topic:'인수분해',exam:'mid'},
-  {id:'mtc-3-1-3',name:'이차방정식',topic:'이차방정식',exam:'final'},
-  {id:'mtc-3-1-4',name:'이차함수',topic:'이차함수',exam:'final'},
-],2:[
-  {id:'mtc-3-2-1',name:'삼각비',topic:'삼각비',exam:'mid'},
-  {id:'mtc-3-2-2',name:'원',topic:'원의 성질',exam:'mid'},
-  {id:'mtc-3-2-3',name:'통계',topic:'통계 심화',exam:'final'},
-  {id:'mtc-3-2-4',name:'피타고라스',topic:'피타고라스',exam:'final'},
-]}},vis:{1:{1:[
-  {id:'mtv-1-1-1',name:'소인수분해',topic:'소인수분해',exam:'mid'},
-  {id:'mtv-1-1-2',name:'정수·유리수',topic:'정수·유리수',exam:'mid'},
-  {id:'mtv-1-1-3',name:'문자와 식',topic:'문자·일차식',exam:'final'},
-  {id:'mtv-1-1-4',name:'방정식',topic:'일차방정식',exam:'final'},
-],2:[
-  {id:'mtv-1-2-1',name:'좌표와 그래프',topic:'좌표·함수',exam:'mid'},
-  {id:'mtv-1-2-2',name:'기본 도형',topic:'도형 기초',exam:'mid'},
-  {id:'mtv-1-2-3',name:'평면도형',topic:'다각형·원',exam:'final'},
-  {id:'mtv-1-2-4',name:'통계',topic:'자료 분석',exam:'final'},
-]},2:{1:[
-  {id:'mtv-2-1-1',name:'수와 식',topic:'유리수·식 계산',exam:'mid'},
-  {id:'mtv-2-1-2',name:'방정식',topic:'연립방정식',exam:'mid'},
-  {id:'mtv-2-1-3',name:'함수',topic:'일차함수',exam:'final'},
-  {id:'mtv-2-1-4',name:'통계',topic:'자료 분석',exam:'final'},
-],2:[
-  {id:'mtv-2-2-1',name:'삼각형',topic:'삼각형 성질',exam:'mid'},
-  {id:'mtv-2-2-2',name:'사각형',topic:'사각형 성질',exam:'mid'},
-  {id:'mtv-2-2-3',name:'닮음',topic:'도형의 닮음',exam:'final'},
-  {id:'mtv-2-2-4',name:'확률',topic:'경우의 수·확률',exam:'final'},
-]},3:{1:[
-  {id:'mtv-3-1-1',name:'실수',topic:'제곱근·실수',exam:'mid'},
-  {id:'mtv-3-1-2',name:'인수분해',topic:'인수분해',exam:'mid'},
-  {id:'mtv-3-1-3',name:'이차방정식',topic:'이차방정식',exam:'final'},
-  {id:'mtv-3-1-4',name:'이차함수',topic:'이차함수',exam:'final'},
-],2:[
-  {id:'mtv-3-2-1',name:'삼각비',topic:'삼각비',exam:'mid'},
-  {id:'mtv-3-2-2',name:'원',topic:'원의 성질',exam:'mid'},
-  {id:'mtv-3-2-3',name:'통계',topic:'통계',exam:'final'},
-  {id:'mtv-3-2-4',name:'피타고라스',topic:'피타고라스 정리',exam:'final'},
-]}},dong:{1:{1:[
-  {id:'mtd-1-1-1',name:'소인수분해',topic:'소인수분해',exam:'mid'},
-  {id:'mtd-1-1-2',name:'정수·유리수',topic:'정수·유리수',exam:'mid'},
-  {id:'mtd-1-1-3',name:'방정식',topic:'일차방정식',exam:'final'},
-  {id:'mtd-1-1-4',name:'그래프',topic:'좌표·그래프',exam:'final'},
-],2:[
-  {id:'mtd-1-2-1',name:'도형 기초',topic:'기본 도형',exam:'mid'},
-  {id:'mtd-1-2-2',name:'다각형',topic:'다각형·원',exam:'mid'},
-  {id:'mtd-1-2-3',name:'입체도형',topic:'입체도형',exam:'final'},
-  {id:'mtd-1-2-4',name:'통계',topic:'통계',exam:'final'},
-]},2:{1:[
-  {id:'mtd-2-1-1',name:'유리수·소수',topic:'유리수',exam:'mid'},
-  {id:'mtd-2-1-2',name:'식 계산',topic:'다항식',exam:'mid'},
-  {id:'mtd-2-1-3',name:'연립방정식',topic:'연립방정식',exam:'final'},
-  {id:'mtd-2-1-4',name:'일차함수',topic:'일차함수',exam:'final'},
-],2:[
-  {id:'mtd-2-2-1',name:'삼각형',topic:'삼각형',exam:'mid'},
-  {id:'mtd-2-2-2',name:'사각형',topic:'사각형',exam:'mid'},
-  {id:'mtd-2-2-3',name:'닮음',topic:'닮음',exam:'final'},
-  {id:'mtd-2-2-4',name:'확률',topic:'확률',exam:'final'},
-]},3:{1:[
-  {id:'mtd-3-1-1',name:'제곱근',topic:'실수',exam:'mid'},
-  {id:'mtd-3-1-2',name:'다항식',topic:'인수분해',exam:'mid'},
-  {id:'mtd-3-1-3',name:'이차방정식',topic:'이차방정식',exam:'final'},
-  {id:'mtd-3-1-4',name:'이차함수',topic:'이차함수',exam:'final'},
-],2:[
-  {id:'mtd-3-2-1',name:'삼각비',topic:'삼각비',exam:'mid'},
-  {id:'mtd-3-2-2',name:'원',topic:'원',exam:'mid'},
-  {id:'mtd-3-2-3',name:'통계',topic:'통계',exam:'final'},
-  {id:'mtd-3-2-4',name:'피타고라스',topic:'피타고라스',exam:'final'},
-]}},sin:{1:{1:[
-  {id:'mts-1-1-1',name:'소인수분해',topic:'소인수분해',exam:'mid'},
-  {id:'mts-1-1-2',name:'정수·유리수',topic:'정수·유리수',exam:'mid'},
-  {id:'mts-1-1-3',name:'문자와 식',topic:'문자·식',exam:'final'},
-  {id:'mts-1-1-4',name:'일차방정식',topic:'방정식',exam:'final'},
-],2:[
-  {id:'mts-1-2-1',name:'좌표·함수',topic:'좌표·그래프',exam:'mid'},
-  {id:'mts-1-2-2',name:'도형 기초',topic:'기본 도형',exam:'mid'},
-  {id:'mts-1-2-3',name:'평면·입체',topic:'도형 심화',exam:'final'},
-  {id:'mts-1-2-4',name:'통계',topic:'통계',exam:'final'},
-]},2:{1:[
-  {id:'mts-2-1-1',name:'수와 식',topic:'유리수·식',exam:'mid'},
-  {id:'mts-2-1-2',name:'연립방정식',topic:'연립방정식',exam:'mid'},
-  {id:'mts-2-1-3',name:'일차함수',topic:'일차함수',exam:'final'},
-  {id:'mts-2-1-4',name:'통계',topic:'통계',exam:'final'},
-],2:[
-  {id:'mts-2-2-1',name:'삼각형',topic:'삼각형',exam:'mid'},
-  {id:'mts-2-2-2',name:'사각형',topic:'사각형',exam:'mid'},
-  {id:'mts-2-2-3',name:'닮음',topic:'닮음',exam:'final'},
-  {id:'mts-2-2-4',name:'확률',topic:'확률',exam:'final'},
-]},3:{1:[
-  {id:'mts-3-1-1',name:'실수',topic:'제곱근',exam:'mid'},
-  {id:'mts-3-1-2',name:'인수분해',topic:'인수분해',exam:'mid'},
-  {id:'mts-3-1-3',name:'이차방정식',topic:'이차방정식',exam:'final'},
-  {id:'mts-3-1-4',name:'이차함수',topic:'이차함수',exam:'final'},
-],2:[
-  {id:'mts-3-2-1',name:'삼각비',topic:'삼각비',exam:'mid'},
-  {id:'mts-3-2-2',name:'원',topic:'원의 성질',exam:'mid'},
-  {id:'mts-3-2-3',name:'통계',topic:'통계',exam:'final'},
-  {id:'mts-3-2-4',name:'피타고라스',topic:'피타고라스',exam:'final'},
-]}}
+const CURRICULUM = {
+  mir:{
+    1:{1:[
+      {id:'mir-1-1-1',name:'Ⅰ. 소인수분해',         topic:'소수·합성수·소인수분해·최대공약수·최소공배수', exam:'mid'},
+      {id:'mir-1-1-2',name:'Ⅱ. 정수와 유리수',       topic:'양수·음수·정수·유리수·사칙연산',              exam:'mid'},
+      {id:'mir-1-1-3',name:'Ⅲ. 문자와 식',           topic:'문자 사용·일차식의 계산·일차방정식',          exam:'mid'},
+      {id:'mir-1-1-4',name:'Ⅳ. 좌표평면과 그래프',   topic:'좌표평면·정비례·반비례·그래프',               exam:'final'},
+    ],2:[
+      {id:'mir-1-2-1',name:'Ⅴ. 기본 도형',           topic:'점·선·면·각·수직·평행·위치관계',             exam:'mid'},
+      {id:'mir-1-2-2',name:'Ⅵ. 평면도형의 성질',     topic:'다각형 내각·외각·원과 부채꼴',               exam:'mid'},
+      {id:'mir-1-2-3',name:'Ⅶ. 입체도형의 성질',     topic:'다면체·회전체·겉넓이·부피',                  exam:'final'},
+      {id:'mir-1-2-4',name:'Ⅷ. 자료의 정리와 해석', topic:'줄기잎그림·도수분포표·히스토그램·대푯값',     exam:'final'},
+    ]},
+    2:{1:[
+      {id:'mir-2-1-1',name:'Ⅰ. 수와 식',             topic:'유리수와 순환소수·지수법칙·다항식 계산',       exam:'mid'},
+      {id:'mir-2-1-2',name:'Ⅱ. 일차부등식',          topic:'부등식의 성질·일차부등식 풀이·활용',           exam:'mid'},
+      {id:'mir-2-1-3',name:'Ⅲ. 연립일차방정식',      topic:'연립방정식 풀이·가감법·대입법·활용',           exam:'final'},
+      {id:'mir-2-1-4',name:'Ⅳ. 일차함수와 그래프',   topic:'일차함수·기울기·절편·일차방정식과 관계',       exam:'final'},
+    ],2:[
+      {id:'mir-2-2-1',name:'Ⅴ. 도형의 성질',         topic:'이등변삼각형·직각삼각형·평행사변형',           exam:'mid'},
+      {id:'mir-2-2-2',name:'Ⅵ. 도형의 닮음',         topic:'닮음의 뜻·닮음비·삼각형 닮음 조건',           exam:'mid'},
+      {id:'mir-2-2-3',name:'Ⅶ. 피타고라스 정리',     topic:'피타고라스 정리·활용·삼각형과 사각형',         exam:'final'},
+      {id:'mir-2-2-4',name:'Ⅷ. 확률',                topic:'경우의 수·확률의 뜻과 계산·확률의 성질',       exam:'final'},
+    ]},
+    3:{1:[
+      {id:'mir-3-1-1',name:'Ⅰ. 제곱근과 실수',       topic:'제곱근의 뜻·성질·실수·근호 계산',             exam:'mid'},
+      {id:'mir-3-1-2',name:'Ⅱ. 다항식의 인수분해',   topic:'인수분해 공식·공통인수·응용',                  exam:'mid'},
+      {id:'mir-3-1-3',name:'Ⅲ. 이차방정식',          topic:'이차방정식 풀이·근의 공식·활용',               exam:'final'},
+      {id:'mir-3-1-4',name:'Ⅳ. 이차함수',            topic:'이차함수 그래프·꼭짓점·최대최소',              exam:'final'},
+    ],2:[
+      {id:'mir-3-2-1',name:'Ⅴ. 삼각비',              topic:'사인·코사인·탄젠트·삼각비의 활용',             exam:'mid'},
+      {id:'mir-3-2-2',name:'Ⅵ. 원의 성질',           topic:'현의 성질·접선·원주각·원에 내접하는 사각형',   exam:'mid'},
+      {id:'mir-3-2-3',name:'Ⅶ. 통계',                topic:'대푯값·산포도·분산·표준편차·산점도',           exam:'final'},
+    ]},
+  },
+  chun:{
+    1:{1:[
+      {id:'chun-1-1-1',name:'1. 소인수분해',           topic:'소수·합성수·소인수분해·최대공약수·최소공배수', exam:'mid'},
+      {id:'chun-1-1-2',name:'2. 정수와 유리수',         topic:'정수·유리수·수직선·사칙연산',                 exam:'mid'},
+      {id:'chun-1-1-3',name:'3. 문자와 식',             topic:'문자 사용·일차식·방정식',                     exam:'mid'},
+      {id:'chun-1-1-4',name:'4. 그래프와 비례',         topic:'좌표·정비례·반비례',                          exam:'final'},
+    ],2:[
+      {id:'chun-1-2-1',name:'5. 기본 도형',             topic:'점·선·면·위치관계',                           exam:'mid'},
+      {id:'chun-1-2-2',name:'6. 작도와 합동',           topic:'삼각형 작도·합동 조건',                       exam:'mid'},
+      {id:'chun-1-2-3',name:'7. 평면도형',              topic:'다각형·원·부채꼴',                            exam:'final'},
+      {id:'chun-1-2-4',name:'8. 통계',                  topic:'도수분포·히스토그램·상대도수',                 exam:'final'},
+    ]},
+    2:{1:[
+      {id:'chun-2-1-1',name:'1. 유리수와 식',           topic:'순환소수·지수·다항식',                         exam:'mid'},
+      {id:'chun-2-1-2',name:'2. 일차부등식',            topic:'부등식·일차부등식',                            exam:'mid'},
+      {id:'chun-2-1-3',name:'3. 연립방정식',            topic:'연립일차방정식',                               exam:'final'},
+      {id:'chun-2-1-4',name:'4. 일차함수',              topic:'일차함수·그래프',                              exam:'final'},
+    ],2:[
+      {id:'chun-2-2-1',name:'5. 삼각형과 사각형',       topic:'이등변삼각형·평행사변형',                      exam:'mid'},
+      {id:'chun-2-2-2',name:'6. 도형의 닮음',           topic:'닮음비·삼각형 닮음',                           exam:'mid'},
+      {id:'chun-2-2-3',name:'7. 피타고라스 정리',       topic:'피타고라스 정리·활용',                         exam:'final'},
+      {id:'chun-2-2-4',name:'8. 확률',                  topic:'경우의 수·확률',                               exam:'final'},
+    ]},
+    3:{1:[
+      {id:'chun-3-1-1',name:'1. 제곱근과 실수',         topic:'제곱근·실수',                                  exam:'mid'},
+      {id:'chun-3-1-2',name:'2. 인수분해',              topic:'인수분해 공식',                                exam:'mid'},
+      {id:'chun-3-1-3',name:'3. 이차방정식',            topic:'이차방정식 풀이',                              exam:'final'},
+      {id:'chun-3-1-4',name:'4. 이차함수',              topic:'이차함수 그래프',                              exam:'final'},
+    ],2:[
+      {id:'chun-3-2-1',name:'5. 삼각비',                topic:'삼각비',                                       exam:'mid'},
+      {id:'chun-3-2-2',name:'6. 원의 성질',             topic:'원·현·접선·원주각',                           exam:'mid'},
+      {id:'chun-3-2-3',name:'7. 통계',                  topic:'대푯값·산포도·표준편차',                       exam:'final'},
+    ]},
+  },
+  vis:{
+    1:{1:[
+      {id:'vis-1-1-1',name:'Ⅰ. 소인수분해',            topic:'소인수분해·최대공약수·최소공배수',             exam:'mid'},
+      {id:'vis-1-1-2',name:'Ⅱ. 정수와 유리수',         topic:'정수·유리수·사칙연산',                         exam:'mid'},
+      {id:'vis-1-1-3',name:'Ⅲ. 일차방정식',            topic:'문자와 식·일차방정식',                         exam:'mid'},
+      {id:'vis-1-1-4',name:'Ⅳ. 함수와 그래프',         topic:'좌표·정비례·반비례',                           exam:'final'},
+    ],2:[
+      {id:'vis-1-2-1',name:'Ⅴ. 기본 도형',             topic:'점·선·면·각',                                  exam:'mid'},
+      {id:'vis-1-2-2',name:'Ⅵ. 평면도형',              topic:'다각형·원·부채꼴',                             exam:'mid'},
+      {id:'vis-1-2-3',name:'Ⅶ. 입체도형',              topic:'다면체·회전체',                                exam:'final'},
+      {id:'vis-1-2-4',name:'Ⅷ. 통계',                  topic:'자료정리·도수분포',                            exam:'final'},
+    ]},
+    2:{1:[
+      {id:'vis-2-1-1',name:'Ⅰ. 수와 식의 계산',        topic:'순환소수·다항식',                              exam:'mid'},
+      {id:'vis-2-1-2',name:'Ⅱ. 부등식',                topic:'일차부등식',                                   exam:'mid'},
+      {id:'vis-2-1-3',name:'Ⅲ. 연립방정식',            topic:'연립일차방정식',                               exam:'final'},
+      {id:'vis-2-1-4',name:'Ⅳ. 일차함수',              topic:'일차함수',                                     exam:'final'},
+    ],2:[
+      {id:'vis-2-2-1',name:'Ⅴ. 도형의 성질',           topic:'삼각형·사각형',                                exam:'mid'},
+      {id:'vis-2-2-2',name:'Ⅵ. 도형의 닮음',           topic:'닮음',                                         exam:'mid'},
+      {id:'vis-2-2-3',name:'Ⅶ. 피타고라스 정리',       topic:'피타고라스 정리',                              exam:'final'},
+      {id:'vis-2-2-4',name:'Ⅷ. 확률',                  topic:'경우의 수·확률',                               exam:'final'},
+    ]},
+    3:{1:[
+      {id:'vis-3-1-1',name:'Ⅰ. 실수와 그 계산',        topic:'제곱근·실수',                                  exam:'mid'},
+      {id:'vis-3-1-2',name:'Ⅱ. 다항식의 인수분해',     topic:'인수분해',                                     exam:'mid'},
+      {id:'vis-3-1-3',name:'Ⅲ. 이차방정식',            topic:'이차방정식',                                   exam:'final'},
+      {id:'vis-3-1-4',name:'Ⅳ. 이차함수',              topic:'이차함수',                                     exam:'final'},
+    ],2:[
+      {id:'vis-3-2-1',name:'Ⅴ. 삼각비',                topic:'삼각비',                                       exam:'mid'},
+      {id:'vis-3-2-2',name:'Ⅵ. 원의 성질',             topic:'원의 성질',                                    exam:'mid'},
+      {id:'vis-3-2-3',name:'Ⅶ. 통계',                  topic:'통계',                                         exam:'final'},
+    ]},
+  },
+  dong:{
+    1:{1:[
+      {id:'dong-1-1-1',name:'1. 소인수분해',            topic:'소인수분해·최대공약수·최소공배수',             exam:'mid'},
+      {id:'dong-1-1-2',name:'2. 정수와 유리수',         topic:'정수·유리수 개념과 연산',                      exam:'mid'},
+      {id:'dong-1-1-3',name:'3. 문자와 식',             topic:'문자 사용·일차식',                             exam:'mid'},
+      {id:'dong-1-1-4',name:'4. 일차방정식',            topic:'방정식·일차방정식 풀이',                       exam:'final'},
+      {id:'dong-1-1-5',name:'5. 그래프와 비례관계',     topic:'좌표·정비례·반비례',                           exam:'final'},
+    ],2:[
+      {id:'dong-1-2-1',name:'6. 기본 도형',             topic:'점·선·면·위치관계',                            exam:'mid'},
+      {id:'dong-1-2-2',name:'7. 작도와 합동',           topic:'작도·삼각형 합동',                             exam:'mid'},
+      {id:'dong-1-2-3',name:'8. 평면도형',              topic:'다각형·원',                                    exam:'final'},
+      {id:'dong-1-2-4',name:'9. 입체도형',              topic:'다면체·회전체',                                exam:'final'},
+      {id:'dong-1-2-5',name:'10. 통계',                 topic:'자료정리·대푯값',                              exam:'final'},
+    ]},
+    2:{1:[
+      {id:'dong-2-1-1',name:'1. 유리수와 순환소수',     topic:'유한소수·순환소수',                            exam:'mid'},
+      {id:'dong-2-1-2',name:'2. 식의 계산',             topic:'단항식·다항식 계산',                           exam:'mid'},
+      {id:'dong-2-1-3',name:'3. 일차부등식',            topic:'일차부등식',                                   exam:'mid'},
+      {id:'dong-2-1-4',name:'4. 연립방정식',            topic:'연립방정식',                                   exam:'final'},
+      {id:'dong-2-1-5',name:'5. 일차함수',              topic:'일차함수·그래프',                              exam:'final'},
+    ],2:[
+      {id:'dong-2-2-1',name:'6. 삼각형의 성질',         topic:'이등변삼각형·직각삼각형',                      exam:'mid'},
+      {id:'dong-2-2-2',name:'7. 사각형의 성질',         topic:'평행사변형·여러 사각형',                       exam:'mid'},
+      {id:'dong-2-2-3',name:'8. 도형의 닮음',           topic:'닮음비·삼각형 닮음',                           exam:'final'},
+      {id:'dong-2-2-4',name:'9. 피타고라스 정리',       topic:'피타고라스 정리',                              exam:'final'},
+      {id:'dong-2-2-5',name:'10. 확률',                 topic:'경우의 수·확률',                               exam:'final'},
+    ]},
+    3:{1:[
+      {id:'dong-3-1-1',name:'1. 제곱근과 실수',         topic:'제곱근·실수',                                  exam:'mid'},
+      {id:'dong-3-1-2',name:'2. 식의 계산',             topic:'근호가 있는 식의 계산',                        exam:'mid'},
+      {id:'dong-3-1-3',name:'3. 인수분해',              topic:'인수분해 공식',                                exam:'final'},
+      {id:'dong-3-1-4',name:'4. 이차방정식',            topic:'이차방정식',                                   exam:'final'},
+      {id:'dong-3-1-5',name:'5. 이차함수',              topic:'이차함수',                                     exam:'final'},
+    ],2:[
+      {id:'dong-3-2-1',name:'6. 삼각비',                topic:'삼각비',                                       exam:'mid'},
+      {id:'dong-3-2-2',name:'7. 원의 성질',             topic:'원의 성질',                                    exam:'mid'},
+      {id:'dong-3-2-3',name:'8. 통계',                  topic:'대푯값·산포도',                                exam:'final'},
+    ]},
+  },
+  sin:{
+    1:{1:[
+      {id:'sin-1-1-1',name:'Ⅰ. 소인수분해',            topic:'소인수분해·최대공약수·최소공배수',             exam:'mid'},
+      {id:'sin-1-1-2',name:'Ⅱ. 정수와 유리수',         topic:'정수·유리수',                                  exam:'mid'},
+      {id:'sin-1-1-3',name:'Ⅲ. 문자와 식',             topic:'문자·일차식·방정식',                           exam:'mid'},
+      {id:'sin-1-1-4',name:'Ⅳ. 좌표와 그래프',         topic:'좌표·비례',                                    exam:'final'},
+    ],2:[
+      {id:'sin-1-2-1',name:'Ⅴ. 기본 도형',             topic:'점·선·면',                                     exam:'mid'},
+      {id:'sin-1-2-2',name:'Ⅵ. 평면도형',              topic:'다각형·원·부채꼴',                             exam:'mid'},
+      {id:'sin-1-2-3',name:'Ⅶ. 입체도형',              topic:'다면체·회전체',                                exam:'final'},
+      {id:'sin-1-2-4',name:'Ⅷ. 통계',                  topic:'자료 정리·해석',                               exam:'final'},
+    ]},
+    2:{1:[
+      {id:'sin-2-1-1',name:'Ⅰ. 유리수와 식',           topic:'순환소수·다항식',                              exam:'mid'},
+      {id:'sin-2-1-2',name:'Ⅱ. 일차부등식',            topic:'부등식',                                       exam:'mid'},
+      {id:'sin-2-1-3',name:'Ⅲ. 연립방정식',            topic:'연립방정식',                                   exam:'final'},
+      {id:'sin-2-1-4',name:'Ⅳ. 일차함수',              topic:'일차함수',                                     exam:'final'},
+    ],2:[
+      {id:'sin-2-2-1',name:'Ⅴ. 도형의 성질',           topic:'삼각형·사각형',                                exam:'mid'},
+      {id:'sin-2-2-2',name:'Ⅵ. 도형의 닮음',           topic:'닮음',                                         exam:'mid'},
+      {id:'sin-2-2-3',name:'Ⅶ. 피타고라스 정리',       topic:'피타고라스',                                   exam:'final'},
+      {id:'sin-2-2-4',name:'Ⅷ. 확률',                  topic:'확률',                                         exam:'final'},
+    ]},
+    3:{1:[
+      {id:'sin-3-1-1',name:'Ⅰ. 실수와 그 연산',        topic:'제곱근·실수',                                  exam:'mid'},
+      {id:'sin-3-1-2',name:'Ⅱ. 인수분해',              topic:'인수분해',                                     exam:'mid'},
+      {id:'sin-3-1-3',name:'Ⅲ. 이차방정식',            topic:'이차방정식',                                   exam:'final'},
+      {id:'sin-3-1-4',name:'Ⅳ. 이차함수',              topic:'이차함수',                                     exam:'final'},
+    ],2:[
+      {id:'sin-3-2-1',name:'Ⅴ. 삼각비',                topic:'삼각비',                                       exam:'mid'},
+      {id:'sin-3-2-2',name:'Ⅵ. 원의 성질',             topic:'원의 성질',                                    exam:'mid'},
+      {id:'sin-3-2-3',name:'Ⅶ. 통계',                  topic:'통계',                                         exam:'final'},
+    ]},
+  },
+};
+
 
 
 const SHARED={
@@ -604,12 +635,37 @@ const SHARED={
 };
 function getPoolForUnit(uid){
   const pools=[];
-  if(uid.includes('소인수')||uid.includes('정수')||uid.includes('유리수')||uid.includes('제곱근')||uid.includes('실수')){pools.push(...(SHARED['수와 연산']||[]));}
-  if(uid.includes('문자')||uid.includes('식')||uid.includes('인수분해')){pools.push(...(SHARED['문자와 식']||[]));}
-  if(uid.includes('방정식')||uid.includes('연립')||uid.includes('부등식')){pools.push(...(SHARED['방정식·부등식']||[]));}
-  if(uid.includes('함수')||uid.includes('좌표')||uid.includes('그래프')){pools.push(...(SHARED['함수']||[]));}
-  if(uid.includes('도형')||uid.includes('삼각형')||uid.includes('사각형')||uid.includes('닮음')||uid.includes('원')||uid.includes('피타고라스')||uid.includes('삼각비')){pools.push(...(SHARED['기하']||[]));}
-  if(uid.includes('통계')||uid.includes('확률')){pools.push(...(SHARED['통계·확률']||[]));}
+  const name = uid.toLowerCase();
+  // 수와 연산
+  if(name.includes('소인수')||name.includes('정수')||name.includes('유리수')||name.includes('제곱근')||name.includes('실수')||name.includes('순환소수')||
+     uid.includes('-1-1-1')||uid.includes('-1-1-2')||uid.includes('-3-1-1')){
+    pools.push(...(SHARED['수와 연산']||[]));
+  }
+  // 문자와 식 / 인수분해
+  if(name.includes('문자')||name.includes('인수분해')||name.includes('다항식')||
+     uid.includes('-1-1-3')||uid.includes('-3-1-2')){
+    pools.push(...(SHARED['문자와 식']||[]));
+  }
+  // 방정식·부등식
+  if(name.includes('방정식')||name.includes('연립')||name.includes('부등식')||
+     uid.includes('-1-1-4')||uid.includes('-2-1-2')||uid.includes('-2-1-3')||uid.includes('-3-1-3')){
+    pools.push(...(SHARED['방정식·부등식']||[]));
+  }
+  // 함수
+  if(name.includes('함수')||name.includes('그래프')||name.includes('비례')||name.includes('좌표')||
+     uid.includes('-1-1-4')||uid.includes('-1-1-5')||uid.includes('-2-1-4')||uid.includes('-2-1-5')||uid.includes('-3-1-4')){
+    pools.push(...(SHARED['함수']||[]));
+  }
+  // 기하
+  if(name.includes('도형')||name.includes('삼각형')||name.includes('사각형')||name.includes('닮음')||
+     name.includes('원')||name.includes('피타고라스')||name.includes('삼각비')||name.includes('작도')||
+     name.includes('합동')||name.includes('평면도형')||name.includes('입체도형')){
+    pools.push(...(SHARED['기하']||[]));
+  }
+  // 통계·확률
+  if(name.includes('통계')||name.includes('확률')||name.includes('경우의 수')){
+    pools.push(...(SHARED['통계·확률']||[]));
+  }
   if(pools.length<8){Object.values(SHARED).forEach(p=>pools.push(...p));}
   const seen=new Set();return pools.filter(q=>{if(seen.has(q.q))return false;seen.add(q.q);return true;});
 }
@@ -617,7 +673,7 @@ function getPoolForUnit(uid){
 // ════════════════════════════════════════════════════════════
 //  상태
 // ════════════════════════════════════════════════════════════
-let state = {pub:'mirae', grade:1, sem:1, units:new Set(), examType:'all', count:20};
+let state = {pub:'mir', grade:1, sem:1, units:new Set(), examType:'all', count:20};
 let curQs=[], userAns={}, submitted=false, timerSec=0, timerInterval;
 const NUMS=['①','②','③','④'];
 const CHIP_COLOR = {"\uc218\uc640 \uc5f0\uc0b0": "#dc2626", "\ubb38\uc790\uc640 \uc2dd": "#1d4ed8", "\ud568\uc218": "#166534", "\uae30\ud558": "#92400e", "\ud1b5\uacc4\u00b7\ud655\ub960": "#6d28d9", "\ubc29\uc815\uc2dd\u00b7\ubd80\ub4f1\uc2dd": "#0d6b5e"};

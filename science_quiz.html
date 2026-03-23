@@ -407,161 +407,188 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--rice);color:var(--in
 // ════════════════════════════════════════════════════════════
 //  출판사 정의
 // ════════════════════════════════════════════════════════════
-const PUBLISHERS = [{"id": "mir", "name": "미래엔", "author": "곽영직", "icon": "📘", "color": "#1d4ed8"}, {"id": "chun", "name": "천재교육", "author": "신영준", "icon": "📗", "color": "#166534"}, {"id": "vis", "name": "비상교육", "author": "심규철", "icon": "📙", "color": "#92400e"}, {"id": "dong", "name": "동아출판", "author": "이상인", "icon": "📕", "color": "#881337"}, {"id": "sin", "name": "신사고", "author": "강남화", "icon": "📓", "color": "#4c1d95"}];
+const PUBLISHERS = [
+  {id:'mir', name:'미래엔',  author:'김태일', icon:'📘', color:'#1d4ed8'},
+  {id:'chun',name:'천재교육',author:'정대홍', icon:'📗', color:'#166534'},
+  {id:'vis', name:'비상교육',author:'심규철', icon:'📙', color:'#92400e'},
+  {id:'dong',name:'동아출판',author:'이상인', icon:'📕', color:'#881337'},
+  {id:'sin', name:'신사고',  author:'강남화', icon:'📓', color:'#4c1d95'},
+];
 
 
-const CURRICULUM={mir:{1:{1:[
-  {id:'sc-1-1-1',name:'과학의 탐구',topic:'탐구 방법·변인 통제·측정',exam:'mid'},
-  {id:'sc-1-1-2',name:'물질의 상태',topic:'고체·액체·기체 특성·상태변화',exam:'mid'},
-  {id:'sc-1-1-3',name:'힘과 운동',topic:'힘의 종류·중력·마찰력·뉴턴 법칙',exam:'mid'},
-  {id:'sc-1-1-4',name:'빛과 파동',topic:'빛의 반사·굴절·파동 기초',exam:'final'},
-  {id:'sc-1-1-5',name:'지각의 구성',topic:'광물·암석·토양',exam:'final'},
-],2:[
-  {id:'sc-1-2-1',name:'생물의 구성',topic:'세포·조직·기관·개체',exam:'mid'},
-  {id:'sc-1-2-2',name:'소화와 순환',topic:'소화계·순환계',exam:'mid'},
-  {id:'sc-1-2-3',name:'호흡과 배설',topic:'호흡계·배설계',exam:'final'},
-  {id:'sc-1-2-4',name:'수권과 대기',topic:'물의 순환·대기 현상',exam:'final'},
-]},2:{1:[
-  {id:'sc-2-1-1',name:'물질의 구성',topic:'원소·원자·분자·이온',exam:'mid'},
-  {id:'sc-2-1-2',name:'전기와 자기',topic:'전류·전압·저항·옴의 법칙',exam:'mid'},
-  {id:'sc-2-1-3',name:'태양계',topic:'태양계 구성원·행성 특징',exam:'final'},
-  {id:'sc-2-1-4',name:'물질의 변화',topic:'물리변화·화학변화·화학반응식',exam:'final'},
-],2:[
-  {id:'sc-2-2-1',name:'식물의 영양',topic:'광합성·증산작용',exam:'mid'},
-  {id:'sc-2-2-2',name:'동물의 생식',topic:'유성생식·무성생식',exam:'mid'},
-  {id:'sc-2-2-3',name:'열과 에너지',topic:'열에너지·비열·열평형',exam:'final'},
-  {id:'sc-2-2-4',name:'지권의 변화',topic:'판 구조론·화산·지진',exam:'final'},
-]},3:{1:[
-  {id:'sc-3-1-1',name:'화학반응',topic:'화학 방정식·질량 보존·일정 성분비',exam:'mid'},
-  {id:'sc-3-1-2',name:'운동과 에너지',topic:'속력·가속도·역학적 에너지 보존',exam:'mid'},
-  {id:'sc-3-1-3',name:'유전과 진화',topic:'멘델 유전·진화 증거',exam:'final'},
-  {id:'sc-3-1-4',name:'별과 우주',topic:'별의 특성·은하·우주 팽창',exam:'final'},
-],2:[
-  {id:'sc-3-2-1',name:'산과 염기',topic:'중화반응·pH·지시약',exam:'mid'},
-  {id:'sc-3-2-2',name:'전기에너지',topic:'전력·전력량·전기 안전',exam:'mid'},
-  {id:'sc-3-2-3',name:'생태계',topic:'생태계 구성·에너지 흐름·물질 순환',exam:'final'},
-  {id:'sc-3-2-4',name:'지구 환경 변화',topic:'기후변화·환경 오염·지속가능 발전',exam:'final'},
-]}},chun:{1:{1:[
-  {id:'scc-1-1-1',name:'탐구와 측정',topic:'탐구 방법',exam:'mid'},
-  {id:'scc-1-1-2',name:'물질의 상태변화',topic:'상태변화',exam:'mid'},
-  {id:'scc-1-1-3',name:'힘',topic:'힘과 운동',exam:'final'},
-  {id:'scc-1-1-4',name:'빛',topic:'빛의 성질',exam:'final'},
-],2:[
-  {id:'scc-1-2-1',name:'세포와 생물',topic:'세포·생물 구성',exam:'mid'},
-  {id:'scc-1-2-2',name:'소화·순환·호흡',topic:'생명 유지',exam:'mid'},
-  {id:'scc-1-2-3',name:'지층과 암석',topic:'지각 구성',exam:'final'},
-  {id:'scc-1-2-4',name:'수권과 기권',topic:'물·대기',exam:'final'},
-]},2:{1:[
-  {id:'scc-2-1-1',name:'물질의 구성',topic:'원자·분자',exam:'mid'},
-  {id:'scc-2-1-2',name:'전기',topic:'전기·자기',exam:'mid'},
-  {id:'scc-2-1-3',name:'태양계',topic:'태양계',exam:'final'},
-  {id:'scc-2-1-4',name:'화학반응',topic:'물질 변화',exam:'final'},
-],2:[
-  {id:'scc-2-2-1',name:'광합성',topic:'식물의 영양',exam:'mid'},
-  {id:'scc-2-2-2',name:'생식',topic:'동물의 생식',exam:'mid'},
-  {id:'scc-2-2-3',name:'열',topic:'열과 에너지',exam:'final'},
-  {id:'scc-2-2-4',name:'지권',topic:'지권의 변화',exam:'final'},
-]},3:{1:[
-  {id:'scc-3-1-1',name:'화학반응',topic:'화학반응',exam:'mid'},
-  {id:'scc-3-1-2',name:'운동',topic:'운동과 에너지',exam:'mid'},
-  {id:'scc-3-1-3',name:'유전',topic:'유전과 진화',exam:'final'},
-  {id:'scc-3-1-4',name:'별',topic:'별과 우주',exam:'final'},
-],2:[
-  {id:'scc-3-2-1',name:'산·염기',topic:'산과 염기',exam:'mid'},
-  {id:'scc-3-2-2',name:'전기에너지',topic:'전력',exam:'mid'},
-  {id:'scc-3-2-3',name:'생태계',topic:'생태계',exam:'final'},
-  {id:'scc-3-2-4',name:'환경',topic:'환경 변화',exam:'final'},
-]}},vis:{1:{1:[
-  {id:'scv-1-1-1',name:'탐구',topic:'과학 탐구',exam:'mid'},
-  {id:'scv-1-1-2',name:'물질 상태',topic:'상태',exam:'mid'},
-  {id:'scv-1-1-3',name:'힘과 운동',topic:'힘·운동',exam:'final'},
-  {id:'scv-1-1-4',name:'빛과 파동',topic:'빛·파동',exam:'final'},
-],2:[
-  {id:'scv-1-2-1',name:'세포',topic:'세포·생물',exam:'mid'},
-  {id:'scv-1-2-2',name:'생명 유지',topic:'소화·순환',exam:'mid'},
-  {id:'scv-1-2-3',name:'지각',topic:'지각·암석',exam:'final'},
-  {id:'scv-1-2-4',name:'대기',topic:'수권·기권',exam:'final'},
-]},2:{1:[
-  {id:'scv-2-1-1',name:'원자·분자',topic:'물질 구성',exam:'mid'},
-  {id:'scv-2-1-2',name:'전기',topic:'전기·자기',exam:'mid'},
-  {id:'scv-2-1-3',name:'태양계',topic:'태양계',exam:'final'},
-  {id:'scv-2-1-4',name:'화학',topic:'화학반응',exam:'final'},
-],2:[
-  {id:'scv-2-2-1',name:'광합성',topic:'식물',exam:'mid'},
-  {id:'scv-2-2-2',name:'생식',topic:'동물 생식',exam:'mid'},
-  {id:'scv-2-2-3',name:'열·에너지',topic:'열',exam:'final'},
-  {id:'scv-2-2-4',name:'지권',topic:'지권',exam:'final'},
-]},3:{1:[
-  {id:'scv-3-1-1',name:'화학반응',topic:'화학반응',exam:'mid'},
-  {id:'scv-3-1-2',name:'역학',topic:'운동·에너지',exam:'mid'},
-  {id:'scv-3-1-3',name:'유전',topic:'유전',exam:'final'},
-  {id:'scv-3-1-4',name:'우주',topic:'별·우주',exam:'final'},
-],2:[
-  {id:'scv-3-2-1',name:'산·염기',topic:'산과 염기',exam:'mid'},
-  {id:'scv-3-2-2',name:'전기',topic:'전기에너지',exam:'mid'},
-  {id:'scv-3-2-3',name:'생태계',topic:'생태계',exam:'final'},
-  {id:'scv-3-2-4',name:'환경',topic:'환경',exam:'final'},
-]}},dong:{1:{1:[
-  {id:'scd-1-1-1',name:'탐구·측정',topic:'탐구',exam:'mid'},
-  {id:'scd-1-1-2',name:'물질',topic:'상태변화',exam:'mid'},
-  {id:'scd-1-1-3',name:'힘',topic:'힘·운동',exam:'final'},
-  {id:'scd-1-1-4',name:'빛',topic:'빛',exam:'final'},
-],2:[
-  {id:'scd-1-2-1',name:'세포',topic:'세포',exam:'mid'},
-  {id:'scd-1-2-2',name:'생명',topic:'소화·순환',exam:'mid'},
-  {id:'scd-1-2-3',name:'지구',topic:'지각',exam:'final'},
-  {id:'scd-1-2-4',name:'환경',topic:'수권·대기',exam:'final'},
-]},2:{1:[
-  {id:'scd-2-1-1',name:'물질 구성',topic:'원자·분자',exam:'mid'},
-  {id:'scd-2-1-2',name:'전기',topic:'전기',exam:'mid'},
-  {id:'scd-2-1-3',name:'태양계',topic:'태양계',exam:'final'},
-  {id:'scd-2-1-4',name:'화학',topic:'화학반응',exam:'final'},
-],2:[
-  {id:'scd-2-2-1',name:'광합성',topic:'식물',exam:'mid'},
-  {id:'scd-2-2-2',name:'생식',topic:'생식',exam:'mid'},
-  {id:'scd-2-2-3',name:'열',topic:'열에너지',exam:'final'},
-  {id:'scd-2-2-4',name:'지권',topic:'지권',exam:'final'},
-]},3:{1:[
-  {id:'scd-3-1-1',name:'화학반응',topic:'화학반응',exam:'mid'},
-  {id:'scd-3-1-2',name:'역학',topic:'운동·에너지',exam:'mid'},
-  {id:'scd-3-1-3',name:'유전',topic:'유전',exam:'final'},
-  {id:'scd-3-1-4',name:'우주',topic:'우주',exam:'final'},
-],2:[
-  {id:'scd-3-2-1',name:'산·염기',topic:'산·염기',exam:'mid'},
-  {id:'scd-3-2-2',name:'전기',topic:'전기',exam:'mid'},
-  {id:'scd-3-2-3',name:'생태계',topic:'생태계',exam:'final'},
-  {id:'scd-3-2-4',name:'환경',topic:'환경',exam:'final'},
-]}},sin:{1:{1:[
-  {id:'scs-1-1-1',name:'탐구',topic:'탐구 방법',exam:'mid'},
-  {id:'scs-1-1-2',name:'물질 상태',topic:'상태변화',exam:'mid'},
-  {id:'scs-1-1-3',name:'힘·운동',topic:'힘과 운동',exam:'final'},
-  {id:'scs-1-1-4',name:'빛·파동',topic:'빛과 파동',exam:'final'},
-],2:[
-  {id:'scs-1-2-1',name:'생물 구성',topic:'세포·생물',exam:'mid'},
-  {id:'scs-1-2-2',name:'생명 활동',topic:'소화·순환·호흡',exam:'mid'},
-  {id:'scs-1-2-3',name:'지각·암석',topic:'지각 구성',exam:'final'},
-  {id:'scs-1-2-4',name:'수권·기권',topic:'물·대기',exam:'final'},
-]},2:{1:[
-  {id:'scs-2-1-1',name:'원자·분자',topic:'물질 구성',exam:'mid'},
-  {id:'scs-2-1-2',name:'전기·자기',topic:'전기',exam:'mid'},
-  {id:'scs-2-1-3',name:'태양계',topic:'태양계',exam:'final'},
-  {id:'scs-2-1-4',name:'화학변화',topic:'물질 변화',exam:'final'},
-],2:[
-  {id:'scs-2-2-1',name:'광합성',topic:'식물',exam:'mid'},
-  {id:'scs-2-2-2',name:'생식·발생',topic:'생식',exam:'mid'},
-  {id:'scs-2-2-3',name:'열에너지',topic:'열',exam:'final'},
-  {id:'scs-2-2-4',name:'지권변화',topic:'지권',exam:'final'},
-]},3:{1:[
-  {id:'scs-3-1-1',name:'화학반응',topic:'화학반응',exam:'mid'},
-  {id:'scs-3-1-2',name:'운동·에너지',topic:'역학',exam:'mid'},
-  {id:'scs-3-1-3',name:'유전·진화',topic:'유전',exam:'final'},
-  {id:'scs-3-1-4',name:'별·우주',topic:'우주',exam:'final'},
-],2:[
-  {id:'scs-3-2-1',name:'산과 염기',topic:'산·염기',exam:'mid'},
-  {id:'scs-3-2-2',name:'전기에너지',topic:'전기',exam:'mid'},
-  {id:'scs-3-2-3',name:'생태계',topic:'생태계',exam:'final'},
-  {id:'scs-3-2-4',name:'환경변화',topic:'환경',exam:'final'},
-]}}
+const CURRICULUM = {
+  mir:{
+    1:{1:[
+      {id:'mir-sc-1-1-1',name:'Ⅰ. 과학이란 무엇인가',         topic:'탐구 방법·변인 통제·측정·단위',             exam:'mid'},
+      {id:'mir-sc-1-1-2',name:'Ⅱ. 물질의 상태',               topic:'고체·액체·기체 특성·상태변화',              exam:'mid'},
+      {id:'mir-sc-1-1-3',name:'Ⅲ. 힘과 운동',                 topic:'힘의 종류·합력·뉴턴 운동 법칙',             exam:'mid'},
+      {id:'mir-sc-1-1-4',name:'Ⅳ. 파동과 빛',                 topic:'파동의 성질·빛의 반사·굴절',                exam:'final'},
+    ],2:[
+      {id:'mir-sc-1-2-1',name:'Ⅴ. 지권의 구성',               topic:'지각·광물·암석·토양',                       exam:'mid'},
+      {id:'mir-sc-1-2-2',name:'Ⅵ. 생물의 구성과 다양성',      topic:'세포·조직·기관·개체·생물 분류',              exam:'mid'},
+      {id:'mir-sc-1-2-3',name:'Ⅶ. 소화와 순환',               topic:'소화계·순환계·혈액',                        exam:'final'},
+      {id:'mir-sc-1-2-4',name:'Ⅷ. 수권과 기권',               topic:'물의 순환·대기 현상·날씨',                  exam:'final'},
+    ]},
+    2:{1:[
+      {id:'mir-sc-2-1-1',name:'Ⅰ. 물질의 구성',               topic:'원소·원자·분자·이온·주기율표',               exam:'mid'},
+      {id:'mir-sc-2-1-2',name:'Ⅱ. 전기와 자기',               topic:'전류·전압·저항·옴의 법칙·자기장',           exam:'mid'},
+      {id:'mir-sc-2-1-3',name:'Ⅲ. 화학반응',                  topic:'물리변화·화학변화·화학반응식·질량 보존',     exam:'final'},
+      {id:'mir-sc-2-1-4',name:'Ⅳ. 태양계',                    topic:'태양계 구성·행성 특징·달의 운동',            exam:'final'},
+    ],2:[
+      {id:'mir-sc-2-2-1',name:'Ⅴ. 식물의 구조와 기능',        topic:'뿌리·줄기·잎·광합성·증산작용',              exam:'mid'},
+      {id:'mir-sc-2-2-2',name:'Ⅵ. 동물의 구조와 기능',        topic:'호흡계·배설계·신경계·호르몬',                exam:'mid'},
+      {id:'mir-sc-2-2-3',name:'Ⅶ. 열과 에너지',               topic:'열에너지·비열·열평형·단열',                 exam:'final'},
+      {id:'mir-sc-2-2-4',name:'Ⅷ. 지권의 변화',               topic:'판 구조론·화산·지진·지층',                  exam:'final'},
+    ]},
+    3:{1:[
+      {id:'mir-sc-3-1-1',name:'Ⅰ. 운동과 에너지',             topic:'속력·가속도·역학적 에너지 보존',             exam:'mid'},
+      {id:'mir-sc-3-1-2',name:'Ⅱ. 물질의 변화',               topic:'산·염기·중화반응·pH·산화환원',               exam:'mid'},
+      {id:'mir-sc-3-1-3',name:'Ⅲ. 유전과 진화',               topic:'멘델 유전·유전자·DNA·진화 증거',             exam:'final'},
+      {id:'mir-sc-3-1-4',name:'Ⅳ. 지구와 우주',               topic:'별의 특성·은하·우주 팽창·빅뱅',              exam:'final'},
+    ],2:[
+      {id:'mir-sc-3-2-1',name:'Ⅴ. 전기에너지',                topic:'전력·전력량·전기 안전',                      exam:'mid'},
+      {id:'mir-sc-3-2-2',name:'Ⅵ. 생태계와 환경',             topic:'생태계·먹이 사슬·에너지 흐름·환경 문제',     exam:'mid'},
+      {id:'mir-sc-3-2-3',name:'Ⅶ. 과학기술과 사회',           topic:'첨단 과학기술·지속가능 발전',                exam:'final'},
+    ]},
+  },
+  chun:{
+    1:{1:[
+      {id:'chun-sc-1-1-1',name:'1. 과학의 탐구',               topic:'탐구 방법·측정',                            exam:'mid'},
+      {id:'chun-sc-1-1-2',name:'2. 물질의 상태',               topic:'고체·액체·기체·상태변화',                   exam:'mid'},
+      {id:'chun-sc-1-1-3',name:'3. 힘과 운동',                 topic:'힘·뉴턴 법칙',                              exam:'mid'},
+      {id:'chun-sc-1-1-4',name:'4. 빛과 파동',                 topic:'빛·파동',                                   exam:'final'},
+    ],2:[
+      {id:'chun-sc-1-2-1',name:'5. 지각의 구성',               topic:'광물·암석',                                 exam:'mid'},
+      {id:'chun-sc-1-2-2',name:'6. 생물의 구성과 다양성',      topic:'세포·조직·생물 분류',                        exam:'mid'},
+      {id:'chun-sc-1-2-3',name:'7. 소화·순환·호흡',            topic:'생명 유지 과정',                            exam:'final'},
+      {id:'chun-sc-1-2-4',name:'8. 수권과 대기',               topic:'물·대기 현상',                              exam:'final'},
+    ]},
+    2:{1:[
+      {id:'chun-sc-2-1-1',name:'1. 원자와 분자',               topic:'원소·원자·분자',                            exam:'mid'},
+      {id:'chun-sc-2-1-2',name:'2. 전기와 자기',               topic:'전기·자기장',                               exam:'mid'},
+      {id:'chun-sc-2-1-3',name:'3. 화학변화',                  topic:'화학반응식',                                exam:'final'},
+      {id:'chun-sc-2-1-4',name:'4. 태양계',                    topic:'태양계·행성',                               exam:'final'},
+    ],2:[
+      {id:'chun-sc-2-2-1',name:'5. 식물',                      topic:'광합성·증산',                               exam:'mid'},
+      {id:'chun-sc-2-2-2',name:'6. 동물',                      topic:'호흡·배설·신경',                            exam:'mid'},
+      {id:'chun-sc-2-2-3',name:'7. 열에너지',                  topic:'열·비열',                                   exam:'final'},
+      {id:'chun-sc-2-2-4',name:'8. 지권변화',                  topic:'판 구조론·지진',                            exam:'final'},
+    ]},
+    3:{1:[
+      {id:'chun-sc-3-1-1',name:'1. 운동과 에너지',             topic:'속력·역학적 에너지',                        exam:'mid'},
+      {id:'chun-sc-3-1-2',name:'2. 산과 염기',                 topic:'중화반응·pH',                               exam:'mid'},
+      {id:'chun-sc-3-1-3',name:'3. 유전',                      topic:'멘델 유전·DNA',                             exam:'final'},
+      {id:'chun-sc-3-1-4',name:'4. 별과 우주',                 topic:'별·은하·우주',                              exam:'final'},
+    ],2:[
+      {id:'chun-sc-3-2-1',name:'5. 전기에너지',                topic:'전력·전력량',                               exam:'mid'},
+      {id:'chun-sc-3-2-2',name:'6. 생태계',                    topic:'생태계·환경',                               exam:'mid'},
+      {id:'chun-sc-3-2-3',name:'7. 과학과 사회',               topic:'첨단과학기술',                              exam:'final'},
+    ]},
+  },
+  vis:{
+    1:{1:[
+      {id:'vis-sc-1-1-1',name:'Ⅰ. 과학 탐구',                 topic:'탐구 방법',                                 exam:'mid'},
+      {id:'vis-sc-1-1-2',name:'Ⅱ. 물질의 상태',               topic:'상태변화',                                  exam:'mid'},
+      {id:'vis-sc-1-1-3',name:'Ⅲ. 힘과 운동',                 topic:'힘·뉴턴 법칙',                              exam:'mid'},
+      {id:'vis-sc-1-1-4',name:'Ⅳ. 빛과 파동',                 topic:'빛·파동',                                   exam:'final'},
+    ],2:[
+      {id:'vis-sc-1-2-1',name:'Ⅴ. 지각',                      topic:'광물·암석·토양',                            exam:'mid'},
+      {id:'vis-sc-1-2-2',name:'Ⅵ. 생물의 구성',               topic:'세포·조직·분류',                            exam:'mid'},
+      {id:'vis-sc-1-2-3',name:'Ⅶ. 생명 유지',                 topic:'소화·순환',                                 exam:'final'},
+      {id:'vis-sc-1-2-4',name:'Ⅷ. 수권·기권',                 topic:'물·대기',                                   exam:'final'},
+    ]},
+    2:{1:[
+      {id:'vis-sc-2-1-1',name:'Ⅰ. 물질 구성',                 topic:'원자·분자',                                 exam:'mid'},
+      {id:'vis-sc-2-1-2',name:'Ⅱ. 전기·자기',                 topic:'전류·전압·자기',                            exam:'mid'},
+      {id:'vis-sc-2-1-3',name:'Ⅲ. 화학반응',                  topic:'화학변화',                                  exam:'final'},
+      {id:'vis-sc-2-1-4',name:'Ⅳ. 태양계',                    topic:'행성·달',                                   exam:'final'},
+    ],2:[
+      {id:'vis-sc-2-2-1',name:'Ⅴ. 식물',                      topic:'광합성',                                    exam:'mid'},
+      {id:'vis-sc-2-2-2',name:'Ⅵ. 동물',                      topic:'호흡·배설',                                 exam:'mid'},
+      {id:'vis-sc-2-2-3',name:'Ⅶ. 열',                        topic:'비열·열평형',                               exam:'final'},
+      {id:'vis-sc-2-2-4',name:'Ⅷ. 지권변화',                  topic:'판 구조론',                                 exam:'final'},
+    ]},
+    3:{1:[
+      {id:'vis-sc-3-1-1',name:'Ⅰ. 운동·에너지',               topic:'역학적 에너지',                             exam:'mid'},
+      {id:'vis-sc-3-1-2',name:'Ⅱ. 산·염기',                   topic:'중화·pH',                                   exam:'mid'},
+      {id:'vis-sc-3-1-3',name:'Ⅲ. 유전·진화',                 topic:'멘델·DNA',                                  exam:'final'},
+      {id:'vis-sc-3-1-4',name:'Ⅳ. 우주',                      topic:'별·은하',                                   exam:'final'},
+    ],2:[
+      {id:'vis-sc-3-2-1',name:'Ⅴ. 전기에너지',                topic:'전력',                                      exam:'mid'},
+      {id:'vis-sc-3-2-2',name:'Ⅵ. 생태계',                    topic:'생태·환경',                                 exam:'mid'},
+      {id:'vis-sc-3-2-3',name:'Ⅶ. 과학·사회',                 topic:'과학기술',                                  exam:'final'},
+    ]},
+  },
+  dong:{
+    1:{1:[
+      {id:'dong-sc-1-1-1',name:'1. 과학의 탐구',               topic:'탐구·측정·변인',                            exam:'mid'},
+      {id:'dong-sc-1-1-2',name:'2. 물질의 세 가지 상태',       topic:'상태변화',                                  exam:'mid'},
+      {id:'dong-sc-1-1-3',name:'3. 힘과 운동',                 topic:'힘·뉴턴 법칙',                              exam:'mid'},
+      {id:'dong-sc-1-1-4',name:'4. 빛과 파동',                 topic:'파동·빛',                                   exam:'final'},
+    ],2:[
+      {id:'dong-sc-1-2-1',name:'5. 지권의 구성',               topic:'광물·암석',                                 exam:'mid'},
+      {id:'dong-sc-1-2-2',name:'6. 생물의 구성과 다양성',      topic:'세포·분류',                                 exam:'mid'},
+      {id:'dong-sc-1-2-3',name:'7. 소화·순환·호흡·배설',      topic:'생명 활동',                                 exam:'final'},
+      {id:'dong-sc-1-2-4',name:'8. 수권과 대기',               topic:'물의 순환·대기',                            exam:'final'},
+    ]},
+    2:{1:[
+      {id:'dong-sc-2-1-1',name:'1. 물질의 구성',               topic:'원소·원자·분자·이온',                       exam:'mid'},
+      {id:'dong-sc-2-1-2',name:'2. 전기와 자기',               topic:'전류·전압·자기장',                          exam:'mid'},
+      {id:'dong-sc-2-1-3',name:'3. 물질의 변화',               topic:'화학반응식',                                exam:'final'},
+      {id:'dong-sc-2-1-4',name:'4. 태양계',                    topic:'태양계·행성',                               exam:'final'},
+    ],2:[
+      {id:'dong-sc-2-2-1',name:'5. 식물의 구조와 기능',        topic:'광합성·증산',                               exam:'mid'},
+      {id:'dong-sc-2-2-2',name:'6. 동물의 구조와 기능',        topic:'소화·호흡·배설',                            exam:'mid'},
+      {id:'dong-sc-2-2-3',name:'7. 열과 에너지',               topic:'열에너지·비열',                             exam:'final'},
+      {id:'dong-sc-2-2-4',name:'8. 지권의 변화',               topic:'판 구조론·화산·지진',                       exam:'final'},
+    ]},
+    3:{1:[
+      {id:'dong-sc-3-1-1',name:'1. 운동과 에너지',             topic:'속력·가속도·역학',                          exam:'mid'},
+      {id:'dong-sc-3-1-2',name:'2. 화학반응과 우리 생활',      topic:'산·염기·중화·산화환원',                     exam:'mid'},
+      {id:'dong-sc-3-1-3',name:'3. 유전과 진화',               topic:'유전·DNA·진화',                             exam:'final'},
+      {id:'dong-sc-3-1-4',name:'4. 별과 우주',                 topic:'별·은하·빅뱅',                              exam:'final'},
+    ],2:[
+      {id:'dong-sc-3-2-1',name:'5. 전기에너지',                topic:'전력·전력량',                               exam:'mid'},
+      {id:'dong-sc-3-2-2',name:'6. 생태계와 환경',             topic:'생태계·환경 오염',                          exam:'mid'},
+      {id:'dong-sc-3-2-3',name:'7. 과학기술과 미래',           topic:'첨단과학·지속가능성',                       exam:'final'},
+    ]},
+  },
+  sin:{
+    1:{1:[
+      {id:'sin-sc-1-1-1',name:'Ⅰ. 탐구와 측정',               topic:'과학 탐구',                                 exam:'mid'},
+      {id:'sin-sc-1-1-2',name:'Ⅱ. 물질 상태',                 topic:'상태변화',                                  exam:'mid'},
+      {id:'sin-sc-1-1-3',name:'Ⅲ. 힘',                        topic:'힘·운동',                                   exam:'mid'},
+      {id:'sin-sc-1-1-4',name:'Ⅳ. 빛·파동',                   topic:'빛·파동',                                   exam:'final'},
+    ],2:[
+      {id:'sin-sc-1-2-1',name:'Ⅴ. 지각',                      topic:'광물·암석',                                 exam:'mid'},
+      {id:'sin-sc-1-2-2',name:'Ⅵ. 생물 구성',                 topic:'세포·조직',                                 exam:'mid'},
+      {id:'sin-sc-1-2-3',name:'Ⅶ. 생명 활동',                 topic:'소화·순환',                                 exam:'final'},
+      {id:'sin-sc-1-2-4',name:'Ⅷ. 수권·기권',                 topic:'물·대기',                                   exam:'final'},
+    ]},
+    2:{1:[
+      {id:'sin-sc-2-1-1',name:'Ⅰ. 물질 구성',                 topic:'원자·분자',                                 exam:'mid'},
+      {id:'sin-sc-2-1-2',name:'Ⅱ. 전기·자기',                 topic:'전기·자기장',                               exam:'mid'},
+      {id:'sin-sc-2-1-3',name:'Ⅲ. 화학반응',                  topic:'화학변화',                                  exam:'final'},
+      {id:'sin-sc-2-1-4',name:'Ⅳ. 태양계',                    topic:'행성',                                      exam:'final'},
+    ],2:[
+      {id:'sin-sc-2-2-1',name:'Ⅴ. 식물',                      topic:'광합성',                                    exam:'mid'},
+      {id:'sin-sc-2-2-2',name:'Ⅵ. 동물',                      topic:'호흡·배설',                                 exam:'mid'},
+      {id:'sin-sc-2-2-3',name:'Ⅶ. 열에너지',                  topic:'비열·열평형',                               exam:'final'},
+      {id:'sin-sc-2-2-4',name:'Ⅷ. 지권',                      topic:'판 구조론',                                 exam:'final'},
+    ]},
+    3:{1:[
+      {id:'sin-sc-3-1-1',name:'Ⅰ. 운동·에너지',               topic:'역학',                                      exam:'mid'},
+      {id:'sin-sc-3-1-2',name:'Ⅱ. 산·염기',                   topic:'중화',                                      exam:'mid'},
+      {id:'sin-sc-3-1-3',name:'Ⅲ. 유전',                      topic:'유전·진화',                                 exam:'final'},
+      {id:'sin-sc-3-1-4',name:'Ⅳ. 우주',                      topic:'별·은하',                                   exam:'final'},
+    ],2:[
+      {id:'sin-sc-3-2-1',name:'Ⅴ. 전기에너지',                topic:'전력',                                      exam:'mid'},
+      {id:'sin-sc-3-2-2',name:'Ⅵ. 생태계',                    topic:'생태·환경',                                 exam:'mid'},
+      {id:'sin-sc-3-2-3',name:'Ⅶ. 과학·사회',                 topic:'과학기술',                                  exam:'final'},
+    ]},
+  },
+};
+
 
 
 const SHARED={
@@ -613,7 +640,7 @@ function getPoolForUnit(uid){
 // ════════════════════════════════════════════════════════════
 //  상태
 // ════════════════════════════════════════════════════════════
-let state = {pub:'mirae', grade:1, sem:1, units:new Set(), examType:'all', count:20};
+let state = {pub:'mir', grade:1, sem:1, units:new Set(), examType:'all', count:20};
 let curQs=[], userAns={}, submitted=false, timerSec=0, timerInterval;
 const NUMS=['①','②','③','④'];
 const CHIP_COLOR = {"\ubb3c\uc9c8": "#0d6b5e", "\ud798\uacfc \uc6b4\ub3d9": "#dc2626", "\uc0dd\uba85\uacfc\ud559": "#166534", "\uc9c0\uad6c\uacfc\ud559": "#1d4ed8", "\uc5d0\ub108\uc9c0": "#92400e", "\ud654\ud559\ubc18\uc751": "#6d28d9"};

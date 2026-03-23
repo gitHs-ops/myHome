@@ -407,161 +407,188 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--rice);color:var(--in
 // ════════════════════════════════════════════════════════════
 //  출판사 정의
 // ════════════════════════════════════════════════════════════
-const PUBLISHERS = [{"id": "mir", "name": "미래엔", "author": "김진수", "icon": "📘", "color": "#1d4ed8"}, {"id": "chun", "name": "천재교육", "author": "박선미", "icon": "📗", "color": "#166534"}, {"id": "vis", "name": "비상교육", "author": "이진석", "icon": "📙", "color": "#92400e"}, {"id": "dong", "name": "동아출판", "author": "모경환", "icon": "📕", "color": "#881337"}, {"id": "sin", "name": "신사고", "author": "한진수", "icon": "📓", "color": "#4c1d95"}];
+const PUBLISHERS = [
+  {id:'mir', name:'미래엔',  author:'손영찬', icon:'📘', color:'#1d4ed8'},
+  {id:'chun',name:'천재교육',author:'한희경', icon:'📗', color:'#166534'},
+  {id:'vis', name:'비상교육',author:'이진석', icon:'📙', color:'#92400e'},
+  {id:'dong',name:'동아출판',author:'구정화', icon:'📕', color:'#881337'},
+  {id:'sin', name:'신사고',  author:'한진수', icon:'📓', color:'#4c1d95'},
+];
 
 
-const CURRICULUM={mir:{1:{1:[
-  {id:'so-1-1-1',name:'내가 사는 세계',topic:'지도·위치·지리 정보 시스템',exam:'mid'},
-  {id:'so-1-1-2',name:'자연환경과 인간',topic:'기후·지형과 인간 생활',exam:'mid'},
-  {id:'so-1-1-3',name:'인문 환경과 인간',topic:'인구·도시화·문화',exam:'mid'},
-  {id:'so-1-1-4',name:'극한 지역의 생활',topic:'냉대·열대·건조·고산 기후',exam:'final'},
-  {id:'so-1-1-5',name:'자원과 환경',topic:'자원의 종류·분포·환경 문제',exam:'final'},
-],2:[
-  {id:'so-1-2-1',name:'개인과 사회',topic:'사회화·사회 집단·일탈',exam:'mid'},
-  {id:'so-1-2-2',name:'문화의 이해',topic:'문화 특성·다문화·문화 상대주의',exam:'mid'},
-  {id:'so-1-2-3',name:'정치 생활',topic:'민주주의·선거·정치 참여',exam:'final'},
-  {id:'so-1-2-4',name:'경제생활의 이해',topic:'희소성·경제 문제·경제 주체',exam:'final'},
-]},2:{1:[
-  {id:'so-2-1-1',name:'인권과 헌법',topic:'기본권·인권 보장·헌법',exam:'mid'},
-  {id:'so-2-1-2',name:'헌법과 국가 기관',topic:'삼권 분립·국가 기관',exam:'mid'},
-  {id:'so-2-1-3',name:'경제 주체',topic:'가계·기업·정부의 역할',exam:'final'},
-  {id:'so-2-1-4',name:'시장 경제',topic:'수요·공급·시장 가격',exam:'final'},
-],2:[
-  {id:'so-2-2-1',name:'사회 변동',topic:'사회 변동·사회 문제',exam:'mid'},
-  {id:'so-2-2-2',name:'현대 사회의 변화',topic:'정보화·세계화·저출산 고령화',exam:'mid'},
-  {id:'so-2-2-3',name:'세계 여러 지역',topic:'세계 지역 지리',exam:'final'},
-  {id:'so-2-2-4',name:'글로벌 경제',topic:'무역·국제 분업·환율',exam:'final'},
-]},3:{1:[
-  {id:'so-3-1-1',name:'정치 과정',topic:'정당·선거·정치 참여·시민 사회',exam:'mid'},
-  {id:'so-3-1-2',name:'국제 정치',topic:'국제 관계·외교·국제 기구',exam:'mid'},
-  {id:'so-3-1-3',name:'국민 경제',topic:'GDP·경제 성장·물가·실업',exam:'final'},
-  {id:'so-3-1-4',name:'국제 경제',topic:'무역·환율·국제 수지',exam:'final'},
-],2:[
-  {id:'so-3-2-1',name:'사회 불평등',topic:'사회 계층·불평등 해결',exam:'mid'},
-  {id:'so-3-2-2',name:'다양한 문화',topic:'문화 다양성·다문화 사회',exam:'mid'},
-  {id:'so-3-2-3',name:'지속가능한 발전',topic:'환경 문제·지속가능 발전',exam:'final'},
-  {id:'so-3-2-4',name:'인구와 지역 변화',topic:'인구 문제·도시화',exam:'final'},
-]}},chun:{1:{1:[
-  {id:'soc-1-1-1',name:'세계와 지리',topic:'지리 정보',exam:'mid'},
-  {id:'soc-1-1-2',name:'자연환경',topic:'기후·지형',exam:'mid'},
-  {id:'soc-1-1-3',name:'인간과 환경',topic:'인구·도시',exam:'final'},
-  {id:'soc-1-1-4',name:'자원',topic:'자원·환경',exam:'final'},
-],2:[
-  {id:'soc-1-2-1',name:'개인과 사회',topic:'사회화',exam:'mid'},
-  {id:'soc-1-2-2',name:'문화',topic:'문화 이해',exam:'mid'},
-  {id:'soc-1-2-3',name:'정치',topic:'민주주의',exam:'final'},
-  {id:'soc-1-2-4',name:'경제',topic:'경제 기초',exam:'final'},
-]},2:{1:[
-  {id:'soc-2-1-1',name:'인권·헌법',topic:'기본권',exam:'mid'},
-  {id:'soc-2-1-2',name:'국가 기관',topic:'삼권 분립',exam:'mid'},
-  {id:'soc-2-1-3',name:'경제 주체',topic:'가계·기업',exam:'final'},
-  {id:'soc-2-1-4',name:'시장',topic:'시장 경제',exam:'final'},
-],2:[
-  {id:'soc-2-2-1',name:'사회 변동',topic:'변동·문제',exam:'mid'},
-  {id:'soc-2-2-2',name:'현대 사회',topic:'정보화',exam:'mid'},
-  {id:'soc-2-2-3',name:'세계 지역',topic:'세계 지리',exam:'final'},
-  {id:'soc-2-2-4',name:'글로벌',topic:'무역·환율',exam:'final'},
-]},3:{1:[
-  {id:'soc-3-1-1',name:'정치 과정',topic:'선거·정당',exam:'mid'},
-  {id:'soc-3-1-2',name:'국제 정치',topic:'국제 관계',exam:'mid'},
-  {id:'soc-3-1-3',name:'국민 경제',topic:'GDP',exam:'final'},
-  {id:'soc-3-1-4',name:'국제 경제',topic:'무역',exam:'final'},
-],2:[
-  {id:'soc-3-2-1',name:'불평등',topic:'사회 불평등',exam:'mid'},
-  {id:'soc-3-2-2',name:'다문화',topic:'문화 다양성',exam:'mid'},
-  {id:'soc-3-2-3',name:'지속가능',topic:'지속가능 발전',exam:'final'},
-  {id:'soc-3-2-4',name:'인구',topic:'인구·도시',exam:'final'},
-]}},vis:{1:{1:[
-  {id:'sov-1-1-1',name:'지리 기초',topic:'지리 정보',exam:'mid'},
-  {id:'sov-1-1-2',name:'자연과 인간',topic:'기후·지형',exam:'mid'},
-  {id:'sov-1-1-3',name:'인문 환경',topic:'인구·문화',exam:'final'},
-  {id:'sov-1-1-4',name:'자원과 환경',topic:'자원',exam:'final'},
-],2:[
-  {id:'sov-1-2-1',name:'사회와 개인',topic:'사회화',exam:'mid'},
-  {id:'sov-1-2-2',name:'문화',topic:'문화',exam:'mid'},
-  {id:'sov-1-2-3',name:'민주주의',topic:'정치',exam:'final'},
-  {id:'sov-1-2-4',name:'경제',topic:'경제 기초',exam:'final'},
-]},2:{1:[
-  {id:'sov-2-1-1',name:'헌법·인권',topic:'기본권',exam:'mid'},
-  {id:'sov-2-1-2',name:'국가',topic:'국가 기관',exam:'mid'},
-  {id:'sov-2-1-3',name:'경제',topic:'경제 주체',exam:'final'},
-  {id:'sov-2-1-4',name:'시장',topic:'시장',exam:'final'},
-],2:[
-  {id:'sov-2-2-1',name:'사회 변동',topic:'변동',exam:'mid'},
-  {id:'sov-2-2-2',name:'현대',topic:'현대 사회',exam:'mid'},
-  {id:'sov-2-2-3',name:'세계 지리',topic:'세계',exam:'final'},
-  {id:'sov-2-2-4',name:'세계 경제',topic:'무역',exam:'final'},
-]},3:{1:[
-  {id:'sov-3-1-1',name:'정치',topic:'정치 과정',exam:'mid'},
-  {id:'sov-3-1-2',name:'국제',topic:'국제 관계',exam:'mid'},
-  {id:'sov-3-1-3',name:'경제',topic:'국민 경제',exam:'final'},
-  {id:'sov-3-1-4',name:'무역',topic:'국제 경제',exam:'final'},
-],2:[
-  {id:'sov-3-2-1',name:'불평등',topic:'사회',exam:'mid'},
-  {id:'sov-3-2-2',name:'문화',topic:'다문화',exam:'mid'},
-  {id:'sov-3-2-3',name:'환경',topic:'지속가능',exam:'final'},
-  {id:'sov-3-2-4',name:'인구',topic:'인구',exam:'final'},
-]}},dong:{1:{1:[
-  {id:'sod-1-1-1',name:'세계 지리',topic:'지리',exam:'mid'},
-  {id:'sod-1-1-2',name:'자연환경',topic:'환경',exam:'mid'},
-  {id:'sod-1-1-3',name:'인간 생활',topic:'인문',exam:'final'},
-  {id:'sod-1-1-4',name:'자원',topic:'자원',exam:'final'},
-],2:[
-  {id:'sod-1-2-1',name:'개인·사회',topic:'사회화',exam:'mid'},
-  {id:'sod-1-2-2',name:'문화',topic:'문화',exam:'mid'},
-  {id:'sod-1-2-3',name:'정치',topic:'민주',exam:'final'},
-  {id:'sod-1-2-4',name:'경제',topic:'경제',exam:'final'},
-]},2:{1:[
-  {id:'sod-2-1-1',name:'인권',topic:'기본권',exam:'mid'},
-  {id:'sod-2-1-2',name:'국가',topic:'국가 기관',exam:'mid'},
-  {id:'sod-2-1-3',name:'경제',topic:'경제 주체',exam:'final'},
-  {id:'sod-2-1-4',name:'시장',topic:'시장',exam:'final'},
-],2:[
-  {id:'sod-2-2-1',name:'변동',topic:'사회 변동',exam:'mid'},
-  {id:'sod-2-2-2',name:'현대',topic:'현대',exam:'mid'},
-  {id:'sod-2-2-3',name:'세계',topic:'세계 지리',exam:'final'},
-  {id:'sod-2-2-4',name:'무역',topic:'국제 경제',exam:'final'},
-]},3:{1:[
-  {id:'sod-3-1-1',name:'정치',topic:'선거',exam:'mid'},
-  {id:'sod-3-1-2',name:'국제',topic:'국제',exam:'mid'},
-  {id:'sod-3-1-3',name:'경제',topic:'GDP',exam:'final'},
-  {id:'sod-3-1-4',name:'무역',topic:'무역',exam:'final'},
-],2:[
-  {id:'sod-3-2-1',name:'불평등',topic:'불평등',exam:'mid'},
-  {id:'sod-3-2-2',name:'다문화',topic:'문화',exam:'mid'},
-  {id:'sod-3-2-3',name:'환경',topic:'환경',exam:'final'},
-  {id:'sod-3-2-4',name:'인구',topic:'인구',exam:'final'},
-]}},sin:{1:{1:[
-  {id:'sos-1-1-1',name:'지리',topic:'지리 정보',exam:'mid'},
-  {id:'sos-1-1-2',name:'자연',topic:'기후·지형',exam:'mid'},
-  {id:'sos-1-1-3',name:'인문',topic:'인구·도시',exam:'final'},
-  {id:'sos-1-1-4',name:'자원',topic:'자원',exam:'final'},
-],2:[
-  {id:'sos-1-2-1',name:'사회화',topic:'개인·사회',exam:'mid'},
-  {id:'sos-1-2-2',name:'문화',topic:'문화 이해',exam:'mid'},
-  {id:'sos-1-2-3',name:'민주주의',topic:'정치',exam:'final'},
-  {id:'sos-1-2-4',name:'경제 기초',topic:'경제',exam:'final'},
-]},2:{1:[
-  {id:'sos-2-1-1',name:'헌법',topic:'기본권',exam:'mid'},
-  {id:'sos-2-1-2',name:'국가 기관',topic:'삼권',exam:'mid'},
-  {id:'sos-2-1-3',name:'경제 주체',topic:'경제',exam:'final'},
-  {id:'sos-2-1-4',name:'시장',topic:'시장',exam:'final'},
-],2:[
-  {id:'sos-2-2-1',name:'사회 변동',topic:'변동',exam:'mid'},
-  {id:'sos-2-2-2',name:'현대 사회',topic:'정보화',exam:'mid'},
-  {id:'sos-2-2-3',name:'세계',topic:'세계 지리',exam:'final'},
-  {id:'sos-2-2-4',name:'글로벌',topic:'무역',exam:'final'},
-]},3:{1:[
-  {id:'sos-3-1-1',name:'정치 과정',topic:'정당·선거',exam:'mid'},
-  {id:'sos-3-1-2',name:'국제 정치',topic:'외교',exam:'mid'},
-  {id:'sos-3-1-3',name:'국민 경제',topic:'GDP',exam:'final'},
-  {id:'sos-3-1-4',name:'국제 경제',topic:'무역·환율',exam:'final'},
-],2:[
-  {id:'sos-3-2-1',name:'불평등',topic:'계층',exam:'mid'},
-  {id:'sos-3-2-2',name:'다문화',topic:'문화',exam:'mid'},
-  {id:'sos-3-2-3',name:'지속가능',topic:'환경',exam:'final'},
-  {id:'sos-3-2-4',name:'인구·도시',topic:'인구',exam:'final'},
-]}}
+const CURRICULUM = {
+  mir:{
+    1:{1:[
+      {id:'mir-so-1-1-1',name:'Ⅰ. 세계의 자연환경과 인간생활', topic:'기후·지형·자연환경과 인간생활',          exam:'mid'},
+      {id:'mir-so-1-1-2',name:'Ⅱ. 세계의 인문환경과 지역',    topic:'인구·도시·문화권·지역 다양성',           exam:'mid'},
+      {id:'mir-so-1-1-3',name:'Ⅲ. 자연재해와 인간',           topic:'자연재해 종류·피해·대응',                 exam:'mid'},
+      {id:'mir-so-1-1-4',name:'Ⅳ. 국토의 자연환경',           topic:'우리나라 지형·기후·자연환경 특성',        exam:'final'},
+      {id:'mir-so-1-1-5',name:'Ⅴ. 국토의 인문환경',           topic:'인구변화·도시화·지역 개발',               exam:'final'},
+    ],2:[
+      {id:'mir-so-1-2-1',name:'Ⅵ. 개인과 사회',              topic:'사회화·사회집단·지위와 역할·사회적 관계',  exam:'mid'},
+      {id:'mir-so-1-2-2',name:'Ⅶ. 문화의 이해',              topic:'문화의 의미·특성·다양성·문화 상대주의',    exam:'mid'},
+      {id:'mir-so-1-2-3',name:'Ⅷ. 정치 생활과 민주주의',     topic:'정치의미·민주주의 발전·시민 참여',         exam:'final'},
+      {id:'mir-so-1-2-4',name:'Ⅸ. 일상 속의 경제',           topic:'경제활동·합리적 선택·수요와 공급',         exam:'final'},
+    ]},
+    2:{1:[
+      {id:'mir-so-2-1-1',name:'Ⅰ. 인권과 헌법',              topic:'인권의 의미·기본권 종류·침해와 구제',       exam:'mid'},
+      {id:'mir-so-2-1-2',name:'Ⅱ. 헌법과 국가기관',          topic:'국회·행정부·법원·헌법재판소·삼권 분립',    exam:'mid'},
+      {id:'mir-so-2-1-3',name:'Ⅲ. 경제 주체와 시장',         topic:'가계·기업·정부의 경제 활동·시장 경제',      exam:'final'},
+      {id:'mir-so-2-1-4',name:'Ⅳ. 시장 가격과 경제생활',     topic:'수요·공급·시장 가격 결정·합리적 소비',      exam:'final'},
+    ],2:[
+      {id:'mir-so-2-2-1',name:'Ⅴ. 국민 경제와 국제 거래',    topic:'GDP·경제 성장·물가·무역·환율',              exam:'mid'},
+      {id:'mir-so-2-2-2',name:'Ⅵ. 민주 정치와 선거',         topic:'민주주의·선거 원칙·정당·정치 참여',          exam:'mid'},
+      {id:'mir-so-2-2-3',name:'Ⅶ. 국제사회와 세계시민',      topic:'국제 관계·국제기구·평화·세계 시민의식',      exam:'final'},
+      {id:'mir-so-2-2-4',name:'Ⅷ. 사회 변동과 사회문제',     topic:'사회 변동 요인·사회 불평등·다문화',          exam:'final'},
+    ]},
+    3:{1:[
+      {id:'mir-so-3-1-1',name:'Ⅰ. 지속가능한 미래',          topic:'지속가능 발전·환경 문제·기후 변화',          exam:'mid'},
+      {id:'mir-so-3-1-2',name:'Ⅱ. 세계의 지역 갈등',         topic:'민족·종교·자원 갈등·분쟁 해결',             exam:'mid'},
+      {id:'mir-so-3-1-3',name:'Ⅲ. 미래 사회와 진로',         topic:'미래 변화·직업·진로 설계',                   exam:'final'},
+    ],2:[
+      {id:'mir-so-3-2-1',name:'Ⅳ. 사회적 약자와 인권',       topic:'사회적 소수자·차별·인권 보호 제도',          exam:'mid'},
+      {id:'mir-so-3-2-2',name:'Ⅴ. 글로벌 경제와 우리 삶',   topic:'세계화·다국적기업·국제 분업',                 exam:'mid'},
+      {id:'mir-so-3-2-3',name:'Ⅵ. 민주시민과 사회 참여',     topic:'시민 불복종·사회 운동·민주시민의 책임',       exam:'final'},
+    ]},
+  },
+  chun:{
+    1:{1:[
+      {id:'chun-so-1-1-1',name:'1. 세계 자연환경과 삶',       topic:'기후·지형·자연환경',                        exam:'mid'},
+      {id:'chun-so-1-1-2',name:'2. 세계 인문환경',            topic:'인구·도시·문화',                            exam:'mid'},
+      {id:'chun-so-1-1-3',name:'3. 자연재해',                 topic:'자연재해·대응',                             exam:'mid'},
+      {id:'chun-so-1-1-4',name:'4. 국토의 자연환경',          topic:'한반도 지형·기후',                          exam:'final'},
+      {id:'chun-so-1-1-5',name:'5. 국토의 인문환경',          topic:'인구·도시화·지역',                          exam:'final'},
+    ],2:[
+      {id:'chun-so-1-2-1',name:'6. 개인과 사회',              topic:'사회화·집단·역할',                           exam:'mid'},
+      {id:'chun-so-1-2-2',name:'7. 문화',                     topic:'문화 특성·다양성·상대주의',                  exam:'mid'},
+      {id:'chun-so-1-2-3',name:'8. 민주정치',                 topic:'민주주의·참여',                              exam:'final'},
+      {id:'chun-so-1-2-4',name:'9. 경제생활',                 topic:'경제·수요·공급',                             exam:'final'},
+    ]},
+    2:{1:[
+      {id:'chun-so-2-1-1',name:'1. 인권과 헌법',              topic:'기본권·인권 보장',                           exam:'mid'},
+      {id:'chun-so-2-1-2',name:'2. 국가기관',                 topic:'삼권 분립',                                  exam:'mid'},
+      {id:'chun-so-2-1-3',name:'3. 경제 주체',                topic:'가계·기업·정부',                             exam:'final'},
+      {id:'chun-so-2-1-4',name:'4. 시장경제',                 topic:'수요·공급·가격',                             exam:'final'},
+    ],2:[
+      {id:'chun-so-2-2-1',name:'5. 국민경제',                 topic:'GDP·성장·환율',                              exam:'mid'},
+      {id:'chun-so-2-2-2',name:'6. 민주정치와 선거',          topic:'선거·정당',                                  exam:'mid'},
+      {id:'chun-so-2-2-3',name:'7. 국제사회',                 topic:'국제 관계·세계시민',                         exam:'final'},
+      {id:'chun-so-2-2-4',name:'8. 사회 변동',                topic:'변동·불평등·다문화',                         exam:'final'},
+    ]},
+    3:{1:[
+      {id:'chun-so-3-1-1',name:'1. 지속가능 발전',            topic:'환경·기후변화',                              exam:'mid'},
+      {id:'chun-so-3-1-2',name:'2. 세계 갈등',                topic:'민족·종교·자원 갈등',                        exam:'mid'},
+      {id:'chun-so-3-1-3',name:'3. 미래와 진로',              topic:'미래 사회·진로 설계',                        exam:'final'},
+    ],2:[
+      {id:'chun-so-3-2-1',name:'4. 사회적 약자 인권',         topic:'소수자·차별·인권',                           exam:'mid'},
+      {id:'chun-so-3-2-2',name:'5. 글로벌 경제',              topic:'세계화·다국적기업',                          exam:'mid'},
+      {id:'chun-so-3-2-3',name:'6. 민주시민 참여',            topic:'시민 불복종·사회 운동',                      exam:'final'},
+    ]},
+  },
+  vis:{
+    1:{1:[
+      {id:'vis-so-1-1-1',name:'Ⅰ. 세계의 자연환경',          topic:'기후·지형·인간생활',                         exam:'mid'},
+      {id:'vis-so-1-1-2',name:'Ⅱ. 세계의 인문환경',          topic:'인구·도시·문화권',                           exam:'mid'},
+      {id:'vis-so-1-1-3',name:'Ⅲ. 자연재해',                 topic:'재해·대응·안전',                             exam:'mid'},
+      {id:'vis-so-1-1-4',name:'Ⅳ. 우리나라 자연환경',        topic:'한반도 지형·기후',                           exam:'final'},
+      {id:'vis-so-1-1-5',name:'Ⅴ. 우리나라 인문환경',        topic:'인구·도시화',                                exam:'final'},
+    ],2:[
+      {id:'vis-so-1-2-1',name:'Ⅵ. 개인과 사회',             topic:'사회화·집단',                                 exam:'mid'},
+      {id:'vis-so-1-2-2',name:'Ⅶ. 문화',                    topic:'문화 다양성·상대주의',                        exam:'mid'},
+      {id:'vis-so-1-2-3',name:'Ⅷ. 민주정치',                topic:'민주주의·참여',                               exam:'final'},
+      {id:'vis-so-1-2-4',name:'Ⅸ. 경제생활',                topic:'경제·시장',                                   exam:'final'},
+    ]},
+    2:{1:[
+      {id:'vis-so-2-1-1',name:'Ⅰ. 인권·헌법',               topic:'기본권·인권 침해와 구제',                     exam:'mid'},
+      {id:'vis-so-2-1-2',name:'Ⅱ. 국가기관',                topic:'국회·정부·법원',                              exam:'mid'},
+      {id:'vis-so-2-1-3',name:'Ⅲ. 경제 주체',               topic:'가계·기업·정부',                              exam:'final'},
+      {id:'vis-so-2-1-4',name:'Ⅳ. 시장경제',                topic:'수요·공급·가격',                              exam:'final'},
+    ],2:[
+      {id:'vis-so-2-2-1',name:'Ⅴ. 국민경제',                topic:'GDP·성장',                                    exam:'mid'},
+      {id:'vis-so-2-2-2',name:'Ⅵ. 선거·정당',               topic:'민주정치',                                    exam:'mid'},
+      {id:'vis-so-2-2-3',name:'Ⅶ. 국제사회',                topic:'국제 관계',                                   exam:'final'},
+      {id:'vis-so-2-2-4',name:'Ⅷ. 사회 변동',               topic:'변동·불평등',                                 exam:'final'},
+    ]},
+    3:{1:[
+      {id:'vis-so-3-1-1',name:'Ⅰ. 지속가능 발전',           topic:'환경·기후변화',                               exam:'mid'},
+      {id:'vis-so-3-1-2',name:'Ⅱ. 세계 갈등',               topic:'분쟁·해결',                                   exam:'mid'},
+      {id:'vis-so-3-1-3',name:'Ⅲ. 미래·진로',               topic:'진로 설계',                                   exam:'final'},
+    ],2:[
+      {id:'vis-so-3-2-1',name:'Ⅳ. 인권 보호',               topic:'소수자·차별',                                 exam:'mid'},
+      {id:'vis-so-3-2-2',name:'Ⅴ. 글로벌 경제',             topic:'세계화',                                      exam:'mid'},
+      {id:'vis-so-3-2-3',name:'Ⅵ. 시민 참여',               topic:'민주시민',                                    exam:'final'},
+    ]},
+  },
+  dong:{
+    1:{1:[
+      {id:'dong-so-1-1-1',name:'1. 세계 자연환경과 인간',     topic:'기후·지형·인간생활',                          exam:'mid'},
+      {id:'dong-so-1-1-2',name:'2. 세계 인문환경',            topic:'인구·도시·문화권',                            exam:'mid'},
+      {id:'dong-so-1-1-3',name:'3. 자연재해와 안전',          topic:'재해 대응·안전 생활',                         exam:'mid'},
+      {id:'dong-so-1-1-4',name:'4. 우리 국토 자연환경',       topic:'지형·기후·자원',                              exam:'final'},
+      {id:'dong-so-1-1-5',name:'5. 우리 국토 인문환경',       topic:'인구·도시화·지역 개발',                       exam:'final'},
+    ],2:[
+      {id:'dong-so-1-2-1',name:'6. 개인과 사회생활',          topic:'사회화·지위·역할',                            exam:'mid'},
+      {id:'dong-so-1-2-2',name:'7. 문화',                     topic:'문화의 의미·다양성',                          exam:'mid'},
+      {id:'dong-so-1-2-3',name:'8. 민주주의',                 topic:'민주주의·시민 참여',                          exam:'final'},
+      {id:'dong-so-1-2-4',name:'9. 경제생활과 시장',          topic:'경제·수요·공급',                              exam:'final'},
+    ]},
+    2:{1:[
+      {id:'dong-so-2-1-1',name:'1. 인권과 헌법',              topic:'기본권·인권 침해와 구제',                     exam:'mid'},
+      {id:'dong-so-2-1-2',name:'2. 국가기관',                 topic:'국회·정부·법원',                              exam:'mid'},
+      {id:'dong-so-2-1-3',name:'3. 경제 주체와 시장',         topic:'가계·기업·시장경제',                          exam:'final'},
+      {id:'dong-so-2-1-4',name:'4. 국민경제',                 topic:'GDP·물가·실업',                               exam:'final'},
+    ],2:[
+      {id:'dong-so-2-2-1',name:'5. 국제거래와 금융',          topic:'무역·환율·금융',                              exam:'mid'},
+      {id:'dong-so-2-2-2',name:'6. 민주 선거와 정치',         topic:'선거 원칙·정당',                              exam:'mid'},
+      {id:'dong-so-2-2-3',name:'7. 국제사회',                 topic:'국제 관계·세계시민',                          exam:'final'},
+      {id:'dong-so-2-2-4',name:'8. 사회 불평등과 변동',       topic:'불평등·다문화',                               exam:'final'},
+    ]},
+    3:{1:[
+      {id:'dong-so-3-1-1',name:'1. 환경과 지속가능 발전',     topic:'환경문제·기후변화',                           exam:'mid'},
+      {id:'dong-so-3-1-2',name:'2. 세계 갈등과 협력',         topic:'국제 갈등·분쟁 해결',                         exam:'mid'},
+      {id:'dong-so-3-1-3',name:'3. 미래와 삶의 설계',         topic:'미래 사회·진로',                              exam:'final'},
+    ],2:[
+      {id:'dong-so-3-2-1',name:'4. 인권 존중과 차별 극복',    topic:'약자 보호·차별 해소',                         exam:'mid'},
+      {id:'dong-so-3-2-2',name:'5. 글로벌 경제 변화',         topic:'세계화·다국적기업',                           exam:'mid'},
+      {id:'dong-so-3-2-3',name:'6. 민주시민의 역할',          topic:'참여·책임·공동체',                            exam:'final'},
+    ]},
+  },
+  sin:{
+    1:{1:[
+      {id:'sin-so-1-1-1',name:'Ⅰ. 세계 자연환경',            topic:'기후·지형',                                   exam:'mid'},
+      {id:'sin-so-1-1-2',name:'Ⅱ. 세계 인문환경',            topic:'인구·도시·문화',                              exam:'mid'},
+      {id:'sin-so-1-1-3',name:'Ⅲ. 자연재해',                 topic:'재해·대응',                                   exam:'mid'},
+      {id:'sin-so-1-1-4',name:'Ⅳ. 국토 자연환경',            topic:'지형·기후',                                   exam:'final'},
+      {id:'sin-so-1-1-5',name:'Ⅴ. 국토 인문환경',            topic:'인구·도시화',                                 exam:'final'},
+    ],2:[
+      {id:'sin-so-1-2-1',name:'Ⅵ. 개인과 사회',              topic:'사회화·집단',                                 exam:'mid'},
+      {id:'sin-so-1-2-2',name:'Ⅶ. 문화',                     topic:'문화 다양성',                                 exam:'mid'},
+      {id:'sin-so-1-2-3',name:'Ⅷ. 민주정치',                 topic:'민주주의',                                    exam:'final'},
+      {id:'sin-so-1-2-4',name:'Ⅸ. 경제',                     topic:'경제 기초',                                   exam:'final'},
+    ]},
+    2:{1:[
+      {id:'sin-so-2-1-1',name:'Ⅰ. 인권·헌법',                topic:'기본권',                                      exam:'mid'},
+      {id:'sin-so-2-1-2',name:'Ⅱ. 국가기관',                 topic:'삼권 분립',                                   exam:'mid'},
+      {id:'sin-so-2-1-3',name:'Ⅲ. 경제주체',                 topic:'가계·기업',                                   exam:'final'},
+      {id:'sin-so-2-1-4',name:'Ⅳ. 시장경제',                 topic:'수요·공급',                                   exam:'final'},
+    ],2:[
+      {id:'sin-so-2-2-1',name:'Ⅴ. 국민경제',                 topic:'GDP',                                         exam:'mid'},
+      {id:'sin-so-2-2-2',name:'Ⅵ. 민주선거',                 topic:'선거·정당',                                   exam:'mid'},
+      {id:'sin-so-2-2-3',name:'Ⅶ. 국제사회',                 topic:'국제관계',                                    exam:'final'},
+      {id:'sin-so-2-2-4',name:'Ⅷ. 사회변동',                 topic:'변동·불평등',                                 exam:'final'},
+    ]},
+    3:{1:[
+      {id:'sin-so-3-1-1',name:'Ⅰ. 지속가능 발전',            topic:'환경·기후',                                   exam:'mid'},
+      {id:'sin-so-3-1-2',name:'Ⅱ. 세계 갈등',                topic:'분쟁·해결',                                   exam:'mid'},
+      {id:'sin-so-3-1-3',name:'Ⅲ. 미래·진로',                topic:'진로 설계',                                   exam:'final'},
+    ],2:[
+      {id:'sin-so-3-2-1',name:'Ⅳ. 인권',                     topic:'소수자·차별',                                 exam:'mid'},
+      {id:'sin-so-3-2-2',name:'Ⅴ. 글로벌경제',               topic:'세계화',                                      exam:'mid'},
+      {id:'sin-so-3-2-3',name:'Ⅵ. 시민 참여',                topic:'민주시민',                                    exam:'final'},
+    ]},
+  },
+};
+
 
 
 const SHARED={
@@ -615,7 +642,7 @@ function getPoolForUnit(uid){
 // ════════════════════════════════════════════════════════════
 //  상태
 // ════════════════════════════════════════════════════════════
-let state = {pub:'mirae', grade:1, sem:1, units:new Set(), examType:'all', count:20};
+let state = {pub:'mir', grade:1, sem:1, units:new Set(), examType:'all', count:20};
 let curQs=[], userAns={}, submitted=false, timerSec=0, timerInterval;
 const NUMS=['①','②','③','④'];
 const CHIP_COLOR = {"\uc9c0\ub9ac": "#0d6b5e", "\uc5ed\uc0ac": "#881337", "\uc77c\ubc18\uc0ac\ud68c": "#1d4ed8", "\uacbd\uc81c": "#166534", "\uc815\uce58": "#6d28d9", "\ubb38\ud654": "#92400e"};

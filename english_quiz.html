@@ -407,162 +407,193 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--rice);color:var(--in
 // ════════════════════════════════════════════════════════════
 //  출판사 정의
 // ════════════════════════════════════════════════════════════
-const PUBLISHERS = [{"id": "ybm", "name": "YBM", "author": "박준언", "icon": "📘", "color": "#1d4ed8"}, {"id": "chun", "name": "천재교육", "author": "이재영", "icon": "📗", "color": "#166534"}, {"id": "vis", "name": "비상교육", "author": "김진완", "icon": "📙", "color": "#92400e"}, {"id": "dong", "name": "동아출판", "author": "이병민", "icon": "📕", "color": "#881337"}, {"id": "mir", "name": "미래엔", "author": "최연희", "icon": "📓", "color": "#4c1d95"}];
+const PUBLISHERS = [
+  {id:'ybm', name:'YBM',   author:'박준언', icon:'📘', color:'#1d4ed8'},
+  {id:'chun',name:'천재교육',author:'이상기', icon:'📗', color:'#166534'},
+  {id:'vis', name:'비상교육',author:'황종배', icon:'📙', color:'#92400e'},
+  {id:'dong',name:'동아출판',author:'이병민', icon:'📕', color:'#881337'},
+  {id:'neun',name:'능률',   author:'김기택', icon:'📓', color:'#4c1d95'},
+];
 
 
-const CURRICULUM={ybm:{1:{1:[
-  {id:'e-y-1-1-1',name:'Unit 1: Hello!',topic:'자기소개·인사표현·be동사',exam:'mid'},
-  {id:'e-y-1-1-2',name:'Unit 2: My Family',topic:'가족·소유격·일반동사',exam:'mid'},
-  {id:'e-y-1-1-3',name:'Unit 3: School Life',topic:'학교생활·현재시제',exam:'mid'},
-  {id:'e-y-1-1-4',name:'Unit 4: Free Time',topic:'여가·현재진행형',exam:'final'},
-  {id:'e-y-1-1-5',name:'Unit 5: Food',topic:'음식·조동사 can·may',exam:'final'},
-  {id:'e-y-1-1-6',name:'Unit 6: Seasons',topic:'계절·There is·are',exam:'final'},
-],2:[
-  {id:'e-y-1-2-1',name:'Unit 7: Travel',topic:'여행·과거시제',exam:'mid'},
-  {id:'e-y-1-2-2',name:'Unit 8: Health',topic:'건강·비교급·최상급',exam:'mid'},
-  {id:'e-y-1-2-3',name:'Unit 9: Nature',topic:'자연·미래시제 will',exam:'final'},
-  {id:'e-y-1-2-4',name:'Unit 10: People',topic:'인물·관계대명사 기초',exam:'final'},
-]},2:{1:[
-  {id:'e-y-2-1-1',name:'Unit 1: Interests',topic:'취미·동명사',exam:'mid'},
-  {id:'e-y-2-1-2',name:'Unit 2: Community',topic:'지역사회·to부정사',exam:'mid'},
-  {id:'e-y-2-1-3',name:'Unit 3: Culture',topic:'문화·현재완료',exam:'final'},
-  {id:'e-y-2-1-4',name:'Unit 4: Technology',topic:'기술·수동태 기초',exam:'final'},
-],2:[
-  {id:'e-y-2-2-1',name:'Unit 5: Environment',topic:'환경·접속사',exam:'mid'},
-  {id:'e-y-2-2-2',name:'Unit 6: Art',topic:'예술·관계대명사 심화',exam:'mid'},
-  {id:'e-y-2-2-3',name:'Unit 7: Future',topic:'미래 직업·가정법 기초',exam:'final'},
-  {id:'e-y-2-2-4',name:'Unit 8: Stories',topic:'이야기·간접화법',exam:'final'},
-]},3:{1:[
-  {id:'e-y-3-1-1',name:'Unit 1: Identity',topic:'정체성·분사',exam:'mid'},
-  {id:'e-y-3-1-2',name:'Unit 2: Society',topic:'사회·관계부사',exam:'mid'},
-  {id:'e-y-3-1-3',name:'Unit 3: Science',topic:'과학·가정법',exam:'final'},
-  {id:'e-y-3-1-4',name:'Unit 4: Media',topic:'미디어·복잡 문장',exam:'final'},
-],2:[
-  {id:'e-y-3-2-1',name:'Unit 5: Global Issues',topic:'세계 문제·논설 독해',exam:'mid'},
-  {id:'e-y-3-2-2',name:'Unit 6: Creativity',topic:'창의성·복합 문법',exam:'mid'},
-  {id:'e-y-3-2-3',name:'Unit 7: Challenge',topic:'도전·심화 독해',exam:'final'},
-  {id:'e-y-3-2-4',name:'Unit 8: Dreams',topic:'꿈·심화 작문',exam:'final'},
-]}},chun:{1:{1:[
-  {id:'ec-1-1-1',name:'Lesson 1: Nice to Meet You',topic:'만남·인사·be동사',exam:'mid'},
-  {id:'ec-1-1-2',name:'Lesson 2: My Day',topic:'일상·일반동사',exam:'mid'},
-  {id:'ec-1-1-3',name:'Lesson 3: My Favorite',topic:'좋아하는 것·형용사',exam:'final'},
-  {id:'ec-1-1-4',name:'Lesson 4: Let's Eat',topic:'음식·can',exam:'final'},
-],2:[
-  {id:'ec-1-2-1',name:'Lesson 5: Last Weekend',topic:'지난 주말·과거시제',exam:'mid'},
-  {id:'ec-1-2-2',name:'Lesson 6: My Body',topic:'신체·건강',exam:'mid'},
-  {id:'ec-1-2-3',name:'Lesson 7: Around the World',topic:'세계·비교급',exam:'final'},
-  {id:'ec-1-2-4',name:'Lesson 8: My Future',topic:'미래 계획·will',exam:'final'},
-]},2:{1:[
-  {id:'ec-2-1-1',name:'Lesson 1: Hobbies',topic:'취미·동명사',exam:'mid'},
-  {id:'ec-2-1-2',name:'Lesson 2: Going Green',topic:'환경·to부정사',exam:'mid'},
-  {id:'ec-2-1-3',name:'Lesson 3: Amazing Trips',topic:'여행·현재완료',exam:'final'},
-  {id:'ec-2-1-4',name:'Lesson 4: Science World',topic:'과학·수동태',exam:'final'},
-],2:[
-  {id:'ec-2-2-1',name:'Lesson 5: Great Stories',topic:'이야기·관계대명사',exam:'mid'},
-  {id:'ec-2-2-2',name:'Lesson 6: Culture Hub',topic:'문화·접속사',exam:'mid'},
-  {id:'ec-2-2-3',name:'Lesson 7: Work and Play',topic:'직업·분사',exam:'final'},
-  {id:'ec-2-2-4',name:'Lesson 8: Dream Big',topic:'꿈·복합 문법',exam:'final'},
-]},3:{1:[
-  {id:'ec-3-1-1',name:'Lesson 1: Who Am I?',topic:'정체성·복잡 문장',exam:'mid'},
-  {id:'ec-3-1-2',name:'Lesson 2: Our Society',topic:'사회 문제·가정법',exam:'mid'},
-  {id:'ec-3-1-3',name:'Lesson 3: Tech Life',topic:'기술·관계부사',exam:'final'},
-  {id:'ec-3-1-4',name:'Lesson 4: Be Creative',topic:'창의성·심화 문법',exam:'final'},
-],2:[
-  {id:'ec-3-2-1',name:'Lesson 5: Go Global',topic:'세계화·논설 독해',exam:'mid'},
-  {id:'ec-3-2-2',name:'Lesson 6: For the Earth',topic:'환경·심화 독해',exam:'mid'},
-  {id:'ec-3-2-3',name:'Lesson 7: New Challenges',topic:'도전·심화 작문',exam:'final'},
-  {id:'ec-3-2-4',name:'Lesson 8: Future Plans',topic:'미래·종합',exam:'final'},
-]}},vis:{1:{1:[
-  {id:'ev-1-1-1',name:'Ch.1 New Start',topic:'학교생활·be동사',exam:'mid'},
-  {id:'ev-1-1-2',name:'Ch.2 Daily Life',topic:'일상·일반동사',exam:'mid'},
-  {id:'ev-1-1-3',name:'Ch.3 Favorites',topic:'취향·형용사·부사',exam:'final'},
-  {id:'ev-1-1-4',name:'Ch.4 Around Me',topic:'주변·can·조동사',exam:'final'},
-],2:[
-  {id:'ev-1-2-1',name:'Ch.5 Past Days',topic:'과거·과거시제',exam:'mid'},
-  {id:'ev-1-2-2',name:'Ch.6 Stay Healthy',topic:'건강·비교',exam:'mid'},
-  {id:'ev-1-2-3',name:'Ch.7 The World',topic:'세계·미래',exam:'final'},
-  {id:'ev-1-2-4',name:'Ch.8 My Dream',topic:'꿈·진로',exam:'final'},
-]},2:{1:[
-  {id:'ev-2-1-1',name:'Ch.1 My Interests',topic:'취미·동명사',exam:'mid'},
-  {id:'ev-2-1-2',name:'Ch.2 Together',topic:'공동체·to부정사',exam:'mid'},
-  {id:'ev-2-1-3',name:'Ch.3 Experiences',topic:'경험·현재완료',exam:'final'},
-  {id:'ev-2-1-4',name:'Ch.4 How Things Work',topic:'원리·수동태',exam:'final'},
-],2:[
-  {id:'ev-2-2-1',name:'Ch.5 Nature and Us',topic:'자연·환경·접속사',exam:'mid'},
-  {id:'ev-2-2-2',name:'Ch.6 Arts and Culture',topic:'예술·관계대명사',exam:'mid'},
-  {id:'ev-2-2-3',name:'Ch.7 What If?',topic:'가정법',exam:'final'},
-  {id:'ev-2-2-4',name:'Ch.8 Life Stories',topic:'이야기·분사',exam:'final'},
-]},3:{1:[
-  {id:'ev-3-1-1',name:'Ch.1 Who We Are',topic:'정체성·복합 구문',exam:'mid'},
-  {id:'ev-3-1-2',name:'Ch.2 Society Matters',topic:'사회·가정법 심화',exam:'mid'},
-  {id:'ev-3-1-3',name:'Ch.3 Science & Tech',topic:'기술·관계부사',exam:'final'},
-  {id:'ev-3-1-4',name:'Ch.4 Creative Minds',topic:'창의·복합 문법',exam:'final'},
-],2:[
-  {id:'ev-3-2-1',name:'Ch.5 Global Citizens',topic:'세계·논설',exam:'mid'},
-  {id:'ev-3-2-2',name:'Ch.6 Earth First',topic:'환경·심화',exam:'mid'},
-  {id:'ev-3-2-3',name:'Ch.7 Rise Up',topic:'도전·심화 독해',exam:'final'},
-  {id:'ev-3-2-4',name:'Ch.8 My Tomorrow',topic:'미래·종합',exam:'final'},
-]}},dong:{1:{1:[
-  {id:'ed-1-1-1',name:'Unit 1: Here I Am',topic:'자기소개·be동사',exam:'mid'},
-  {id:'ed-1-1-2',name:'Unit 2: Family Ties',topic:'가족·소유격',exam:'mid'},
-  {id:'ed-1-1-3',name:'Unit 3: School Days',topic:'학교·일반동사',exam:'final'},
-  {id:'ed-1-1-4',name:'Unit 4: Fun Activities',topic:'활동·진행형',exam:'final'},
-],2:[
-  {id:'ed-1-2-1',name:'Unit 5: Good Memories',topic:'기억·과거시제',exam:'mid'},
-  {id:'ed-1-2-2',name:'Unit 6: Healthy Life',topic:'건강·비교급',exam:'mid'},
-  {id:'ed-1-2-3',name:'Unit 7: Our Planet',topic:'지구·will',exam:'final'},
-  {id:'ed-1-2-4',name:'Unit 8: Big Dreams',topic:'꿈·be going to',exam:'final'},
-]},2:{1:[
-  {id:'ed-2-1-1',name:'Unit 1: My Passion',topic:'열정·동명사',exam:'mid'},
-  {id:'ed-2-1-2',name:'Unit 2: Giving Back',topic:'봉사·to부정사',exam:'mid'},
-  {id:'ed-2-1-3',name:'Unit 3: World Explorer',topic:'탐험·현재완료',exam:'final'},
-  {id:'ed-2-1-4',name:'Unit 4: How It Works',topic:'원리·수동태',exam:'final'},
-],2:[
-  {id:'ed-2-2-1',name:'Unit 5: Save the Earth',topic:'환경·접속사',exam:'mid'},
-  {id:'ed-2-2-2',name:'Unit 6: Art Around Us',topic:'예술·관계대명사',exam:'mid'},
-  {id:'ed-2-2-3',name:'Unit 7: Future Jobs',topic:'미래 직업·가정법',exam:'final'},
-  {id:'ed-2-2-4',name:'Unit 8: Great Stories',topic:'이야기·간접화법',exam:'final'},
-]},3:{1:[
-  {id:'ed-3-1-1',name:'Unit 1: Being Me',topic:'자아·복합 문장',exam:'mid'},
-  {id:'ed-3-1-2',name:'Unit 2: Social Issues',topic:'사회·가정법',exam:'mid'},
-  {id:'ed-3-1-3',name:'Unit 3: Innovation',topic:'혁신·관계부사',exam:'final'},
-  {id:'ed-3-1-4',name:'Unit 4: Express Yourself',topic:'표현·복합 문법',exam:'final'},
-],2:[
-  {id:'ed-3-2-1',name:'Unit 5: Global Minds',topic:'글로벌·논설',exam:'mid'},
-  {id:'ed-3-2-2',name:'Unit 6: Green Future',topic:'녹색 미래·심화',exam:'mid'},
-  {id:'ed-3-2-3',name:'Unit 7: Overcome',topic:'극복·심화 독해',exam:'final'},
-  {id:'ed-3-2-4',name:'Unit 8: Shine On',topic:'빛나다·종합',exam:'final'},
-]}},mir:{1:{1:[
-  {id:'em-1-1-1',name:'Lesson 1: Hello, Everyone!',topic:'만남·인사',exam:'mid'},
-  {id:'em-1-1-2',name:'Lesson 2: My Sweet Home',topic:'가족·집',exam:'mid'},
-  {id:'em-1-1-3',name:'Lesson 3: Let's Go to School',topic:'학교생활',exam:'final'},
-  {id:'em-1-1-4',name:'Lesson 4: What Do You Like?',topic:'좋아하는 것',exam:'final'},
-],2:[
-  {id:'em-1-2-1',name:'Lesson 5: What Did You Do?',topic:'과거 활동',exam:'mid'},
-  {id:'em-1-2-2',name:'Lesson 6: How Are You?',topic:'건강·감정',exam:'mid'},
-  {id:'em-1-2-3',name:'Lesson 7: Let's Travel',topic:'여행·계획',exam:'final'},
-  {id:'em-1-2-4',name:'Lesson 8: My Future',topic:'미래·꿈',exam:'final'},
-]},2:{1:[
-  {id:'em-2-1-1',name:'Lesson 1: Hobbies and Talents',topic:'취미·재능',exam:'mid'},
-  {id:'em-2-1-2',name:'Lesson 2: Life in the City',topic:'도시생활',exam:'mid'},
-  {id:'em-2-1-3',name:'Lesson 3: Different Cultures',topic:'문화 다양성',exam:'final'},
-  {id:'em-2-1-4',name:'Lesson 4: Technology Matters',topic:'기술',exam:'final'},
-],2:[
-  {id:'em-2-2-1',name:'Lesson 5: Our Green Earth',topic:'환경',exam:'mid'},
-  {id:'em-2-2-2',name:'Lesson 6: Art Speaks',topic:'예술',exam:'mid'},
-  {id:'em-2-2-3',name:'Lesson 7: Dream Jobs',topic:'직업',exam:'final'},
-  {id:'em-2-2-4',name:'Lesson 8: Stories to Tell',topic:'이야기',exam:'final'},
-]},3:{1:[
-  {id:'em-3-1-1',name:'Lesson 1: True Identity',topic:'정체성',exam:'mid'},
-  {id:'em-3-1-2',name:'Lesson 2: Social Concerns',topic:'사회 문제',exam:'mid'},
-  {id:'em-3-1-3',name:'Lesson 3: Future Science',topic:'미래 과학',exam:'final'},
-  {id:'em-3-1-4',name:'Lesson 4: Creative Life',topic:'창의성',exam:'final'},
-],2:[
-  {id:'em-3-2-1',name:'Lesson 5: One World',topic:'세계',exam:'mid'},
-  {id:'em-3-2-2',name:'Lesson 6: Earth Matters',topic:'환경 심화',exam:'mid'},
-  {id:'em-3-2-3',name:'Lesson 7: Dare to Dream',topic:'도전',exam:'final'},
-  {id:'em-3-2-4',name:'Lesson 8: Looking Forward',topic:'미래',exam:'final'},
-]}}}
+const CURRICULUM={
+  ybm:{
+    1:{1:[
+      {id:'ybm-1-1-1',name:'Lesson 1: All about Me',         topic:'자기소개·be동사·동명사',    exam:'mid'},
+      {id:'ybm-1-1-2',name:'Lesson 2: Have Fun at School',    topic:'학교생활·현재진행형·조동사', exam:'mid'},
+      {id:'ybm-1-1-3',name:'Lesson 3: The Magic of Manners',  topic:'예절·과거시제·조동사 may',  exam:'mid'},
+      {id:'ybm-1-1-4',name:'Lesson 4: Home Sweet Home',       topic:'가족·to부정사·접속사 when', exam:'final'},
+      {id:'ybm-1-1-5',name:'Lesson 5: Food Around the World', topic:'음식·비교급·be going to',   exam:'final'},
+      {id:'ybm-1-1-6',name:'Lesson 6: Click, Connect, Communicate', topic:'SNS·동명사·감정 표현', exam:'final'},
+    ],2:[
+      {id:'ybm-1-2-1',name:'Lesson 7: Think Green, Live Green', topic:'환경·접속사 that·감탄문', exam:'mid'},
+      {id:'ybm-1-2-2',name:'Lesson 8: A Journey with Arts',     topic:'예술·현재완료 기초',       exam:'mid'},
+    ]},
+    2:{1:[
+      {id:'ybm-2-1-1',name:'Lesson 1: Be Yourself',            topic:'자아·동명사·to부정사',      exam:'mid'},
+      {id:'ybm-2-1-2',name:'Lesson 2: Teamwork Makes Dreams Come True', topic:'협력·현재완료',   exam:'mid'},
+      {id:'ybm-2-1-3',name:'Lesson 3: Express Yourself',       topic:'표현·수동태 기초',          exam:'final'},
+      {id:'ybm-2-1-4',name:'Lesson 4: Travel the World',       topic:'여행·관계대명사 who/which', exam:'final'},
+    ],2:[
+      {id:'ybm-2-2-1',name:'Lesson 5: Technology Changes Our Life', topic:'기술·분사',           exam:'mid'},
+      {id:'ybm-2-2-2',name:'Lesson 6: The Power of Small Acts',     topic:'봉사·접속사 심화',     exam:'mid'},
+      {id:'ybm-2-2-3',name:'Lesson 7: Be a Smart Shopper',          topic:'소비·간접의문문',      exam:'final'},
+      {id:'ybm-2-2-4',name:'Lesson 8: The Beauty of Nature',        topic:'자연·가정법 기초',     exam:'final'},
+    ]},
+    3:{1:[
+      {id:'ybm-3-1-1',name:'Lesson 1: Role Models',             topic:'역할 모델·복합 문장',      exam:'mid'},
+      {id:'ybm-3-1-2',name:'Lesson 2: Wonders of the World',    topic:'세계 불가사의·수동태 심화',exam:'mid'},
+      {id:'ybm-3-1-3',name:'Lesson 3: Diversity Makes Us Strong',topic:'다양성·관계부사',          exam:'final'},
+      {id:'ybm-3-1-4',name:'Lesson 4: Science in Our Life',     topic:'과학·가정법',              exam:'final'},
+    ],2:[
+      {id:'ybm-3-2-1',name:'Lesson 5: Think before You Act',    topic:'비판적 사고·복합 구문',    exam:'mid'},
+      {id:'ybm-3-2-2',name:'Lesson 6: Make the World Better',   topic:'세계 문제·심화 독해',      exam:'mid'},
+      {id:'ybm-3-2-3',name:'Lesson 7: A Better Future',         topic:'미래·종합 문법',           exam:'final'},
+      {id:'ybm-3-2-4',name:'Lesson 8: Stories That Move Us',    topic:'감동 이야기·심화 작문',    exam:'final'},
+    ]},
+  },
+  chun:{
+    1:{1:[
+      {id:'chun-1-1-1',name:'Lesson 1: I Am Cotton Candy!',     topic:'자기소개·be동사·형용사',   exam:'mid'},
+      {id:'chun-1-1-2',name:'Lesson 2: My School Tour',         topic:'학교·일반동사·There is',  exam:'mid'},
+      {id:'chun-1-1-3',name:'Lesson 3: Happy Together',         topic:'가족·현재진행형',          exam:'mid'},
+      {id:'chun-1-1-4',name:'Lesson 4: Taste the World',        topic:'음식·비교급·조동사',       exam:'final'},
+      {id:'chun-1-1-5',name:'Lesson 5: My Weekend',             topic:'주말·과거시제',            exam:'final'},
+      {id:'chun-1-1-6',name:'Lesson 6: Amazing Animals',        topic:'동물·미래시제',            exam:'final'},
+    ],2:[
+      {id:'chun-1-2-1',name:'Lesson 7: Save Our Earth',         topic:'환경·접속사',              exam:'mid'},
+      {id:'chun-1-2-2',name:'Lesson 8: Let's Make Art',        topic:'예술·to부정사 기초',       exam:'mid'},
+    ]},
+    2:{1:[
+      {id:'chun-2-1-1',name:'Lesson 1: Know Yourself',          topic:'자아·동명사',              exam:'mid'},
+      {id:'chun-2-1-2',name:'Lesson 2: Around the World',       topic:'세계 문화·현재완료',       exam:'mid'},
+      {id:'chun-2-1-3',name:'Lesson 3: Science and Me',         topic:'과학·수동태 기초',         exam:'final'},
+      {id:'chun-2-1-4',name:'Lesson 4: People Who Inspire Us',  topic:'인물·관계대명사',          exam:'final'},
+    ],2:[
+      {id:'chun-2-2-1',name:'Lesson 5: Technology in Daily Life',topic:'기술·분사',               exam:'mid'},
+      {id:'chun-2-2-2',name:'Lesson 6: Help Each Other',        topic:'협력·접속사 심화',         exam:'mid'},
+      {id:'chun-2-2-3',name:'Lesson 7: Be a Good Consumer',     topic:'소비·간접의문문',          exam:'final'},
+      {id:'chun-2-2-4',name:'Lesson 8: Nature Is Beautiful',    topic:'자연·복합 문장',           exam:'final'},
+    ]},
+    3:{1:[
+      {id:'chun-3-1-1',name:'Lesson 1: Follow Your Dream',      topic:'꿈·복합 구문',             exam:'mid'},
+      {id:'chun-3-1-2',name:'Lesson 2: Mysteries of the World', topic:'미스터리·수동태 심화',     exam:'mid'},
+      {id:'chun-3-1-3',name:'Lesson 3: We Are All Different',   topic:'다양성·관계부사',          exam:'final'},
+      {id:'chun-3-1-4',name:'Lesson 4: The Power of Science',   topic:'과학·가정법',              exam:'final'},
+    ],2:[
+      {id:'chun-3-2-1',name:'Lesson 5: Think Critically',       topic:'비판적 사고',              exam:'mid'},
+      {id:'chun-3-2-2',name:'Lesson 6: Change the World',       topic:'세계 문제',                exam:'mid'},
+      {id:'chun-3-2-3',name:'Lesson 7: Looking Ahead',          topic:'미래·종합',                exam:'final'},
+      {id:'chun-3-2-4',name:'Lesson 8: Stories to Remember',    topic:'감동·심화',                exam:'final'},
+    ]},
+  },
+  vis:{
+    1:{1:[
+      {id:'vis-1-1-1',name:'Lesson 1: Hello, I'm New Here',    topic:'자기소개·be동사',          exam:'mid'},
+      {id:'vis-1-1-2',name:'Lesson 2: My Busy School Life',     topic:'학교생활·일반동사',        exam:'mid'},
+      {id:'vis-1-1-3',name:'Lesson 3: Family Is Everything',    topic:'가족·현재진행형',          exam:'mid'},
+      {id:'vis-1-1-4',name:'Lesson 4: Food Is Culture',         topic:'음식·비교급',              exam:'final'},
+      {id:'vis-1-1-5',name:'Lesson 5: My Fun Weekend',          topic:'주말·과거시제',            exam:'final'},
+      {id:'vis-1-1-6',name:'Lesson 6: Let's Go Outside',       topic:'야외활동·미래시제',        exam:'final'},
+    ],2:[
+      {id:'vis-1-2-1',name:'Lesson 7: Keep Our Earth Clean',    topic:'환경·접속사',              exam:'mid'},
+      {id:'vis-1-2-2',name:'Lesson 8: Art Is Everywhere',       topic:'예술·to부정사',            exam:'mid'},
+    ]},
+    2:{1:[
+      {id:'vis-2-1-1',name:'Lesson 1: Who Are You?',            topic:'자아정체성·동명사',        exam:'mid'},
+      {id:'vis-2-1-2',name:'Lesson 2: Explore the World',       topic:'탐험·현재완료',            exam:'mid'},
+      {id:'vis-2-1-3',name:'Lesson 3: Science Is Fun',          topic:'과학·수동태',              exam:'final'},
+      {id:'vis-2-1-4',name:'Lesson 4: Amazing People',          topic:'인물·관계대명사',          exam:'final'},
+    ],2:[
+      {id:'vis-2-2-1',name:'Lesson 5: Digital World',           topic:'디지털·분사',              exam:'mid'},
+      {id:'vis-2-2-2',name:'Lesson 6: Together We Can',         topic:'협력·접속사',              exam:'mid'},
+      {id:'vis-2-2-3',name:'Lesson 7: Smart Choices',           topic:'선택·간접의문문',          exam:'final'},
+      {id:'vis-2-2-4',name:'Lesson 8: The Beauty of Earth',     topic:'지구·복합 문장',           exam:'final'},
+    ]},
+    3:{1:[
+      {id:'vis-3-1-1',name:'Lesson 1: My Role Model',           topic:'역할 모델·복합 구문',      exam:'mid'},
+      {id:'vis-3-1-2',name:'Lesson 2: World Wonders',           topic:'세계 불가사의·수동태',     exam:'mid'},
+      {id:'vis-3-1-3',name:'Lesson 3: Embrace Diversity',       topic:'다양성·관계부사',          exam:'final'},
+      {id:'vis-3-1-4',name:'Lesson 4: Science Shapes Our World',topic:'과학·가정법',              exam:'final'},
+    ],2:[
+      {id:'vis-3-2-1',name:'Lesson 5: Think for Yourself',      topic:'비판적 사고',              exam:'mid'},
+      {id:'vis-3-2-2',name:'Lesson 6: Make a Difference',       topic:'변화·심화 독해',           exam:'mid'},
+      {id:'vis-3-2-3',name:'Lesson 7: Tomorrow's World',       topic:'미래·종합',                exam:'final'},
+      {id:'vis-3-2-4',name:'Lesson 8: Unforgettable Stories',   topic:'이야기·심화',              exam:'final'},
+    ]},
+  },
+  dong:{
+    1:{1:[
+      {id:'dong-1-1-1',name:'Lesson 1: Nice to Meet You!',      topic:'인사·자기소개·be동사',     exam:'mid'},
+      {id:'dong-1-1-2',name:'Lesson 2: School Days',            topic:'학교생활·일반동사·조동사', exam:'mid'},
+      {id:'dong-1-1-3',name:'Lesson 3: Family and Friends',     topic:'가족·친구·현재진행형',     exam:'mid'},
+      {id:'dong-1-1-4',name:'Lesson 4: Let's Eat!',            topic:'음식·비교급·권유 표현',    exam:'final'},
+      {id:'dong-1-1-5',name:'Lesson 5: My Free Time',           topic:'여가·과거시제',            exam:'final'},
+      {id:'dong-1-1-6',name:'Lesson 6: Our Planet',             topic:'환경·미래시제·접속사',     exam:'final'},
+    ],2:[
+      {id:'dong-1-2-1',name:'Lesson 7: Culture Around Us',      topic:'문화·to부정사',            exam:'mid'},
+      {id:'dong-1-2-2',name:'Lesson 8: The World of Art',       topic:'예술·감탄문',              exam:'mid'},
+    ]},
+    2:{1:[
+      {id:'dong-2-1-1',name:'Lesson 1: Finding Yourself',       topic:'자아·동명사',              exam:'mid'},
+      {id:'dong-2-1-2',name:'Lesson 2: Around the World',       topic:'세계·현재완료',            exam:'mid'},
+      {id:'dong-2-1-3',name:'Lesson 3: Science and Technology', topic:'과학기술·수동태',          exam:'final'},
+      {id:'dong-2-1-4',name:'Lesson 4: People Who Inspire',     topic:'인물·관계대명사',          exam:'final'},
+    ],2:[
+      {id:'dong-2-2-1',name:'Lesson 5: Living in a Digital World',topic:'디지털·분사',            exam:'mid'},
+      {id:'dong-2-2-2',name:'Lesson 6: Helping Hands',          topic:'봉사·접속사 심화',         exam:'mid'},
+      {id:'dong-2-2-3',name:'Lesson 7: Be a Wise Consumer',     topic:'소비·간접의문문',          exam:'final'},
+      {id:'dong-2-2-4',name:'Lesson 8: Wonders of Nature',      topic:'자연·복합 문장',           exam:'final'},
+    ]},
+    3:{1:[
+      {id:'dong-3-1-1',name:'Lesson 1: Dream Big',              topic:'꿈·복합 구문',             exam:'mid'},
+      {id:'dong-3-1-2',name:'Lesson 2: World Heritage',         topic:'세계유산·수동태 심화',     exam:'mid'},
+      {id:'dong-3-1-3',name:'Lesson 3: Different but Equal',    topic:'다양성·관계부사',          exam:'final'},
+      {id:'dong-3-1-4',name:'Lesson 4: Science for Us',         topic:'과학·가정법',              exam:'final'},
+    ],2:[
+      {id:'dong-3-2-1',name:'Lesson 5: Be a Critical Thinker',  topic:'비판적 사고',              exam:'mid'},
+      {id:'dong-3-2-2',name:'Lesson 6: Global Challenges',      topic:'세계 문제·심화 독해',      exam:'mid'},
+      {id:'dong-3-2-3',name:'Lesson 7: The Future Is Now',      topic:'미래·종합 문법',           exam:'final'},
+      {id:'dong-3-2-4',name:'Lesson 8: Stories That Touch Us',  topic:'감동·심화 작문',           exam:'final'},
+    ]},
+  },
+  neun:{
+    1:{1:[
+      {id:'neun-1-1-1',name:'Unit 1: About Me',                  topic:'자기소개·be동사·형용사',  exam:'mid'},
+      {id:'neun-1-1-2',name:'Unit 2: School Life',               topic:'학교생활·일반동사',        exam:'mid'},
+      {id:'neun-1-1-3',name:'Unit 3: My Family',                 topic:'가족·현재진행형·조동사',  exam:'mid'},
+      {id:'neun-1-1-4',name:'Unit 4: Food and Culture',          topic:'음식문화·비교급',          exam:'final'},
+      {id:'neun-1-1-5',name:'Unit 5: My Free Time',              topic:'여가활동·과거시제',        exam:'final'},
+      {id:'neun-1-1-6',name:'Unit 6: Our Environment',           topic:'환경·미래시제·접속사',     exam:'final'},
+    ],2:[
+      {id:'neun-1-2-1',name:'Unit 7: World Cultures',            topic:'세계문화·to부정사',        exam:'mid'},
+      {id:'neun-1-2-2',name:'Unit 8: Art and Music',             topic:'예술·동명사',              exam:'mid'},
+    ]},
+    2:{1:[
+      {id:'neun-2-1-1',name:'Unit 1: My Identity',               topic:'정체성·동명사',            exam:'mid'},
+      {id:'neun-2-1-2',name:'Unit 2: Exploring the World',       topic:'탐험·현재완료',            exam:'mid'},
+      {id:'neun-2-1-3',name:'Unit 3: Science and Life',          topic:'과학·수동태',              exam:'final'},
+      {id:'neun-2-1-4',name:'Unit 4: Inspiring People',          topic:'인물·관계대명사',          exam:'final'},
+    ],2:[
+      {id:'neun-2-2-1',name:'Unit 5: Technology and Us',         topic:'기술·분사',                exam:'mid'},
+      {id:'neun-2-2-2',name:'Unit 6: Helping Others',            topic:'봉사·접속사 심화',         exam:'mid'},
+      {id:'neun-2-2-3',name:'Unit 7: Making Good Choices',       topic:'선택·간접의문문',          exam:'final'},
+      {id:'neun-2-2-4',name:'Unit 8: Nature's Wonders',         topic:'자연·복합 문장',           exam:'final'},
+    ]},
+    3:{1:[
+      {id:'neun-3-1-1',name:'Unit 1: Chasing Your Dream',        topic:'꿈·복합 구문',             exam:'mid'},
+      {id:'neun-3-1-2',name:'Unit 2: Heritage of the World',     topic:'세계유산·수동태 심화',     exam:'mid'},
+      {id:'neun-3-1-3',name:'Unit 3: Value Diversity',           topic:'다양성·관계부사',          exam:'final'},
+      {id:'neun-3-1-4',name:'Unit 4: Science Changes Lives',     topic:'과학·가정법',              exam:'final'},
+    ],2:[
+      {id:'neun-3-2-1',name:'Unit 5: Think Critically',          topic:'비판적 사고',              exam:'mid'},
+      {id:'neun-3-2-2',name:'Unit 6: World Issues',              topic:'세계 문제·심화 독해',      exam:'mid'},
+      {id:'neun-3-2-3',name:'Unit 7: Our Future',                topic:'미래·종합',                exam:'final'},
+      {id:'neun-3-2-4',name:'Unit 8: Stories We Love',           topic:'이야기·심화',              exam:'final'},
+    ]},
+  },
+};
+
 
 
 const SHARED={
@@ -617,7 +648,7 @@ function getPoolForUnit(uid){
 // ════════════════════════════════════════════════════════════
 //  상태
 // ════════════════════════════════════════════════════════════
-let state = {pub:'mirae', grade:1, sem:1, units:new Set(), examType:'all', count:20};
+let state = {pub:'ybm', grade:1, sem:1, units:new Set(), examType:'all', count:20};
 let curQs=[], userAns={}, submitted=false, timerSec=0, timerInterval;
 const NUMS=['①','②','③','④'];
 const CHIP_COLOR = {"\uc5b4\ud718": "#1d4ed8", "\ubb38\ubc95": "#166534", "\ub3c5\ud574": "#92400e", "\ub4e3\uae30\u00b7\ub9d0\ud558\uae30": "#6d28d9", "\uc4f0\uae30": "#0d6b5e", "\ubb38\ud654": "#881337"};
