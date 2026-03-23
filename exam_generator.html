@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>중학교 전과목 시험지 생성기</title>
+<title>중학교 전과목 시험지 생성기 ver1.7</title>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -254,8 +254,8 @@ header::before{
 
 <header>
   <div class="hdr-inner">
-    <div class="hdr-label">AI-Powered · 교육부 2015·2022 개정 기준</div>
-    <h1 class="hdr-title">중학교 <span>전과목</span> 시험지 생성기</h1>
+    <div class="hdr-label">AI-Powered · 교육부 2015·2022 개정 기준 ver1.7</div>
+    <h1 class="hdr-title">중학교 <span>전과목</span> 시험지 생성기 </h1>
     <p class="hdr-sub">과목·학년·학기·단원을 선택하면 AI가 맞춤형 시험지를 즉시 생성합니다</p>
     <div class="hdr-stats">
       <div class="hdr-stat">📚 지원 과목 <span>6과목</span></div>
@@ -602,6 +602,7 @@ const SUBJ_PROMPTS={
 let currentSubj = null;
 let currentQuestions = [];
 let answersShown = false;
+let pubFirst = '';
 
 // ── 과목 선택 ──
 function selectSubject(subj, el) {
@@ -730,9 +731,11 @@ JSON 형식 (배열):
 ]
 
 규칙:
+- 반드시 위 JSON 형식 그대로 사용 (키 이름 변경 금지: type/qtype/question/choices/answer/explanation)
 - fill 타입은 type을 "fill"로, choices 생략
 - 2015 개정 교육과정 수준에 맞는 문제
 - 정답 위치(①②③④)가 고르게 분포
+- JSON 배열만 반환, 코드블록(\`\`\`) 사용 금지
 - 반드시 ${count}개 생성`;
 
   try {
@@ -758,9 +761,20 @@ JSON 형식 (배열):
     }
 
     console.log('프록시 응답 raw:', raw.substring(0, 500));
+    // 코드블록 제거
+    raw = raw.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
     const m = raw.match(/\[[\s\S]*\]/);
-    if (!m) throw new Error('JSON parse error');
-    currentQuestions = JSON.parse(m[0]);
+    if (!m) throw new Error('JSON parse error: ' + raw.substring(0,100));
+    const parsed = JSON.parse(m[0]);
+    // 한국어 키 → 영문 키 변환 (Claude가 한국어로 반환한 경우 대비)
+    currentQuestions = parsed.map(q => ({
+      type: q.type || (q['선택지'] ? 'choice' : 'fill'),
+      qtype: q.qtype || 'concept',
+      question: q.question || q['문제'] || q['질문'] || '',
+      choices: q.choices || q['선택지'] || q['보기'] || null,
+      answer: q.answer || q['정답'] || '',
+      explanation: q.explanation || q['해설'] || q['설명'] || ''
+    }));
     renderExam({s, grade, sem, pub, unit, count, level});
   } catch(err) {
     console.error(err);
