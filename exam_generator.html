@@ -336,7 +336,7 @@ header::before{
   <header>
     <div class="hdr-inner">
       <div class="hdr-label">AI-Powered · 교육부 2015·2022 개정 기준</div>
-      <h1 class="hdr-title">중학교 <span>전과목</span> 시험지 생성기 v1.5</h1>
+      <h1 class="hdr-title">중학교 <span>전과목</span> 시험지 생성기</h1>
       <p class="hdr-sub">과목을 선택하면 학년·학기·단원별 맞춤 시험지를 즉시 생성합니다</p>
     </div>
   </header>
@@ -404,12 +404,12 @@ header::before{
           </select>
         </div>
         <div class="cfg-item">
-          <label>교재(출판사)</label>
-          <select id="sel-pub"></select>
+          <label>교재(출판사) <span style="font-weight:400;color:var(--muted);font-size:.75em;">(복수 선택)</span></label>
+          <div id="sel-pub" style="display:flex;flex-direction:column;gap:5px;padding:8px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);max-height:130px;overflow-y:auto;"></div>
         </div>
         <div class="cfg-item">
-          <label>단원</label>
-          <select id="sel-unit"></select>
+          <label>단원 <span style="font-weight:400;color:var(--muted);font-size:.75em;">(복수 선택)</span></label>
+          <div id="sel-unit" style="display:flex;flex-direction:column;gap:5px;padding:8px 10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-sm);max-height:150px;overflow-y:auto;"></div>
         </div>
         <div class="cfg-item">
           <label>문항 수</label>
@@ -682,10 +682,12 @@ function goConfig(subj) {
   document.getElementById('cfg-icon').textContent  = s.icon;
   document.getElementById('cfg-title').textContent = s.name + ' 시험지 설정';
 
-  // 출판사
-  const pubSel = document.getElementById('sel-pub');
-  pubSel.innerHTML = Object.entries(s.publishers).map(([k,v]) =>
-    `<option value="${k}">${v}</option>`).join('');
+  // 출판사 체크박스
+  const pubDiv = document.getElementById('sel-pub');
+  pubDiv.innerHTML = Object.entries(s.publishers).map(([k,v]) =>
+    `<label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;">
+      <input type="checkbox" name="pub" value="${k}" checked style="accent-color:#7c3aed;width:14px;height:14px;"> ${v}
+    </label>`).join('');
 
   // 문제 유형 체크박스
   const chips = document.getElementById('qtype-chips');
@@ -710,24 +712,33 @@ function updateUnits() {
   if (!currentSubj) return;
   const g = document.getElementById('sel-grade').value;
   const s = document.getElementById('sel-sem').value;
-  const p = document.getElementById('sel-pub').value;
-  const units = SUBJECTS[currentSubj].units?.[p]?.[g]?.[s] || ['전체'];
-  const sel = document.getElementById('sel-unit');
-  sel.innerHTML = units.map((u, i) =>
-    `<option value="${i === 0 ? 'all' : i}">${u}</option>`).join('');
+  // 체크된 출판사들 가져오기
+  const checkedPubs = [...document.querySelectorAll('input[name=pub]:checked')].map(e=>e.value);
+  const pub = checkedPubs[0] || Object.keys(SUBJECTS[currentSubj].publishers)[0];
+  // 첫 번째 선택 출판사 기준으로 단원 목록 생성
+  const units = SUBJECTS[currentSubj].units?.[pub]?.[g]?.[s] || ['전체'];
+  const unitDiv = document.getElementById('sel-unit');
+  unitDiv.innerHTML = units.map((u, i) =>
+    `<label style="display:flex;align-items:center;gap:7px;font-size:.85rem;cursor:pointer;">
+      <input type="checkbox" name="unit" value="${i===0?'all':i}" ${i===0?'checked':''} style="accent-color:#7c3aed;width:14px;height:14px;"> ${u}
+    </label>`).join('');
 }
-['sel-grade','sel-sem','sel-pub'].forEach(id => {
+['sel-grade','sel-sem'].forEach(id => {
   document.getElementById(id).addEventListener('change', updateUnits);
 });
+document.getElementById('sel-pub').addEventListener('change', updateUnits);
 
 async function generateExam(){
   if (!currentSubj) { alert('과목을 먼저 선택해 주세요.'); return; }
   const s  = SUBJECTS[currentSubj];
   const grade = document.getElementById('sel-grade').value;
   const sem   = document.getElementById('sel-sem').value;
-  const pub   = document.getElementById('sel-pub').value;
-  const unitEl= document.getElementById('sel-unit');
-  const unit  = unitEl.options[unitEl.selectedIndex].text;
+  const pubChecked = [...document.querySelectorAll('input[name=pub]:checked')].map(e=>e.value);
+  const pub = pubChecked.length ? pubChecked.join(', ') : Object.keys(SUBJECTS[currentSubj].publishers)[0];
+  const pubFirst = [...document.querySelectorAll('input[name=pub]:checked')].map(e=>e.value)[0]
+                || Object.keys(SUBJECTS[currentSubj].publishers)[0];
+  const unitChecked=[...document.querySelectorAll('input[name=unit]:checked')].map(e=>e.closest('label').textContent.trim());
+  const unit = unitChecked.length ? unitChecked.join(', ') : '전체';
   const count = document.getElementById('sel-count').value;
   const level = document.getElementById('sel-level').value;
   const qtypes=[...document.querySelectorAll('input[name=qtype]:checked')].map(e=>e.value);
@@ -765,7 +776,7 @@ async function generateExam(){
 - 과목: ${s.name} (${SUBJ_PROMPTS[currentSubj]})
 - 학년: 중학교 ${grade}학년
 - 학기: ${sem}학기
-- 교재: ${s.publishers[pub]}
+- 교재: ${s.publishers[pubFirst] || pub}
 - 단원/범위: ${unit}
 - 난이도: ${LEVEL_NAME[level]}
 - 문제 유형(균등 배분): ${qtypes.join(', ')}
@@ -840,7 +851,7 @@ function renderExam({s,grade,sem,pub,unit,count,level}){
   document.getElementById('ep-title').textContent=`중학교 ${grade}학년 ${sem}학기 ${s.name} 시험`;
   document.getElementById('em-grade').textContent=`중${grade}학년`;
   document.getElementById('em-sem').textContent=`${sem}학기`;
-  document.getElementById('em-pub').textContent=s.publishers[pub];
+  document.getElementById('em-pub').textContent=s.publishers[pubFirst] || pub;
   document.getElementById('em-unit').textContent=unit;
   document.getElementById('em-cnt').textContent=`${currentQuestions.length}문항`;
   document.getElementById('ep-date').textContent=`생성일: ${dt} · 난이도: ${LEVEL_NAME[level]}`;
