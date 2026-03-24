@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>홀랜드 직업흥미유형 — RIASEC 진로 시험</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@600;900&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════ */
+:root {
+  --R: #e85d04;   /* 실재형 — 주황 */
+  --I: #3a86ff;   /* 탐구형 — 파랑 */
+  --A: #8338ec;   /* 예술형 — 보라 */
+  --S: #06d6a0;   /* 사회형 — 민트 */
+  --E: #ffbe0b;   /* 진취형 — 노랑 */
+  --C: #ef233c;   /* 관습형 — 빨강 */
+
+  --bg:   #0d0d0d;
+  --bg2:  #161616;
+  --bg3:  #1f1f1f;
+  --line: rgba(255,255,255,.08);
+  --txt:  #f0f0f0;
+  --sub:  #888;
+  --white: #ffffff;
+
+  --radius: 14px;
+  --shadow: 0 8px 40px rgba(0,0,0,.5);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Noto Sans KR',sans-serif;
+  background:var(--bg);color:var(--txt);
+  min-height:100vh;overflow-x:hidden;
+}
+
+/* ═══════════════════════════════════════
+   HERO — 인트로 화면
+═══════════════════════════════════════ */
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:60px 24px;position:relative;overflow:hidden;
+  background:radial-gradient(ellipse at 20% 40%,rgba(58,134,255,.12) 0%,transparent 55%),
+             radial-gradient(ellipse at 80% 60%,rgba(131,56,236,.10) 0%,transparent 55%),
+             var(--bg);
+}
+
+/* 배경 헥사곤 장식 */
+.hex-bg{
+  position:absolute;inset:0;pointer-events:none;overflow:hidden;
+}
+.hex-bg::before{
+  content:'RIASEC';
+  position:absolute;bottom:-80px;right:-60px;
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(180px,24vw,380px);
+  color:rgba(255,255,255,.025);letter-spacing:.15em;line-height:1;
+}
+
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  padding:6px 18px;border-radius:999px;font-size:11px;font-weight:700;
+  letter-spacing:.2em;color:var(--sub);margin-bottom:28px;
+  text-transform:uppercase;
+}
+.hero-badge::before{content:'◆';color:var(--I);}
+
+h1.hero-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(52px,10vw,110px);
+  line-height:.92;text-align:center;letter-spacing:.04em;
+  margin-bottom:8px;
+}
+h1.hero-title .hl-r{color:var(--R);}
+h1.hero-title .hl-i{color:var(--I);}
+h1.hero-title .hl-a{color:var(--A);}
+h1.hero-title .hl-s{color:var(--S);}
+h1.hero-title .hl-e{color:var(--E);}
+h1.hero-title .hl-c{color:var(--C);}
+
+.hero-sub{
+  font-size:14px;color:var(--sub);text-align:center;
+  line-height:1.8;margin-bottom:48px;max-width:480px;
+}
+
+/* RIASEC 6유형 미리보기 */
+.type-strip{
+  display:flex;gap:8px;flex-wrap:wrap;justify-content:center;
+  margin-bottom:48px;max-width:600px;
+}
+.type-chip{
+  display:flex;align-items:center;gap:7px;
+  padding:8px 16px;border-radius:8px;
+  border:1px solid;font-size:13px;font-weight:700;
+  cursor:default;transition:transform .15s;
+}
+.type-chip:hover{transform:translateY(-2px);}
+.type-chip.R{color:var(--R);border-color:rgba(232,93,4,.3);background:rgba(232,93,4,.08);}
+.type-chip.I{color:var(--I);border-color:rgba(58,134,255,.3);background:rgba(58,134,255,.08);}
+.type-chip.A{color:var(--A);border-color:rgba(131,56,236,.3);background:rgba(131,56,236,.08);}
+.type-chip.S{color:var(--S);border-color:rgba(6,214,160,.3);background:rgba(6,214,160,.08);}
+.type-chip.E{color:var(--E);border-color:rgba(255,190,11,.3);background:rgba(255,190,11,.08);}
+.type-chip.C{color:var(--C);border-color:rgba(239,35,60,.3);background:rgba(239,35,60,.08);}
+.type-chip .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.type-chip.R .dot{background:var(--R);}
+.type-chip.I .dot{background:var(--I);}
+.type-chip.A .dot{background:var(--A);}
+.type-chip.S .dot{background:var(--S);}
+.type-chip.E .dot{background:var(--E);}
+.type-chip.C .dot{background:var(--C);}
+
+/* 시험 선택 카드 */
+.exam-cards{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+  max-width:700px;width:100%;margin-bottom:32px;
+}
+@media(max-width:600px){.exam-cards{grid-template-columns:1fr;}}
+.exam-card{
+  background:var(--bg2);border:1px solid var(--line);
+  border-radius:var(--radius);padding:20px 18px;
+  cursor:pointer;transition:all .2s;text-align:left;
+  position:relative;overflow:hidden;
+}
+.exam-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  border-radius:var(--radius) var(--radius) 0 0;
+  opacity:.7;
+}
+.exam-card.cat-개념::before{background:linear-gradient(90deg,var(--I),var(--A));}
+.exam-card.cat-유형::before{background:linear-gradient(90deg,var(--R),var(--E));}
+.exam-card.cat-종합::before{background:linear-gradient(90deg,var(--S),var(--C));}
+.exam-card:hover{border-color:rgba(255,255,255,.2);transform:translateY(-3px);box-shadow:var(--shadow);}
+.exam-card.active{border-color:rgba(255,255,255,.35);background:var(--bg3);}
+.ec-label{font-size:10px;font-weight:700;letter-spacing:.15em;color:var(--sub);margin-bottom:6px;text-transform:uppercase;}
+.ec-title{font-size:16px;font-weight:700;margin-bottom:4px;}
+.ec-desc{font-size:11px;color:var(--sub);line-height:1.5;}
+.ec-cnt{font-size:11px;color:var(--sub);margin-top:8px;}
+.ec-cnt strong{color:var(--txt);}
+
+.cnt-row{display:flex;gap:8px;justify-content:center;margin-bottom:32px;}
+.cnt-btn{
+  padding:9px 20px;border-radius:8px;
+  border:1px solid var(--line);background:var(--bg2);
+  color:var(--sub);font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .17s;
+}
+.cnt-btn:hover{border-color:rgba(255,255,255,.25);color:var(--txt);}
+.cnt-btn.active{background:var(--white);color:var(--bg);border-color:var(--white);}
+
+.start-btn{
+  padding:16px 56px;
+  background:linear-gradient(135deg,#fff 0%,#d0d0d0 100%);
+  color:var(--bg);border:none;border-radius:10px;
+  font-family:'Noto Sans KR',sans-serif;
+  font-size:16px;font-weight:900;letter-spacing:.1em;
+  cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 24px rgba(255,255,255,.15);
+}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,255,255,.25);}
+
+/* ═══════════════════════════════════════
+   QUIZ PAGE
+═══════════════════════════════════════ */
+#quiz-page{display:none;min-height:100vh;}
+
+/* 상단 고정 헤더 */
+.qhdr{
+  position:sticky;top:0;z-index:100;
+  background:rgba(13,13,13,.92);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);
+}
+.qhdr-inner{
+  max-width:860px;margin:0 auto;padding:12px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.qhdr-left{display:flex;align-items:center;gap:10px;}
+.qhdr-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.08em;}
+.qhdr-title span{color:var(--I);}
+.qbadge{
+  padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;
+  background:rgba(255,255,255,.08);color:var(--sub);
+}
+.qtimer{
+  font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.1em;
+  color:var(--E);
+}
+.prog-bar{height:3px;background:rgba(255,255,255,.06);}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--I),var(--A));transition:width .3s;}
+#prog{width:0%;}
+.back-btn{
+  background:rgba(255,255,255,.06);border:1px solid var(--line);
+  color:var(--sub);padding:5px 12px;border-radius:6px;font-size:11px;cursor:pointer;
+}
+.back-btn:hover{color:var(--txt);border-color:rgba(255,255,255,.2);}
+
+/* 문제 컨테이너 */
+.q-container{max-width:860px;margin:0 auto;padding:32px 20px 80px;}
+
+/* 섹션 헤더 */
+.sec-hdr{
+  display:flex;align-items:center;gap:12px;
+  margin:36px 0 16px;padding:10px 16px;
+  border-radius:8px;border-left:3px solid;
+}
+.sec-hdr.type-R{background:rgba(232,93,4,.08);border-color:var(--R);}
+.sec-hdr.type-I{background:rgba(58,134,255,.08);border-color:var(--I);}
+.sec-hdr.type-A{background:rgba(131,56,236,.08);border-color:var(--A);}
+.sec-hdr.type-S{background:rgba(6,214,160,.08);border-color:var(--S);}
+.sec-hdr.type-E{background:rgba(255,190,11,.08);border-color:var(--E);}
+.sec-hdr.type-C{background:rgba(239,35,60,.08);border-color:var(--C);}
+.sec-hdr.type-개념{background:rgba(58,134,255,.08);border-color:var(--I);}
+.sec-hdr.type-종합{background:rgba(131,56,236,.08);border-color:var(--A);}
+.sec-icon{font-size:20px;}
+.sec-title{font-weight:700;font-size:14px;}
+.sec-nums{font-size:11px;color:var(--sub);margin-left:auto;}
+
+/* 문제 그리드 */
+.q-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+@media(max-width:640px){.q-grid{grid-template-columns:1fr;}}
+
+/* 문제 카드 */
+.q-card{
+  background:var(--bg2);border:1px solid var(--line);
+  border-radius:var(--radius);padding:16px 18px;
+  display:flex;gap:12px;position:relative;
+  transition:box-shadow .15s;
+}
+.q-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.4);}
+.q-num{
+  min-width:28px;height:28px;border-radius:50%;
+  background:var(--bg3);color:var(--sub);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;flex-shrink:0;margin-top:1px;
+  border:1px solid var(--line);
+}
+.q-body{flex:1;min-width:0;}
+
+/* 유형 배지 */
+.q-type-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:10px;font-weight:800;letter-spacing:.08em;
+  padding:2px 8px;border-radius:4px;margin-bottom:8px;
+  text-transform:uppercase;
+}
+.badge-R{background:rgba(232,93,4,.15);color:var(--R);}
+.badge-I{background:rgba(58,134,255,.15);color:var(--I);}
+.badge-A{background:rgba(131,56,236,.15);color:var(--A);}
+.badge-S{background:rgba(6,214,160,.15);color:var(--S);}
+.badge-E{background:rgba(255,190,11,.15);color:var(--E);}
+.badge-C{background:rgba(239,35,60,.15);color:var(--C);}
+.badge-개념{background:rgba(58,134,255,.12);color:var(--I);}
+.badge-종합{background:rgba(131,56,236,.12);color:var(--A);}
+
+/* 지문 */
+.q-passage{
+  background:rgba(255,255,255,.04);border:1px solid var(--line);
+  border-radius:8px;padding:10px 12px;margin-bottom:8px;
+  font-size:12px;line-height:1.7;color:var(--sub);
+  white-space:pre-line;
+}
+.q-passage strong{color:var(--txt);}
+
+.q-text{font-size:14px;font-weight:600;line-height:1.55;margin-bottom:10px;color:var(--txt);}
+.choices{display:flex;flex-direction:column;gap:6px;}
+.choice{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:8px 12px;border-radius:8px;cursor:pointer;
+  border:1px solid var(--line);background:transparent;
+  font-size:13px;color:var(--sub);transition:all .13s;line-height:1.4;
+  text-align:left;width:100%;
+}
+.choice:hover{border-color:rgba(255,255,255,.2);color:var(--txt);background:rgba(255,255,255,.04);}
+.choice.sel{border-color:rgba(255,255,255,.35);color:var(--txt);background:rgba(255,255,255,.07);font-weight:600;}
+.choice.ok{border-color:var(--S);background:rgba(6,214,160,.12);color:var(--S);font-weight:700;}
+.choice.ng{border-color:var(--C);background:rgba(239,35,60,.1);color:var(--C);}
+.choice-n{
+  font-weight:800;font-size:12px;min-width:18px;flex-shrink:0;
+  margin-top:1px;color:var(--sub);
+}
+.choice.sel .choice-n{color:var(--txt);}
+.choice.ok .choice-n{color:var(--S);}
+.choice.ng .choice-n{color:var(--C);}
+.ans-mark{position:absolute;top:14px;right:14px;font-size:18px;font-weight:900;}
+.q-card.gc{background:rgba(6,214,160,.05);}
+.q-card.gw{background:rgba(239,35,60,.05);}
+
+/* 제출 버튼 */
+.submit-wrap{
+  max-width:860px;margin:0 auto;padding:0 20px 60px;
+  display:flex;justify-content:center;
+}
+.submit-btn{
+  padding:15px 56px;
+  background:linear-gradient(135deg,#fff,#bbb);
+  color:var(--bg);border:none;border-radius:10px;
+  font-size:16px;font-weight:900;cursor:pointer;
+  box-shadow:0 4px 20px rgba(255,255,255,.15);transition:all .2s;
+}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,255,255,.2);}
+
+/* ═══════════════════════════════════════
+   결과 OVERLAY
+═══════════════════════════════════════ */
+#overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
+  z-index:300;align-items:center;justify-content:center;padding:20px;
+  overflow-y:auto;
+}
+#overlay.show{display:flex;}
+.result-card{
+  background:var(--bg2);border:1px solid rgba(255,255,255,.1);
+  border-radius:20px;padding:40px 32px;
+  max-width:480px;width:100%;text-align:center;
+  box-shadow:0 24px 80px rgba(0,0,0,.6);
+  position:relative;overflow:hidden;
+}
+.result-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(58,134,255,.08) 0%,transparent 60%);
+  pointer-events:none;
+}
+.r-score-wrap{position:relative;z-index:1;}
+.r-emoji{font-size:48px;margin-bottom:10px;}
+.r-score{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:80px;line-height:1;color:var(--white);
+  letter-spacing:.04em;
+}
+.r-score span{font-size:28px;color:var(--sub);}
+.r-grade{font-size:18px;font-weight:700;margin:12px 0 6px;}
+.r-desc{font-size:13px;color:var(--sub);line-height:1.7;margin-bottom:24px;}
+
+/* RIASEC 점수 바 */
+.riasec-bars{
+  display:flex;flex-direction:column;gap:8px;
+  margin:20px 0 24px;text-align:left;
+}
+.rb-row{display:flex;align-items:center;gap:10px;}
+.rb-label{font-size:12px;font-weight:800;width:60px;flex-shrink:0;}
+.rb-label.R{color:var(--R);}
+.rb-label.I{color:var(--I);}
+.rb-label.A{color:var(--A);}
+.rb-label.S{color:var(--S);}
+.rb-label.E{color:var(--E);}
+.rb-label.C{color:var(--C);}
+.rb-track{flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden;}
+.rb-fill{height:100%;border-radius:999px;transition:width .8s ease;}
+.rb-fill.R{background:var(--R);}
+.rb-fill.I{background:var(--I);}
+.rb-fill.A{background:var(--A);}
+.rb-fill.S{background:var(--S);}
+.rb-fill.E{background:var(--E);}
+.rb-fill.C{background:var(--C);}
+.rb-pct{font-size:11px;color:var(--sub);width:30px;text-align:right;flex-shrink:0;}
+
+.r-stats{
+  display:flex;justify-content:center;gap:24px;
+  padding:16px;background:rgba(255,255,255,.04);
+  border-radius:10px;margin-bottom:24px;
+}
+.r-stat .lbl{font-size:10px;color:var(--sub);margin-bottom:4px;}
+.r-stat .val{font-size:22px;font-weight:800;}
+.r-stat.co .val{color:var(--S);}
+.r-stat.wr .val{color:var(--C);}
+.r-stat.un .val{color:var(--sub);}
+.r-btns{display:flex;gap:10px;}
+.r-btn{
+  flex:1;padding:12px;border-radius:9px;
+  font-size:14px;font-weight:700;cursor:pointer;border:none;
+  transition:all .17s;
+}
+.r-btn.sec{background:rgba(255,255,255,.08);color:var(--txt);}
+.r-btn.sec:hover{background:rgba(255,255,255,.14);}
+.r-btn.pri{background:var(--white);color:var(--bg);}
+.r-btn.pri:hover{background:#ddd;}
+
+/* 유틸 */
+.empty-msg{
+  text-align:center;color:var(--sub);
+  padding:24px;font-size:13px;
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     HERO
+══════════════════════════════════ -->
+<section id="hero">
+  <div class="hex-bg"></div>
+
+  <div class="hero-badge">Holland RIASEC · 진로와 직업</div>
+
+  <h1 class="hero-title">
+    <span class="hl-r">R</span><span class="hl-i">I</span><span class="hl-a">A</span><span class="hl-s">S</span><span class="hl-e">E</span><span class="hl-c">C</span><br>직업흥미유형
+  </h1>
+  <p class="hero-sub">
+    홀랜드(Holland)의 6가지 직업흥미유형 이론을 바탕으로<br>
+    각 유형의 특성·직업·행동을 묻는 <strong>진로 시험</strong>입니다
+  </p>
+
+  <!-- 6유형 미리보기 -->
+  <div class="type-strip">
+    <div class="type-chip R"><span class="dot"></span>R 실재형</div>
+    <div class="type-chip I"><span class="dot"></span>I 탐구형</div>
+    <div class="type-chip A"><span class="dot"></span>A 예술형</div>
+    <div class="type-chip S"><span class="dot"></span>S 사회형</div>
+    <div class="type-chip E"><span class="dot"></span>E 진취형</div>
+    <div class="type-chip C"><span class="dot"></span>C 관습형</div>
+  </div>
+
+  <!-- 시험 카테고리 선택 -->
+  <div class="exam-cards" id="exam-cards">
+    <div class="exam-card cat-개념 active" data-cat="개념" onclick="selectCat(this)">
+      <div class="ec-label">Category 01</div>
+      <div class="ec-title">개념 이해</div>
+      <div class="ec-desc">유형 정의·육각형 모형·핵심 개념</div>
+      <div class="ec-cnt">수록 문제 <strong>18문항</strong></div>
+    </div>
+    <div class="exam-card cat-유형" data-cat="유형" onclick="selectCat(this)">
+      <div class="ec-label">Category 02</div>
+      <div class="ec-title">유형 판별</div>
+      <div class="ec-desc">상황·행동·직업으로 유형 찾기</div>
+      <div class="ec-cnt">수록 문제 <strong>24문항</strong></div>
+    </div>
+    <div class="exam-card cat-종합" data-cat="종합" onclick="selectCat(this)">
+      <div class="ec-label">Category 03</div>
+      <div class="ec-title">종합 응용</div>
+      <div class="ec-desc">일치성·일관성·육각형 관계 심화</div>
+      <div class="ec-cnt">수록 문제 <strong>16문항</strong></div>
+    </div>
+  </div>
+
+  <!-- 문항수 선택 -->
+  <div class="cnt-row">
+    <button class="cnt-btn active" onclick="selCnt(10,this)">10문항</button>
+    <button class="cnt-btn" onclick="selCnt(15,this)">15문항</button>
+    <button class="cnt-btn" onclick="selCnt(20,this)">20문항</button>
+  </div>
+
+  <button class="start-btn" onclick="startQuiz()">시험 시작 →</button>
+</section>
+
+<!-- ══════════════════════════════════
+     QUIZ PAGE
+══════════════════════════════════ -->
+<div id="quiz-page">
+  <div class="qhdr">
+    <div class="qhdr-inner">
+      <div class="qhdr-left">
+        <div class="qhdr-title">홀랜드 <span>RIASEC</span></div>
+        <span class="qbadge" id="hdr-cat"></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="qtimer" id="timer">00:00</span>
+        <button class="back-btn" onclick="goBack()">← 처음으로</button>
+      </div>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="prog"></div></div>
+  </div>
+
+  <div class="q-container" id="q-container"></div>
+
+  <div class="submit-wrap">
+    <button class="submit-btn" onclick="submitQuiz()">✓ 채점하기</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     결과 OVERLAY
+══════════════════════════════════ -->
+<div id="overlay">
+  <div class="result-card">
+    <div class="r-score-wrap">
+      <div class="r-emoji" id="r-emoji"></div>
+      <div class="r-score" id="r-score"></div>
+      <div class="r-grade" id="r-grade"></div>
+      <div class="r-desc" id="r-desc"></div>
+    </div>
+
+    <!-- RIASEC 유형별 정답률 바 -->
+    <div class="riasec-bars" id="riasec-bars"></div>
+
+    <div class="r-stats">
+      <div class="r-stat co"><div class="lbl">정답</div><div class="val" id="s-co"></div></div>
+      <div class="r-stat wr"><div class="lbl">오답</div><div class="val" id="s-wr"></div></div>
+      <div class="r-stat un"><div class="lbl">미응답</div><div class="val" id="s-un"></div></div>
+    </div>
+    <div class="r-btns">
+      <button class="r-btn sec" onclick="reviewAns()">해설 보기</button>
+      <button class="r-btn pri" onclick="retryQuiz()">다시 풀기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  문제 데이터 — Holland RIASEC
+//  type: 'R'|'I'|'A'|'S'|'E'|'C'|'개념'|'종합'
+//  cat:  '개념'|'유형'|'종합'
+// ════════════════════════════════════════════════════════════
+
+const QUESTIONS = {
+
+  // ─── 카테고리 1: 개념 이해 ─────────────────────────────────
+  개념: [
+    {
+      type:'개념', cat:'개념',
+      q:'홀랜드(Holland) 이론에서 직업흥미유형을 나타내는 알파벳 약자는?',
+      answer:'RIASEC',
+      choices:['RIASEC','MBTI','OCEAN','DISC'],
+    },
+    {
+      type:'개념', cat:'개념',
+      q:'홀랜드 이론에서 6가지 유형을 배치한 도형 모양은?',
+      answer:'육각형',
+      choices:['육각형','삼각형','원형','사각형'],
+    },
+    {
+      type:'I', cat:'개념',
+      passage:'탐구형(I)은 지적 호기심이 강하고 분석적·논리적 사고를 즐긴다.\n과학적 탐구나 수학적 문제 해결을 선호한다.',
+      q:'탐구형(I)의 특성으로 가장 적절한 것은?',
+      answer:'문제를 체계적으로 분석하고 연구하는 것을 좋아한다',
+      choices:[
+        '문제를 체계적으로 분석하고 연구하는 것을 좋아한다',
+        '다른 사람을 이끌고 설득하는 것을 잘한다',
+        '도구와 기계를 다루는 작업을 선호한다',
+        '정해진 규칙과 절차를 따르는 것을 좋아한다',
+      ],
+    },
+    {
+      type:'R', cat:'개념',
+      q:'실재형(R)에 해당하는 특성을 〈보기〉에서 모두 고른 것은?\n〈보기〉\nㄱ. 도구·기계 조작을 즐김\nㄴ. 추상적 아이디어 탐구를 즐김\nㄷ. 신체 활동·야외 활동 선호\nㄹ. 데이터 정리·서류 작업 선호',
+      answer:'ㄱ, ㄷ',
+      choices:['ㄱ, ㄷ','ㄴ, ㄹ','ㄱ, ㄴ, ㄷ','ㄷ, ㄹ'],
+    },
+    {
+      type:'A', cat:'개념',
+      q:'예술형(A)의 핵심 특성으로 가장 거리가 먼 것은?',
+      answer:'체계적인 절차와 규칙을 중시한다',
+      choices:[
+        '체계적인 절차와 규칙을 중시한다',
+        '자유로운 자기표현을 추구한다',
+        '창의적 사고와 상상력이 풍부하다',
+        '비구조적·개방적 환경을 선호한다',
+      ],
+    },
+    {
+      type:'S', cat:'개념',
+      q:'사회형(S)과 가장 관련 깊은 핵심 가치는?',
+      answer:'사람을 돕고 교육하며 함께 성장하기',
+      choices:[
+        '사람을 돕고 교육하며 함께 성장하기',
+        '새로운 기계와 기술을 개발하기',
+        '정확한 데이터와 수치 분석하기',
+        '독창적인 예술 작품 창작하기',
+      ],
+    },
+    {
+      type:'E', cat:'개념',
+      q:'진취형(E)이 가장 잘 발휘되는 환경은?',
+      answer:'사람들을 이끌고 설득하며 목표를 달성하는 환경',
+      choices:[
+        '사람들을 이끌고 설득하며 목표를 달성하는 환경',
+        '혼자서 정밀한 작업을 반복하는 환경',
+        '자연과 함께하는 야외 작업 환경',
+        '새로운 과학적 가설을 검증하는 환경',
+      ],
+    },
+    {
+      type:'C', cat:'개념',
+      q:'관습형(C)에 해당하는 설명으로 옳은 것은?',
+      answer:'정확성·질서·체계성을 중시하며 규정된 절차를 선호한다',
+      choices:[
+        '정확성·질서·체계성을 중시하며 규정된 절차를 선호한다',
+        '위험을 감수하며 새로운 도전을 즐긴다',
+        '감성적이고 직관적인 판단을 중시한다',
+        '사람들과의 관계를 가장 중요시한다',
+      ],
+    },
+    {
+      type:'개념', cat:'개념',
+      passage:'홀랜드 모형의 육각형에서 인접한 유형끼리는 공통점이 많고,\n마주보는 유형끼리는 서로 반대 특성을 가진다.',
+      q:'육각형 모형에서 실재형(R)과 마주보는 유형은?',
+      answer:'사회형(S)',
+      choices:['사회형(S)','탐구형(I)','예술형(A)','관습형(C)'],
+    },
+    {
+      type:'개념', cat:'개념',
+      q:'홀랜드 이론에서 자신의 유형과 직업 환경의 유형이 일치할 때를 무엇이라 하는가?',
+      answer:'일치성(Congruence)',
+      choices:['일치성(Congruence)','일관성(Consistency)','차별성(Differentiation)','계측성(Calculus)'],
+    },
+    {
+      type:'개념', cat:'개념',
+      q:'홀랜드 이론에서 한 개인의 유형 프로파일이 하나의 유형에 집중될수록 높아지는 것은?',
+      answer:'차별성(Differentiation)',
+      choices:['차별성(Differentiation)','일치성(Congruence)','일관성(Consistency)','정체성(Identity)'],
+    },
+    {
+      type:'개념', cat:'개념',
+      q:'홀랜드 이론에서 육각형의 인접 유형 관계가 설명하는 개념은?',
+      answer:'일관성(Consistency) — 인접할수록 일관성이 높다',
+      choices:[
+        '일관성(Consistency) — 인접할수록 일관성이 높다',
+        '일치성(Congruence) — 개인과 환경의 일치',
+        '차별성(Differentiation) — 프로파일의 집중도',
+        '계측성(Calculus) — 유형 간 거리 측정',
+      ],
+    },
+    {
+      type:'개념', cat:'개념',
+      q:'다음 중 홀랜드 이론의 4가지 핵심 개념에 해당하지 않는 것은?',
+      answer:'성숙성(Maturity)',
+      choices:['성숙성(Maturity)','일치성(Congruence)','일관성(Consistency)','차별성(Differentiation)'],
+    },
+    {
+      type:'개념', cat:'개념',
+      q:'커리어넷(career.go.kr)에서 홀랜드 유형을 알아볼 수 있는 검사는?',
+      answer:'직업흥미검사(Holland형)',
+      choices:['직업흥미검사(Holland형)','다중지능검사','MBTI성격유형검사','에니어그램검사'],
+    },
+    {
+      type:'개념', cat:'개념',
+      q:'홀랜드 이론의 기본 가정으로 옳지 않은 것은?',
+      answer:'사람의 흥미유형은 성인이 된 이후에만 형성된다',
+      choices:[
+        '사람의 흥미유형은 성인이 된 이후에만 형성된다',
+        '사람들은 6가지 유형 중 하나로 분류될 수 있다',
+        '직업 환경도 6가지 유형으로 분류된다',
+        '자신의 유형과 맞는 환경에서 더 만족한다',
+      ],
+    },
+    {
+      type:'I', cat:'개념',
+      q:'탐구형(I)과 마주보는 유형, 즉 가장 반대 특성을 가진 유형은?',
+      answer:'진취형(E)',
+      choices:['진취형(E)','사회형(S)','관습형(C)','실재형(R)'],
+    },
+    {
+      type:'개념', cat:'개념',
+      q:'홀랜드 육각형에서 예술형(A)과 인접한 두 유형은?',
+      answer:'탐구형(I)과 사회형(S)',
+      choices:['탐구형(I)과 사회형(S)','실재형(R)과 진취형(E)','관습형(C)과 실재형(R)','진취형(E)과 관습형(C)'],
+    },
+    {
+      type:'개념', cat:'개념',
+      q:'홀랜드 이론에서 개인과 직업 환경이 잘 맞을수록 어떤 결과가 나타나는가?',
+      answer:'직업 만족도와 생산성이 높아진다',
+      choices:[
+        '직업 만족도와 생산성이 높아진다',
+        '새로운 직업으로 전환하고 싶어진다',
+        '직업 흥미 유형이 변화한다',
+        '일관성 점수가 낮아진다',
+      ],
+    },
+  ],
+
+  // ─── 카테고리 2: 유형 판별 ─────────────────────────────────
+  유형: [
+    // R 실재형
+    {
+      type:'R', cat:'유형',
+      passage:'민준이는 자동차 엔진 구조에 관심이 많고 직접 손으로 분해·조립하는 것을 즐긴다.\n주말마다 아버지 차를 고치거나 모형 로봇을 만든다.',
+      q:'민준이의 행동 특성과 가장 잘 맞는 홀랜드 유형은?',
+      answer:'R (실재형)',
+      choices:['R (실재형)','I (탐구형)','A (예술형)','E (진취형)'],
+    },
+    {
+      type:'R', cat:'유형',
+      q:'다음 중 실재형(R)에 어울리는 직업으로 가장 적절한 것은?',
+      answer:'소방관',
+      choices:['소방관','심리상담사','광고기획자','세무사'],
+    },
+    {
+      type:'R', cat:'유형',
+      q:'실재형(R) 인물이 가장 불편하게 느낄 상황은?',
+      answer:'여러 사람 앞에서 감정을 표현하며 연설하는 상황',
+      choices:[
+        '여러 사람 앞에서 감정을 표현하며 연설하는 상황',
+        '장비를 이용해 현장 측량을 하는 상황',
+        '직접 농작물을 재배하고 수확하는 상황',
+        '기계를 분해하고 수리하는 상황',
+      ],
+    },
+    // I 탐구형
+    {
+      type:'I', cat:'유형',
+      passage:'지영이는 "왜?"라는 질문을 입에 달고 산다. 실험 결과를 분석하거나\n통계 자료를 보는 것이 취미이며 수학·과학 과목을 특히 좋아한다.',
+      q:'지영이의 특성을 나타내는 홀랜드 유형은?',
+      answer:'I (탐구형)',
+      choices:['I (탐구형)','S (사회형)','E (진취형)','C (관습형)'],
+    },
+    {
+      type:'I', cat:'유형',
+      q:'탐구형(I)에 어울리는 직업이 아닌 것은?',
+      answer:'영업 팀장',
+      choices:['영업 팀장','생물학 연구원','수학 교수','천문학자'],
+    },
+    {
+      type:'I', cat:'유형',
+      q:'탐구형(I) 사람이 가장 잘 발휘하는 능력은?',
+      answer:'복잡한 문제를 논리적으로 분석하고 해결하는 능력',
+      choices:[
+        '복잡한 문제를 논리적으로 분석하고 해결하는 능력',
+        '사람들의 감정을 공감하고 도와주는 능력',
+        '팀을 이끌고 목표를 달성하는 리더십',
+        '정해진 규칙대로 서류를 처리하는 능력',
+      ],
+    },
+    // A 예술형
+    {
+      type:'A', cat:'유형',
+      passage:'하은이는 매일 일기에 그림을 그리고 자신만의 시를 쓴다.\n정해진 답이 있는 문제보다 자유롭게 상상할 수 있는 활동을 좋아한다.',
+      q:'하은이에게 가장 잘 맞는 홀랜드 유형은?',
+      answer:'A (예술형)',
+      choices:['A (예술형)','R (실재형)','C (관습형)','I (탐구형)'],
+    },
+    {
+      type:'A', cat:'유형',
+      q:'예술형(A)에 해당하는 직업으로 가장 거리가 먼 것은?',
+      answer:'세무사',
+      choices:['세무사','뮤지컬 배우','게임 디자이너','소설가'],
+    },
+    {
+      type:'A', cat:'유형',
+      q:'다음 활동 중 예술형(A)이 가장 즐길 것 같은 것은?',
+      answer:'자유 주제로 단편 영화 시나리오 쓰기',
+      choices:[
+        '자유 주제로 단편 영화 시나리오 쓰기',
+        '실험실에서 화학 반응 관찰하기',
+        '회사 회계 장부 정리하기',
+        '자동차 엔진 조립하기',
+      ],
+    },
+    // S 사회형
+    {
+      type:'S', cat:'유형',
+      passage:'수현이는 친구가 힘들 때 가장 먼저 달려간다. 학교 봉사 동아리 회장이며\n어르신들과 함께하는 활동을 기획하는 것을 보람으로 느낀다.',
+      q:'수현이의 특성을 나타내는 홀랜드 유형은?',
+      answer:'S (사회형)',
+      choices:['S (사회형)','E (진취형)','R (실재형)','A (예술형)'],
+    },
+    {
+      type:'S', cat:'유형',
+      q:'사회형(S)에 어울리는 직업이 아닌 것은?',
+      answer:'항공기 정비사',
+      choices:['항공기 정비사','학교 교사','사회복지사','간호사'],
+    },
+    {
+      type:'S', cat:'유형',
+      q:'사회형(S)과 마주보는(반대) 유형은?',
+      answer:'R (실재형)',
+      choices:['R (실재형)','I (탐구형)','A (예술형)','C (관습형)'],
+    },
+    // E 진취형
+    {
+      type:'E', cat:'유형',
+      passage:'도현이는 학생회장 선거에 출마해 공약을 발표했다. 친구들을 설득하여\n행사를 기획하고 이끄는 것을 매우 즐긴다.',
+      q:'도현이에게 가장 잘 맞는 홀랜드 유형은?',
+      answer:'E (진취형)',
+      choices:['E (진취형)','S (사회형)','I (탐구형)','C (관습형)'],
+    },
+    {
+      type:'E', cat:'유형',
+      q:'진취형(E)에 어울리는 직업으로 가장 적절한 것은?',
+      answer:'마케팅 팀장',
+      choices:['마케팅 팀장','기록 보관사','물리치료사','환경 연구원'],
+    },
+    {
+      type:'E', cat:'유형',
+      q:'진취형(E) 사람의 특성으로 옳은 것은?',
+      answer:'목표 달성을 위해 타인을 설득하고 협상하는 것을 즐긴다',
+      choices:[
+        '목표 달성을 위해 타인을 설득하고 협상하는 것을 즐긴다',
+        '혼자 조용히 책을 읽고 연구하는 것을 좋아한다',
+        '세밀한 규칙과 절차를 정확히 따르는 것을 좋아한다',
+        '손으로 직접 만들고 고치는 작업을 즐긴다',
+      ],
+    },
+    // C 관습형
+    {
+      type:'C', cat:'유형',
+      passage:'유진이는 숙제를 항상 정해진 양식에 맞게 작성하고\n파일 정리와 시간표 관리를 꼼꼼히 한다. 오차 없는 계산을 좋아한다.',
+      q:'유진이의 특성을 나타내는 홀랜드 유형은?',
+      answer:'C (관습형)',
+      choices:['C (관습형)','A (예술형)','E (진취형)','S (사회형)'],
+    },
+    {
+      type:'C', cat:'유형',
+      q:'관습형(C)에 어울리는 직업이 아닌 것은?',
+      answer:'연극 배우',
+      choices:['연극 배우','은행원','세무사','회계사'],
+    },
+    {
+      type:'C', cat:'유형',
+      q:'관습형(C) 인물이 가장 선호할 업무 환경은?',
+      answer:'명확한 지침과 절차가 있고 체계적으로 정리된 환경',
+      choices:[
+        '명확한 지침과 절차가 있고 체계적으로 정리된 환경',
+        '자유롭게 창작하고 표현할 수 있는 환경',
+        '새로운 아이디어를 실험하는 연구 환경',
+        '다양한 사람들을 만나며 상담하는 환경',
+      ],
+    },
+    // 혼합 판별
+    {
+      type:'유형', cat:'유형',
+      q:'다음 직업 중 나머지와 다른 홀랜드 유형에 속하는 것은?',
+      answer:'사회복지사',
+      choices:['사회복지사','외과 의사','치과 의사','수의사'],
+    },
+    {
+      type:'유형', cat:'유형',
+      q:'(가)~(다)에서 설명하는 유형을 순서대로 바르게 짝지은 것은?\n(가) 데이터를 정리하고 문서를 체계적으로 관리한다\n(나) 사람들 앞에서 발표하고 팀을 이끈다\n(다) 과학 실험을 통해 가설을 검증한다',
+      answer:'C - E - I',
+      choices:['C - E - I','R - S - A','E - C - R','I - A - S'],
+    },
+    {
+      type:'유형', cat:'유형',
+      q:'"의사"는 홀랜드 유형 코드로 주로 어떻게 분류되는가?',
+      answer:'I (탐구형) — 과학적 분석과 연구 특성',
+      choices:[
+        'I (탐구형) — 과학적 분석과 연구 특성',
+        'E (진취형) — 리더십과 설득 특성',
+        'S (사회형) — 돌봄과 교육 특성',
+        'R (실재형) — 도구와 기계 조작 특성',
+      ],
+    },
+    {
+      type:'유형', cat:'유형',
+      q:'다음 중 성격과 직업의 연결이 가장 잘못된 것은?',
+      answer:'탐구형(I) — 영업사원',
+      choices:[
+        '탐구형(I) — 영업사원',
+        '예술형(A) — 작곡가',
+        '관습형(C) — 회계사',
+        '실재형(R) — 목수',
+      ],
+    },
+    {
+      type:'유형', cat:'유형',
+      q:'홀랜드 유형 중 혼자 연구하고 분석하는 것보다 팀을 이끌며 성과를 내는 것을 더 좋아하는 유형은?',
+      answer:'E (진취형)',
+      choices:['E (진취형)','I (탐구형)','C (관습형)','R (실재형)'],
+    },
+  ],
+
+  // ─── 카테고리 3: 종합 응용 ─────────────────────────────────
+  종합: [
+    {
+      type:'종합', cat:'종합',
+      passage:'홀랜드 육각형 모형에서 두 유형의 코드가 육각형에서 인접할수록\n두 유형의 특성이 비슷하다고 본다.',
+      q:'다음 중 일관성(Consistency)이 가장 높은 코드 조합은?',
+      answer:'RI (실재형-탐구형) — 육각형에서 인접',
+      choices:[
+        'RI (실재형-탐구형) — 육각형에서 인접',
+        'RS (실재형-사회형) — 육각형에서 마주봄',
+        'EC (진취형-관습형) — 육각형에서 인접',
+        'IA (탐구형-예술형) — 육각형에서 인접',
+      ],
+    },
+    {
+      type:'종합', cat:'종합',
+      q:'홀랜드 이론에서 "일치성(Congruence)"이 높다는 것의 의미는?',
+      answer:'개인의 흥미유형과 자신이 선택한 직업 환경의 유형이 잘 맞는다',
+      choices:[
+        '개인의 흥미유형과 자신이 선택한 직업 환경의 유형이 잘 맞는다',
+        '여러 유형의 특성을 골고루 가지고 있다',
+        '자신의 유형이 매우 뚜렷하게 하나에 집중되어 있다',
+        '두 개의 유형 코드가 서로 인접해 있다',
+      ],
+    },
+    {
+      type:'종합', cat:'종합',
+      passage:'재현이의 홀랜드 검사 결과는 SE 코드였다.\n사회형(S)과 진취형(E)는 육각형에서 인접한 유형이다.',
+      q:'재현이의 결과에 대한 해석으로 옳은 것은?',
+      answer:'두 유형이 인접하여 일관성이 높으므로 진로 탐색에 유리하다',
+      choices:[
+        '두 유형이 인접하여 일관성이 높으므로 진로 탐색에 유리하다',
+        '두 유형이 마주보므로 일관성이 낮아 진로 선택이 어렵다',
+        'S와 E는 반대 특성이므로 이 코드는 존재하지 않는다',
+        '일치성이 높으므로 현재 직업에 만족할 것이다',
+      ],
+    },
+    {
+      type:'종합', cat:'종합',
+      q:'다음 중 일치성(Congruence)이 가장 낮은 상황은?',
+      answer:'탐구형(I) 특성이 강한 사람이 영업직 사원으로 일하는 경우',
+      choices:[
+        '탐구형(I) 특성이 강한 사람이 영업직 사원으로 일하는 경우',
+        '예술형(A) 특성이 강한 사람이 그래픽 디자이너로 일하는 경우',
+        '관습형(C) 특성이 강한 사람이 세무사로 일하는 경우',
+        '사회형(S) 특성이 강한 사람이 상담사로 일하는 경우',
+      ],
+    },
+    {
+      type:'종합', cat:'종합',
+      passage:'홀랜드 이론에서 "차별성(Differentiation)"은\n한 개인의 RIASEC 유형 점수 중 최고 점수와 최저 점수의 차이를 나타낸다.',
+      q:'차별성이 높은 사람의 특징으로 옳은 것은?',
+      answer:'특정 유형에 흥미가 집중되어 진로 방향이 명확하다',
+      choices:[
+        '특정 유형에 흥미가 집중되어 진로 방향이 명확하다',
+        '6가지 유형 점수가 모두 비슷하게 고르다',
+        '두 유형이 육각형에서 인접해 있다',
+        '개인과 직업 환경이 잘 맞는다',
+      ],
+    },
+    {
+      type:'종합', cat:'종합',
+      q:'다음 직업 중 홀랜드 코드가 "RIE"(실재-탐구-진취)에 가장 적합한 직업은?',
+      answer:'항공기 조종사',
+      choices:['항공기 조종사','사서','심리치료사','시인'],
+    },
+    {
+      type:'종합', cat:'종합',
+      passage:'서연이는 커리어넷에서 직업흥미검사를 받았다.\n결과: R=45, I=72, A=38, S=51, E=40, C=35',
+      q:'서연이의 2자리 홀랜드 코드는?',
+      answer:'IS (탐구형-사회형)',
+      choices:['IS (탐구형-사회형)','IR (탐구형-실재형)','SI (사회형-탐구형)','IE (탐구형-진취형)'],
+    },
+    {
+      type:'종합', cat:'종합',
+      q:'홀랜드 이론의 육각형 모형에서 관습형(C)과 인접한 두 유형은?',
+      answer:'실재형(R)과 진취형(E)',
+      choices:['실재형(R)과 진취형(E)','탐구형(I)과 사회형(S)','예술형(A)과 사회형(S)','탐구형(I)과 예술형(A)'],
+    },
+    {
+      type:'종합', cat:'종합',
+      q:'홀랜드 이론을 진로 교육에 활용하는 가장 중요한 이유는?',
+      answer:'자신의 흥미·적성과 잘 맞는 직업을 탐색하여 직업 만족도를 높이기 위해',
+      choices:[
+        '자신의 흥미·적성과 잘 맞는 직업을 탐색하여 직업 만족도를 높이기 위해',
+        '단순히 인기 있는 직업을 선택하기 위해',
+        '학교 성적을 높이기 위한 공부 방법을 찾기 위해',
+        '부모님이 원하는 직업을 결정하기 위해',
+      ],
+    },
+    {
+      type:'종합', cat:'종합',
+      passage:'다음은 홀랜드 육각형의 일부이다.\n    R\n  C   I\n  E   A\n    S',
+      q:'위 육각형에서 "A"(예술형)와 마주보는 유형은?',
+      answer:'C (관습형)',
+      choices:['C (관습형)','R (실재형)','E (진취형)','I (탐구형)'],
+    },
+    {
+      type:'종합', cat:'종합',
+      q:'홀랜드 이론을 비판하는 내용 중 하나로 실제 교과서에 제시되는 것은?',
+      answer:'유형 분류가 문화·성별에 따라 달라질 수 있다',
+      choices:[
+        '유형 분류가 문화·성별에 따라 달라질 수 있다',
+        '6가지 유형으로는 직업의 다양성을 설명할 수 없다',
+        'RIASEC 검사 결과는 절대 변하지 않는다',
+        '일치성이 낮을수록 직업 성과가 높다',
+      ],
+    },
+    {
+      type:'종합', cat:'종합',
+      q:'다음 직업들의 공통 홀랜드 유형으로 가장 적절한 것은?\n[교사, 사회복지사, 상담사, 간호사]',
+      answer:'S (사회형)',
+      choices:['S (사회형)','I (탐구형)','E (진취형)','C (관습형)'],
+    },
+    {
+      type:'종합', cat:'종합',
+      q:'홀랜드 이론에서 "정체성(Identity)"의 의미는?',
+      answer:'개인이 자신의 목표·흥미·재능에 대해 명확하고 안정된 상을 갖는 것',
+      choices:[
+        '개인이 자신의 목표·흥미·재능에 대해 명확하고 안정된 상을 갖는 것',
+        '개인의 유형과 직업 환경이 일치하는 정도',
+        '유형 프로파일이 하나에 집중된 정도',
+        '두 유형이 육각형에서 가까이 있는 정도',
+      ],
+    },
+    {
+      type:'종합', cat:'종합',
+      q:'다음 중 "RI 코드"(실재형-탐구형)에 가장 잘 어울리는 직업은?',
+      answer:'기계공학자',
+      choices:['기계공학자','카운셀러','광고기획자','법원 서기'],
+    },
+    {
+      type:'종합', cat:'종합',
+      q:'홀랜드 이론에서 개인의 진로 코드가 "EC"일 때, 이 코드에 대한 설명으로 옳은 것은?',
+      answer:'진취형(E)과 관습형(C)은 인접하여 일관성이 높은 편이다',
+      choices:[
+        '진취형(E)과 관습형(C)은 인접하여 일관성이 높은 편이다',
+        '진취형(E)과 관습형(C)은 서로 마주보는 반대 유형이다',
+        'EC 코드는 이론상 존재하지 않는 조합이다',
+        '이 코드의 사람은 예술 분야 직업에 가장 잘 맞는다',
+      ],
+    },
+    {
+      type:'종합', cat:'종합',
+      q:'홀랜드 이론을 활용할 수 있는 커리어넷의 주소는?',
+      answer:'career.go.kr',
+      choices:['career.go.kr','work.go.kr','neis.go.kr','csat.re.kr'],
+    },
+  ],
+};
+
+// ════════════════════════════════════════════════════════════
+//  상태
+// ════════════════════════════════════════════════════════════
+let state = { cat:'개념', count:10 };
+let curQs=[], userAns={}, submitted=false, timerSec=0, timerInterval;
+const NUMS=['①','②','③','④'];
+
+const TYPE_COLOR = {R:'var(--R)',I:'var(--I)',A:'var(--A)',S:'var(--S)',E:'var(--E)',C:'var(--C)',개념:'var(--I)',유형:'var(--E)',종합:'var(--A)'};
+const TYPE_NAME  = {R:'R 실재형',I:'I 탐구형',A:'A 예술형',S:'S 사회형',E:'E 진취형',C:'C 관습형',개념:'개념',유형:'유형판별',종합:'종합응용'};
+const SEC_EMOJI  = {R:'🔧',I:'🔬',A:'🎨',S:'🤝',E:'🚀',C:'📋',개념:'📖',유형:'🎯',종합:'⚡'};
+
+// ════════════════════════════════════════════════════════════
+//  초기화
+// ════════════════════════════════════════════════════════════
+function selectCat(el){
+  document.querySelectorAll('.exam-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  state.cat = el.dataset.cat;
+}
+function selCnt(n, btn){
+  state.count = n;
+  document.querySelectorAll('.cnt-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ════════════════════════════════════════════════════════════
+//  퀴즈 시작
+// ════════════════════════════════════════════════════════════
+function startQuiz(){
+  const pool = [...QUESTIONS[state.cat]];
+  if(!pool.length){alert('문제 데이터가 없습니다.');return;}
+
+  const shuffled = pool.sort(()=>Math.random()-.5);
+  curQs = shuffled.slice(0, Math.min(state.count, shuffled.length)).map((q,i)=>({
+    ...q, index:i+1,
+    choices:[...q.choices].sort(()=>Math.random()-.5),
+  }));
+  userAns={}; submitted=false;
+
+  document.getElementById('hdr-cat').textContent = `${state.cat} · ${curQs.length}문항`;
+  renderQs();
+  document.getElementById('hero').style.display='none';
+  document.getElementById('quiz-page').style.display='block';
+  window.scrollTo(0,0);
+  startTimer();
+}
+
+// ════════════════════════════════════════════════════════════
+//  문제 렌더링
+// ════════════════════════════════════════════════════════════
+function renderQs(){
+  const container = document.getElementById('q-container');
+  // 유형별 그룹화
+  const groups={};
+  const typeOrder = state.cat==='개념'
+    ? ['개념','R','I','A','S','E','C']
+    : state.cat==='유형'
+    ? ['R','I','A','S','E','C','유형']
+    : ['종합'];
+
+  curQs.forEach(q=>{
+    const t = q.type||'기타';
+    if(!groups[t]) groups[t]=[];
+    groups[t].push(q);
+  });
+
+  let html='';
+  const ordered=[...typeOrder,...Object.keys(groups).filter(t=>!typeOrder.includes(t))];
+  ordered.forEach(t=>{
+    if(!groups[t]||!groups[t].length) return;
+    const qs=groups[t];
+    html+=`
+      <div class="sec-hdr type-${t}">
+        <span class="sec-icon">${SEC_EMOJI[t]||'📝'}</span>
+        <span class="sec-title">${TYPE_NAME[t]||t}</span>
+        <span class="sec-nums">${qs.map(q=>q.index+'번').join(' · ')}</span>
+      </div>
+      <div class="q-grid">${qs.map(renderCard).join('')}</div>`;
+  });
+  container.innerHTML = html || '<div class="empty-msg">문제가 없습니다</div>';
+}
+
+function renderCard(q){
+  const color = TYPE_COLOR[q.type]||'var(--sub)';
+  const hasP = q.passage && q.passage.trim().length > 0;
+  return `
+    <div class="q-card" id="qcard-${q.index}">
+      <div class="q-num">${q.index}</div>
+      <div class="q-body">
+        <span class="q-type-badge badge-${q.type}">${TYPE_NAME[q.type]||q.type}</span>
+        ${hasP ? `<div class="q-passage">${q.passage.replace(/\n/g,'<br>')}</div>` : ''}
+        <div class="q-text">${q.q.replace(/\n/g,'<br>')}</div>
+        <div class="choices" id="ch-${q.index}">
+          ${q.choices.map((c,ci)=>`
+            <button class="choice" id="ci-${q.index}-${ci}" onclick="pick(${q.index},${ci})">
+              <span class="choice-n">${NUMS[ci]}</span><span>${c}</span>
+            </button>`).join('')}
+        </div>
+      </div>
+      <div class="ans-mark" id="mk-${q.index}"></div>
+    </div>`;
+}
+
+// ════════════════════════════════════════════════════════════
+//  인터랙션
+// ════════════════════════════════════════════════════════════
+function pick(qi, ci){
+  if(submitted) return;
+  userAns[qi]=ci;
+  document.querySelectorAll(`#ch-${qi} .choice`).forEach((c,i)=>c.classList.toggle('sel',i===ci));
+  document.getElementById('prog').style.width=(Object.keys(userAns).length/curQs.length*100)+'%';
+}
+
+function startTimer(){
+  timerSec=0; clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    timerSec++;
+    const m=String(Math.floor(timerSec/60)).padStart(2,'0');
+    const s=String(timerSec%60).padStart(2,'0');
+    document.getElementById('timer').textContent=`${m}:${s}`;
+  },1000);
+}
+
+// ════════════════════════════════════════════════════════════
+//  채점
+// ════════════════════════════════════════════════════════════
+function submitQuiz(){
+  const ans=Object.keys(userAns).length;
+  if(!submitted&&ans<curQs.length)
+    if(!confirm(`${curQs.length-ans}문항 미응답입니다. 채점할까요?`)) return;
+  submitted=true; clearInterval(timerInterval);
+
+  let correct=0;
+  // 유형별 정답 집계
+  const typeScore={R:{c:0,t:0},I:{c:0,t:0},A:{c:0,t:0},S:{c:0,t:0},E:{c:0,t:0},C:{c:0,t:0}};
+
+  curQs.forEach(q=>{
+    const card=document.getElementById(`qcard-${q.index}`);
+    const cIdx=q.choices.indexOf(q.answer);
+    const uIdx=userAns[q.index];
+    card.querySelectorAll('.choice').forEach((c,i)=>{
+      c.classList.remove('sel');
+      if(i===cIdx) c.classList.add('ok');
+      else if(i===uIdx&&uIdx!==cIdx) c.classList.add('ng');
+    });
+    const mk=document.getElementById(`mk-${q.index}`);
+    const isCorrect = uIdx===cIdx;
+    if(isCorrect){correct++;card.classList.add('gc');mk.textContent='✓';mk.style.color='var(--S)';}
+    else{card.classList.add('gw');mk.textContent='✗';mk.style.color='var(--C)';}
+
+    // 유형별 집계 (R,I,A,S,E,C 만)
+    const t=q.type;
+    if(typeScore[t]){
+      typeScore[t].t++;
+      if(isCorrect) typeScore[t].c++;
+    }
+  });
+
+  const total=curQs.length, wrong=ans-correct, unanswered=total-ans;
+  const score=Math.round(correct/total*100);
+
+  document.getElementById('r-score').innerHTML=`${score}<span>점</span>`;
+  document.getElementById('s-co').textContent=correct;
+  document.getElementById('s-wr').textContent=wrong;
+  document.getElementById('s-un').textContent=unanswered;
+
+  // 유형별 RIASEC 바
+  const barsHtml = ['R','I','A','S','E','C'].map(t=>{
+    const d=typeScore[t];
+    if(!d||!d.t) return '';
+    const pct=Math.round(d.c/d.t*100);
+    return `<div class="rb-row">
+      <div class="rb-label ${t}">${t} ${TYPE_NAME[t]?.split(' ')[1]||''}</div>
+      <div class="rb-track"><div class="rb-fill ${t}" style="width:${pct}%"></div></div>
+      <div class="rb-pct">${pct}%</div>
+    </div>`;
+  }).join('');
+  document.getElementById('riasec-bars').innerHTML = barsHtml || '';
+
+  let emoji,grade,desc;
+  if(score>=90){emoji='🏆';grade='탁월! 홀랜드 이론 완벽 이해!';desc='RIASEC 모형과 4가지 핵심 개념을 정확히 이해하고 있습니다.';}
+  else if(score>=80){emoji='🥇';grade='우수! 핵심 개념을 잘 파악했어요!';desc='오답 유형을 중심으로 한 번 더 복습하면 완벽해요.';}
+  else if(score>=70){emoji='🎯';grade='양호! 조금만 더 다져볼까요?';desc='각 유형의 특성과 직업 연결을 다시 정리해 보세요.';}
+  else if(score>=60){emoji='📚';grade='보통, 기초부터 다시!';desc:'RIASEC 6유형의 키워드를 먼저 암기해 보세요.';}
+  else{emoji='💪';grade:'분발이 필요해요!';desc:'교과서 홀랜드 단원을 처음부터 차근차근 읽어봐요.';}
+
+  document.getElementById('r-emoji').textContent=emoji;
+  document.getElementById('r-grade').textContent=grade;
+  document.getElementById('r-desc').textContent=desc;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function reviewAns(){document.getElementById('overlay').classList.remove('show');window.scrollTo({top:0,behavior:'smooth'});}
+function retryQuiz(){document.getElementById('overlay').classList.remove('show');startQuiz();}
+function goBack(){
+  clearInterval(timerInterval);
+  document.getElementById('quiz-page').style.display='none';
+  document.getElementById('hero').style.display='flex';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
