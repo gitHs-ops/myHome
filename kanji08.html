@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>읽고쓰는 천자문</title>
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b6f70">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="천자문">
+<link rel="apple-touch-icon" href="icon.svg">
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Malgun Gothic','Apple SD Gothic Neo','Noto Sans KR',sans-serif;min-height:100vh;background:linear-gradient(to bottom,#086266,#9adcda);display:flex;justify-content:center;padding:16px 12px 30px}
+.card{background:#f3f3f5;border-radius:8px;width:100%;max-width:780px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.25)}
+/* Header */
+.hdr{background:#0b6f70;padding:10px 24px;display:flex;align-items:center;justify-content:space-between}
+.hdr-title{color:#eef9f8;font-size:19px;font-weight:bold}
+.hdr-ver{color:#d5ece9;font-size:10px;font-weight:bold}
+/* Chars */
+.chars-row{display:flex;justify-content:center;padding:10px 0 6px}
+.char-col{display:flex;flex-direction:column;align-items:center;padding:0 16px;cursor:pointer;user-select:none}
+.char-col:hover .char-main{color:#0b6f70}
+.char-col.active .char-main{color:#0b6f70}
+.char-reading{color:#0c4d4f;font-size:16px;font-weight:bold;min-height:22px;text-align:center}
+.char-main{color:#555;font-size:38px;font-weight:bold;line-height:1.1;transition:color .15s;text-align:center}
+.char-meaning{color:#666;font-size:13px;min-height:20px;text-align:center;max-width:80px}
+/* Divider */
+.divider{border:none;border-top:2px solid #d6d6d8;margin:2px 28px 8px}
+/* Summary */
+.summary{padding:0 12px;min-height:108px}
+.sentence{color:#1f2f3a;font-size:19px;font-weight:bold;text-align:center;min-height:76px;display:flex;align-items:center;justify-content:center;padding:4px 16px;line-height:1.5}
+.counter-row{height:32px;display:flex;align-items:center;justify-content:center;gap:6px}
+.counter-index{color:#0c4d4f;font-size:14px;font-weight:bold;cursor:pointer;padding:2px 4px}
+.counter-index:hover{text-decoration:underline}
+.counter-cat{color:#0c4d4f;font-size:14px;font-weight:bold;cursor:pointer;padding:2px 4px;position:relative}
+.counter-cat:hover{text-decoration:underline}
+/* Nav */
+.nav-row{display:flex;align-items:center;padding:10px 14px 12px;gap:4px;flex-wrap:wrap}
+.btn{border:none;border-radius:3px;font-family:inherit;font-weight:bold;cursor:pointer;font-size:12px;padding:7px 10px;line-height:1}
+.btn-teal{background:#1ea8a8;color:#fff}.btn-teal:hover{background:#189898}
+.btn-teal:disabled{background:#b9d7d6;color:#2f4c53;cursor:not-allowed}
+.btn-dark{background:#158b8b;color:#fff}.btn-dark:hover{background:#127878}
+.btn-mode-on{background:#17a0a0;color:#fff}
+.btn-mode-off{background:#b9d7d6;color:#2f4c53}
+.spacer{flex:1}
+.hist-lbl{color:#3f5961;font-size:11px;font-weight:bold;width:50px;text-align:center}
+/* Preview */
+.preview{background:#eef3f3;border:1px solid #d6d6d8;margin:6px 14px 10px;border-radius:4px;display:flex;min-height:230px}
+.prev-left{flex:1;padding:8px 6px 10px 10px;display:flex;flex-direction:column;min-width:0}
+.prev-title-row{display:flex;align-items:center;margin-bottom:6px}
+.prev-title{color:#35505a;font-size:14px;font-weight:bold;flex:1}
+.btn-trace{background:#d7f1ef;color:#0f5254;border:none;border-radius:5px;font-family:inherit;font-size:13px;font-weight:bold;padding:6px 14px;cursor:pointer}
+.btn-trace:hover{background:#c0e8e6}
+.prev-guide{flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px;padding:4px 0}
+.guide-txt{color:#3f5961;font-size:13px;font-weight:bold;line-height:1.5}
+.prev-info{flex:1;display:none;flex-direction:column;align-items:center;justify-content:center}
+.prev-huneum{color:#35505a;font-size:17px;font-weight:bold;text-align:center;margin-bottom:4px}
+.prev-char-big{color:#2b3640;font-size:52px;font-weight:bold;text-align:center;line-height:1.1}
+.speed-ctrl{display:none;flex-direction:column;gap:3px;margin-top:6px}
+.speed-hdr{display:flex;justify-content:space-between;align-items:center}
+.speed-lbl{color:#35505a;font-size:10px;font-weight:bold}
+.speed-val{color:#4d646b;font-size:9px;font-weight:bold}
+.speed-row{display:flex;align-items:center;gap:4px}
+.btn-anim{background:#d7f1ef;color:#0f5254;border:none;border-radius:3px;font-family:inherit;font-size:9px;font-weight:bold;padding:3px 6px;cursor:pointer;min-width:38px}
+.btn-anim:hover{background:#c0e8e6}
+.btn-anim:disabled{opacity:.5;cursor:not-allowed}
+input[type=range]{flex:1;accent-color:#1ea8a8}
+.prev-right{flex:1;padding:10px;display:flex;flex-direction:column;min-width:0}
+#stroke-box{flex:1;background:#fbfdfd;border:1px solid #b9cbce;border-radius:3px;position:relative;min-height:180px;overflow:hidden}
+#stroke-box svg{display:block}
+.stroke-ph{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#5a6a70;font-size:11px;font-weight:bold;text-align:center;pointer-events:none;white-space:nowrap}
+/* Dropdown */
+.dropdown{position:fixed;background:#fff;border:1px solid #ccc;border-radius:4px;box-shadow:0 4px 12px rgba(0,0,0,.15);z-index:100;min-width:170px;display:none}
+.dd-item{padding:8px 14px;font-size:12px;cursor:pointer;color:#333;white-space:nowrap}
+.dd-item:hover{background:#f0f8f8;color:#0b6f70}
+.dd-sep{border-top:1px solid #eee}
+/* Modal */
+.modal-ov{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-ov.show{display:flex}
+.modal{background:#eef3f3;border-radius:8px;width:500px;max-width:95vw;height:600px;max-height:95vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-hdr{display:flex;align-items:center;padding:12px 14px 8px;gap:8px}
+.modal-title{flex:1;color:#26434f;font-size:16px;font-weight:bold}
+.btn-modal{background:#d7f1ef;color:#0f5254;border:none;border-radius:3px;font-family:inherit;font-size:10px;font-weight:bold;padding:4px 10px;cursor:pointer}
+.btn-modal:hover{background:#c0e8e6}
+.btn-modal-close{background:#b9d7d6;color:#2f4c53;border:none;border-radius:3px;font-family:inherit;font-size:10px;font-weight:bold;padding:4px 10px;cursor:pointer}
+.trace-wrap{flex:1;position:relative;margin:0 14px 12px;border:1px solid #b9cbce;border-radius:4px;background:#fff;overflow:hidden}
+#trace-guide{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:rgba(0,0,0,.07);font-weight:bold;line-height:1;user-select:none;pointer-events:none}
+#trace-canvas{position:absolute;top:0;left:0;width:100%;height:100%;cursor:crosshair}
+@media(max-width:540px){
+  .chars-row{gap:0}.char-col{padding:0 8px}.char-main{font-size:28px}.char-reading{font-size:13px}
+  .preview{flex-direction:column}.prev-right{min-height:180px}
+}
+/* ── Start Screen ── */
+#start-screen,#prog-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px 32px;gap:28px;min-height:420px}
+.sc-title-box{border:3px solid #0b6f70;border-radius:6px;padding:12px 36px;color:#0b6f70;font-size:24px;font-weight:bold;letter-spacing:2px;text-align:center}
+.sc-block{width:100%;max-width:300px;background:#eef3f3;border-radius:8px;padding:18px 24px;display:flex;flex-direction:column;gap:12px}
+.sc-block-title{color:#35505a;font-size:13px;font-weight:bold;margin-bottom:2px}
+.sc-radio{display:flex;align-items:center;gap:10px;cursor:pointer;color:#1f2f3a;font-size:15px;font-weight:bold;padding:2px 0}
+.sc-radio input{width:18px;height:18px;accent-color:#0b6f70;cursor:pointer}
+.sc-section-row{display:flex;align-items:center;gap:12px}
+.sc-section-label{color:#35505a;font-size:13px;font-weight:bold;white-space:nowrap}
+.sc-select{flex:1;font-family:inherit;font-size:13px;font-weight:bold;color:#1f2f3a;background:#fff;border:1px solid #aac8c8;border-radius:5px;padding:7px 10px;cursor:pointer;outline:none}
+.sc-select:focus{border-color:#0b6f70}
+.sc-start-btn{background:#0b6f70;color:#fff;border:none;border-radius:50px;font-family:inherit;font-size:18px;font-weight:bold;padding:14px 60px;cursor:pointer;letter-spacing:2px;box-shadow:0 3px 10px rgba(11,111,112,.35);transition:background .15s,transform .1s}
+.sc-start-btn:hover{background:#0a5e5f}
+.sc-start-btn:active{transform:scale(.97)}
+.sc-exit-btn{background:#d8ece8;color:#1f5f57;border:none;border-radius:50px;font-family:inherit;font-size:18px;font-weight:bold;padding:14px 60px;cursor:pointer;transition:background .15s,transform .1s}
+.sc-exit-btn:hover{background:#c2deda}
+.sc-exit-btn:active{transform:scale(.97)}
+.sc-prog-btn{background:transparent;color:#0b6f70;border:2px solid #aac8c8;border-radius:50px;font-family:inherit;font-size:14px;font-weight:bold;padding:8px 28px;cursor:pointer;transition:background .15s,border-color .15s}
+.sc-prog-btn:hover{background:#eef9f8;border-color:#0b6f70}
+.sc-prog-panel{width:100%;max-width:300px;background:#eef3f3;border-radius:10px;padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+.sc-prog-row{display:flex;justify-content:space-between;align-items:center;color:#35505a;font-size:14px;padding:3px 0;border-bottom:1px solid #d6dfe0}
+.sc-prog-row:last-of-type{border-bottom:none}
+.sc-prog-val{font-weight:bold;color:#0b6f70;font-size:15px}
+.sc-prog-panel button:disabled{opacity:.4;cursor:not-allowed}
+.sc-prog-bar-row{padding:6px 0;border-bottom:1px solid #d6dfe0;display:flex;flex-direction:column;gap:5px}
+.sc-prog-bar-wrap{background:#d8ece8;border-radius:20px;height:14px;overflow:hidden;width:100%}
+.sc-prog-bar-fill{height:100%;background:#0b6f70;border-radius:20px;transition:width .4s}
+.sc-prog-bar-lbl{text-align:right;color:#0b6f70;font-size:12px;font-weight:bold}
+.sc-prog-mode{color:#1f5f57;font-size:13px;font-weight:bold;background:#d8ece8;border-radius:10px;padding:1px 8px}
+.sc-ver{color:#8aacac;font-size:11px;font-weight:bold}
+/* screen transition */
+.screen{transition:opacity .25s}
+</style>
+</head>
+<body>
+<!-- ── 시작 화면 ── -->
+<div class="card screen" id="start-screen">
+  <div class="sc-title-box">읽고쓰는 천자문</div>
+  <div class="sc-block">
+    <div class="sc-block-title">학습방법</div>
+    <label class="sc-radio"><input type="radio" name="learn-mode" value="sequential" checked> 순차적으로</label>
+    <label class="sc-radio"><input type="radio" name="learn-mode" value="random"> 랜덤하게</label>
+  </div>
+  <div class="sc-block">
+    <div class="sc-section-row">
+      <span class="sc-section-label">구간</span>
+      <select class="sc-select" id="sc-cat">
+        <option value="">전체</option>
+        <option value="천지와 자연 구간">천지와 자연 구간</option>
+        <option value="정치와 문물 구간">정치와 문물 구간</option>
+        <option value="수신과 덕행 구간">수신과 덕행 구간</option>
+        <option value="윤리와 교우 구간">윤리와 교우 구간</option>
+        <option value="도읍과 궁궐 구간">도읍과 궁궐 구간</option>
+        <option value="역사 인물 구간">역사 인물 구간</option>
+        <option value="농정과 수양 구간">농정과 수양 구간</option>
+        <option value="일상과 생활 구간">일상과 생활 구간</option>
+        <option value="마무리와 문법 구간">마무리와 문법 구간</option>
+      </select>
+    </div>
+  </div>
+  <button class="sc-prog-btn" onclick="showProgress()">📊 학습진도보기</button>
+  <button class="sc-start-btn" onclick="startApp()">시 작 하 기</button>
+  <button class="sc-exit-btn" onclick="if(window.Android&&window.Android.exitApp){window.Android.exitApp();}else{window.close();}">종 료 하 기</button>
+  <span class="sc-ver">Ver 4.0 (2026-03-21)</span>
+</div>
+
+<!-- ── 학습진도 화면 ── -->
+<div class="card screen" id="prog-screen" style="display:none">
+  <div class="sc-title-box">학 습 진 도</div>
+  <div class="sc-prog-panel">
+    <div class="sc-prog-row"><span>순차 학습 번호</span><span class="sc-prog-val" id="prog-seq-count">0회</span></div>
+    <div class="sc-prog-bar-row">
+      <div class="sc-prog-bar-wrap"><div class="sc-prog-bar-fill" id="prog-bar-fill" style="width:0%"></div></div>
+      <div class="sc-prog-bar-lbl"><span id="prog-bar-lbl">0</span>/1000</div>
+    </div>
+    <div class="sc-prog-row"><span>마지막 학습</span><span class="sc-prog-mode" id="prog-last-mode"></span><span class="sc-prog-val" id="prog-last-viewed">없음</span></div>
+    <div class="sc-prog-row"><span>랜덤 학습 횟수</span><span class="sc-prog-val" id="prog-rand-count">0회</span></div>
+  </div>
+  <button class="sc-start-btn" id="btn-continue" onclick="continueLearn()" style="font-size:15px;padding:11px 40px">▶ 학습 계속하기</button>
+  <button class="sc-exit-btn" onclick="goBackToStart()">돌 아 가 기</button>
+</div>
+
+<!-- ── 메인 화면 ── -->
+<div class="card screen" id="main-screen" style="display:none">
+  <div class="hdr">
+    <span class="hdr-title">읽고쓰는 천자문</span>
+    <span class="hdr-ver">Ver 4.0 (2026-03-21)</span>
+  </div>
+  <div class="chars-row">
+    <div class="char-col" id="col0" onclick="onCharClick(0)">
+      <div class="char-reading" id="read0"></div>
+      <div class="char-main" id="char0"></div>
+      <div class="char-meaning" id="mean0"></div>
+    </div>
+    <div class="char-col" id="col1" onclick="onCharClick(1)">
+      <div class="char-reading" id="read1"></div>
+      <div class="char-main" id="char1"></div>
+      <div class="char-meaning" id="mean1"></div>
+    </div>
+    <div class="char-col" id="col2" onclick="onCharClick(2)">
+      <div class="char-reading" id="read2"></div>
+      <div class="char-main" id="char2"></div>
+      <div class="char-meaning" id="mean2"></div>
+    </div>
+    <div class="char-col" id="col3" onclick="onCharClick(3)">
+      <div class="char-reading" id="read3"></div>
+      <div class="char-main" id="char3"></div>
+      <div class="char-meaning" id="mean3"></div>
+    </div>
+  </div>
+  <hr class="divider">
+  <div class="summary">
+    <div class="sentence" id="sentence"></div>
+    <div class="counter-row">
+      <span class="counter-index" id="cnt-idx" onclick="onIndexClick()"></span>
+      <span class="counter-cat" id="cnt-cat" onclick="onCatClick(event)"></span>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn btn-teal" id="btn-prev" onclick="goPrev()" disabled>◀ 이전</button>
+    <span class="hist-lbl" id="hist-lbl">0/0</span>
+    <button class="btn btn-teal" id="btn-next" onclick="goNext()">다음 ▶</button>
+    <button class="btn btn-mode-on" id="btn-rand" onclick="setMode('random')" style="display:none">🔀 랜덤</button>
+    <button class="btn btn-mode-off" id="btn-seq" onclick="setMode('sequential')" style="display:none">🔢 순차</button>
+    <div class="spacer"></div>
+    <button class="btn btn-dark" onclick="goHome()">&#x1F3E0; 홈으로</button>
+  </div>
+  <div class="preview">
+    <div class="prev-left">
+      <div class="prev-title-row">
+        <span class="prev-title">해당 한자 획순 보기</span>
+        <button class="btn-trace" onclick="openTrace()">✏️ 따라쓰기</button>
+      </div>
+      <div class="prev-guide" id="prev-guide">
+        <p class="guide-txt">* 해당 한자를 클릭하면 획순 표시됨</p>
+        <p class="guide-txt">* 번호 클릭하면 해당 사자성어로 이동</p>
+        <p class="guide-txt">* 구간 클릭하면 해당 구간만 표시됨</p>
+      </div>
+      <div class="prev-info" id="prev-info">
+        <div class="prev-huneum" id="prev-huneum"></div>
+        <div class="prev-char-big" id="prev-char-big"></div>
+      </div>
+      <div class="speed-ctrl" id="speed-ctrl">
+        <div class="speed-hdr">
+          <span class="speed-lbl">획순 속도</span>
+          <span class="speed-val" id="speed-val">보통</span>
+        </div>
+        <div class="speed-row">
+          <button class="btn-anim" id="btn-pause" onclick="pauseAnim()">멈춤</button>
+          <button class="btn-anim" id="btn-play" onclick="playAnim()" style="display:none">재생</button>
+          <input type="range" id="speed-slider" min="0" max="100" value="60" oninput="onSpeedChange(this.value)">
+        </div>
+      </div>
+    </div>
+    <div class="prev-right">
+      <div id="stroke-box">
+        <div class="stroke-ph" id="stroke-ph">획순 보여주기</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /#main-screen -->
+
+<!-- Category dropdown -->
+<div class="dropdown" id="cat-dd">
+  <div class="dd-item" onclick="setCategory(null)">전체</div>
+  <div class="dd-sep"></div>
+  <div class="dd-item" onclick="setCategory('천지와 자연 구간')">천지와 자연 구간</div>
+  <div class="dd-item" onclick="setCategory('정치와 문물 구간')">정치와 문물 구간</div>
+  <div class="dd-item" onclick="setCategory('수신과 덕행 구간')">수신과 덕행 구간</div>
+  <div class="dd-item" onclick="setCategory('윤리와 교우 구간')">윤리와 교우 구간</div>
+  <div class="dd-item" onclick="setCategory('도읍과 궁궐 구간')">도읍과 궁궐 구간</div>
+  <div class="dd-item" onclick="setCategory('역사 인물 구간')">역사 인물 구간</div>
+  <div class="dd-item" onclick="setCategory('농정과 수양 구간')">농정과 수양 구간</div>
+  <div class="dd-item" onclick="setCategory('일상과 생활 구간')">일상과 생활 구간</div>
+  <div class="dd-item" onclick="setCategory('마무리와 문법 구간')">마무리와 문법 구간</div>
+  <div class="dd-sep"></div>
+  <div class="dd-item" onclick="closeCatDd()">취소</div>
+</div>
+
+<!-- Trace modal -->
+<div class="modal-ov" id="trace-modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <span class="modal-title" id="trace-title">한자 따라쓰기</span>
+      <button class="btn-modal" onclick="eraseTrace()">지우기</button>
+      <button class="btn-modal" id="btn-trace-guide" onclick="clearTrace()">배경 한자 숨기기</button>
+      <button class="btn-modal-close" onclick="closeTrace()">닫기</button>
+    </div>
+    <div class="trace-wrap" id="trace-wrap">
+      <div id="trace-guide"></div>
+      <canvas id="trace-canvas"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────
+const GROUPS = "天地玄黃\n宇宙洪荒\n日月盈昃\n辰宿列張\n寒來暑往\n秋收冬藏\n閏餘成歲\n律召調陽\n雲騰致雨\n露結爲霜\n金生麗水\n玉出崑岡\n劍號巨闕\n珠稱夜光\n果珍李柰\n菜重芥薑\n海鹹河淡\n鱗潛羽翔\n龍師火帝\n鳥官人皇\n始制文字\n乃服衣裳\n推位讓國\n有虞陶唐\n弔民伐罪\n周發殷湯\n坐朝問道\n垂拱平章\n愛育黎首\n臣伏戎羌\n遐邇壹體\n率賓歸王\n鳴鳳在樹\n白駒食場\n化被草木\n賴及萬方\n蓋此身髮\n四大五常\n恭惟鞠養\n豈敢毀傷\n女慕貞烈\n男效才良\n知過必改\n得能莫忘\n罔談彼短\n靡恃己長\n信使可覆\n器欲難量\n墨悲絲淬\n詩讚羔羊\n景行維賢\n克念作聖\n德建名立\n形端表正\n空谷傳聲\n虛堂習聽\n禍因惡積\n福緣善慶\n尺璧非寶\n寸陰是競\n資父事君\n曰嚴與敬\n孝當竭力\n忠則盡命\n臨深履薄\n夙興溫凊\n似蘭斯馨\n如松之盛\n川流不息\n淵澄取映\n容止若思\n言辭安定\n篤初誠美\n慎終宜令\n榮業所基\n籍甚無竟\n學優登仕\n攝職從政\n存以甘棠\n去而益詠\n樂殊貴賤\n禮別尊卑\n上和下睦\n夫唱婦隨\n外受傅訓\n入奉母儀\n諸姑伯叔\n猶子比兒\n孔懷兄弟\n同氣連枝\n交友投分\n切磨箴規\n仁慈隱惻\n造次弗離\n節義廉退\n顛沛匪虧\n性靜情逸\n心動神疲\n守眞志滿\n逐物意移\n堅持雅操\n好爵自縻\n都邑華夏\n東西二京\n背邙面洛\n浮渭據涇\n宮殿盤鬱\n樓觀飛驚\n圖寫禽獸\n畫彩仙靈\n丙舍傍啟\n甲帳對楹\n肆筵設席\n鼓瑟吹笙\n升階納陛\n弁轉疑星\n右通廣內\n左達承明\n既集墳典\n亦聚群英\n杜稾鍾隸\n漆書壁經\n府羅將相\n路俠槐卿\n戶封八縣\n家給千兵\n高冠陪輦\n驅轂振纓\n世祿侈富\n車駕肥輕\n策功茂實\n勒碑刻銘\n磻溪伊尹\n佐時阿衡\n奄宅曲阜\n微旦孰營\n桓公匡合\n濟弱扶傾\n綺迴漢惠\n說感武丁\n俊乂密勿\n多士寔寧\n晉楚更霸\n趙魏困橫\n假途滅虢\n踐土會盟\n何遵約法\n韓弊煩刑\n起翦頗牧\n用軍最精\n宣威沙漠\n馳譽丹青\n九州禹跡\n百郡秦并\n嶽宗恆岱\n禪主云亭\n雁門紫塞\n雞田赤城\n昆池碣石\n鉅野洞庭\n曠遠緜邈\n巖岫杳冥\n治本於農\n務茲稼穡\n俶載南畝\n我藝黍稷\n稅熟貢新\n勸賞黜陟\n孟軻敦素\n史魚秉直\n庶幾中庸\n勞謙謹敕\n聆音察理\n鑑貌辨色\n貽厥嘉猷\n勉其祗植\n省躬譏誡\n寵增抗極\n殆辱近恥\n林皋幸即\n兩疏見機\n解組誰逼\n索居閒處\n沈默寂寥\n求古尋論\n散慮逍遙\n欣奏累遣\n慼謝歡招\n渠荷的歷\n園莽抽條\n枇杷晚翠\n梧桐早凋\n陳根委翳\n落葉飄颻\n游鵾獨運\n凌摩絳霄\n耽讀翫市\n寓目囊箱\n易輶攸畏\n屬耳垣牆\n具膳餐飯\n適口充腸\n飽飫烹宰\n飢厭糟糠\n親戚故舊\n老少異糧\n妾御績紡\n侍巾帷房\n紈扇圓潔\n銀燭煒煌\n晝眠夕寐\n籃筍象牀\n弦歌酒讌\n接杯舉觴\n矯手頓足\n悅豫且康\n嫡後嗣續\n祭祀烝嘗\n稽顙再拜\n悚懼恐惶\n箋牒簡要\n顧答審詳\n骸垢想浴\n執熱願涼\n驢騾犢特\n駭躍超驤\n誅斬賊盜\n捕獲叛亡\n布射遼丸\n嵇琴阮嘯\n恬筆倫紙\n鈞巧任釣\n釋紛利俗\n並皆佳妙\n毛施淑姿\n工顰妍笑\n年矢每催\n曦暉朗耀\n璇璣懸斡\n晦魄環照\n指薪脩祜\n永綏吉劭\n矩步引領\n俯仰廊廟\n束帶矜莊\n徘徊瞻眺\n孤陋寡聞\n愚蒙等誚\n謂語助者\n焉哉乎也".split('\n');
+
+const READINGS = {"天":"천","地":"지","玄":"현","黃":"황","宇":"우","宙":"주","洪":"홍","荒":"황","日":"일","月":"월","盈":"영","昃":"측","辰":"진","宿":"숙","列":"열","張":"장","寒":"한","來":"내","暑":"서","往":"왕","秋":"추","收":"수","冬":"동","藏":"장","閏":"윤","餘":"여","成":"성","歲":"세","律":"율","召":"소","調":"조","陽":"양","雲":"운","騰":"등","致":"치","雨":"우","露":"노","結":"결","爲":"위","霜":"상","金":"금","生":"생","麗":"여","水":"수","玉":"옥","出":"출","崑":"곤","岡":"강","劍":"검","號":"호","巨":"거","闕":"궐","珠":"주","稱":"칭","夜":"야","光":"광","果":"과","珍":"진","李":"이","柰":"내","菜":"채","重":"중","芥":"개","薑":"강","海":"해","鹹":"함","河":"하","淡":"담","鱗":"인","潛":"잠","羽":"우","翔":"상","龍":"용","師":"사","火":"화","帝":"제","鳥":"조","官":"관","人":"인","皇":"황","始":"시","制":"제","文":"문","字":"자","乃":"내","服":"복","衣":"의","裳":"상","推":"추","位":"위","讓":"양","國":"국","有":"유","虞":"우","陶":"도","唐":"당","弔":"조","民":"민","伐":"벌","罪":"죄","周":"주","發":"발","殷":"은","湯":"탕","坐":"좌","朝":"조","問":"문","道":"도","垂":"수","拱":"공","平":"평","章":"장","愛":"애","育":"육","黎":"여","首":"수","臣":"신","伏":"복","戎":"융","羌":"강","遐":"하","邇":"이","壹":"일","體":"체","率":"솔","賓":"빈","歸":"귀","王":"왕","鳴":"명","鳳":"봉","在":"재","樹":"수","白":"백","駒":"구","食":"식","場":"장","化":"화","被":"피","草":"초","木":"목","賴":"뇌","及":"급","萬":"만","方":"방","蓋":"개","此":"차","身":"신","髮":"발","四":"사","大":"대","五":"오","常":"상","恭":"공","惟":"유","鞠":"국","養":"양","豈":"기","敢":"감","毀":"훼","傷":"상","女":"여","慕":"모","貞":"정","烈":"열","男":"남","效":"효","才":"재","良":"양","知":"지","過":"과","必":"필","改":"개","得":"득","能":"능","莫":"막","忘":"망","罔":"망","談":"담","彼":"피","短":"단","靡":"미","恃":"시","己":"기","長":"장","信":"신","使":"사","可":"가","覆":"복","器":"기","欲":"욕","難":"난","量":"양","墨":"묵","悲":"비","絲":"사","淬":"쉬","詩":"시","讚":"찬","羔":"고","羊":"양","景":"경","行":"행","維":"유","賢":"현","克":"극","念":"염","作":"작","聖":"성","德":"덕","建":"건","名":"명","立":"입","形":"형","端":"단","表":"표","正":"정","空":"공","谷":"곡","傳":"전","聲":"성","虛":"허","堂":"당","習":"습","聽":"청","禍":"화","因":"인","惡":"악","積":"적","福":"복","緣":"연","善":"선","慶":"경","尺":"척","璧":"벽","非":"비","寶":"보","寸":"촌","陰":"음","是":"시","競":"경","資":"자","父":"부","事":"사","君":"군","曰":"왈","嚴":"엄","與":"여","敬":"경","孝":"효","當":"당","竭":"갈","力":"역","忠":"충","則":"칙","盡":"진","命":"명","臨":"임","深":"심","履":"이","薄":"박","夙":"숙","興":"흥","溫":"온","凊":"청","似":"사","蘭":"난","斯":"사","馨":"형","如":"여","松":"송","之":"지","盛":"성","川":"천","流":"유","不":"불","息":"식","淵":"연","澄":"징","取":"취","映":"영","容":"용","止":"지","若":"약","思":"사","言":"언","辭":"사","安":"안","定":"정","篤":"독","初":"초","誠":"성","美":"미","慎":"신","終":"종","宜":"의","令":"영","榮":"영","業":"업","所":"소","基":"기","籍":"적","甚":"심","無":"무","竟":"경","學":"학","優":"우","登":"등","仕":"사","攝":"섭","職":"직","從":"종","政":"정","存":"존","以":"이","甘":"감","棠":"당","去":"거","而":"이","益":"익","詠":"영","樂":"낙","殊":"수","貴":"귀","賤":"천","禮":"예","別":"별","尊":"존","卑":"비","上":"상","和":"화","下":"하","睦":"목","夫":"부","唱":"창","婦":"부","隨":"수","外":"외","受":"수","傅":"부","訓":"훈","入":"입","奉":"봉","母":"모","儀":"의","諸":"제","姑":"고","伯":"백","叔":"숙","猶":"유","子":"자","比":"비","兒":"아","孔":"공","懷":"회","兄":"형","弟":"제","同":"동","氣":"기","連":"연","枝":"지","交":"교","友":"우","投":"투","分":"분","切":"절","磨":"마","箴":"잠","規":"규","仁":"인","慈":"자","隱":"은","惻":"측","造":"조","次":"차","弗":"불","離":"이","節":"절","義":"의","廉":"염","退":"퇴","顛":"전","沛":"패","匪":"비","虧":"휴","性":"성","靜":"정","情":"정","逸":"일","心":"심","動":"동","神":"신","疲":"피","守":"수","眞":"진","志":"지","滿":"만","逐":"축","物":"물","意":"의","移":"이","堅":"견","持":"지","雅":"아","操":"조","好":"호","爵":"작","自":"자","縻":"미","都":"도","邑":"읍","華":"화","夏":"하","東":"동","西":"서","二":"이","京":"경","背":"배","邙":"망","面":"면","洛":"낙","浮":"부","渭":"위","據":"거","涇":"경","宮":"궁","殿":"전","盤":"반","鬱":"울","樓":"누","觀":"관","飛":"비","驚":"경","圖":"도","寫":"사","禽":"금","獸":"수","畫":"화","彩":"채","仙":"선","靈":"영","丙":"병","舍":"사","傍":"방","啟":"계","甲":"갑","帳":"장","對":"대","楹":"영","肆":"사","筵":"연","設":"설","席":"석","鼓":"고","瑟":"슬","吹":"취","笙":"생","升":"승","階":"계","納":"납","陛":"폐","弁":"변","轉":"전","疑":"의","星":"성","右":"우","通":"통","廣":"광","內":"내","左":"좌","達":"달","承":"승","明":"명","既":"기","集":"집","墳":"분","典":"전","亦":"역","聚":"취","群":"군","英":"영","杜":"두","稾":"고","鍾":"종","隸":"예","漆":"칠","書":"서","壁":"벽","經":"경","府":"부","羅":"나","將":"장","相":"상","路":"노","俠":"협","槐":"괴","卿":"경","戶":"호","封":"봉","八":"팔","縣":"현","家":"가","給":"급","千":"천","兵":"병","高":"고","冠":"관","陪":"배","輦":"연","驅":"구","轂":"곡","振":"진","纓":"영","世":"세","祿":"녹","侈":"치","富":"부","車":"차","駕":"가","肥":"비","輕":"경","策":"책","功":"공","茂":"무","實":"실","勒":"늑","碑":"비","刻":"각","銘":"명","磻":"반","溪":"계","伊":"이","尹":"윤","佐":"좌","時":"시","阿":"아","衡":"형","奄":"엄","宅":"택","曲":"곡","阜":"부","微":"미","旦":"단","孰":"숙","營":"영","桓":"환","公":"공","匡":"광","合":"합","濟":"제","弱":"약","扶":"부","傾":"경","綺":"기","迴":"회","漢":"한","惠":"혜","說":"설","感":"감","武":"무","丁":"정","俊":"준","乂":"예","密":"밀","勿":"물","多":"다","士":"사","寔":"식","寧":"영","晉":"진","楚":"초","更":"경","霸":"패","趙":"조","魏":"위","困":"곤","橫":"횡","假":"가","途":"도","滅":"멸","虢":"괵","踐":"천","土":"토","會":"회","盟":"맹","何":"하","遵":"준","約":"약","法":"법","韓":"한","弊":"폐","煩":"번","刑":"형","起":"기","翦":"전","頗":"파","牧":"목","用":"용","軍":"군","最":"최","精":"정","宣":"선","威":"위","沙":"사","漠":"막","馳":"치","譽":"예","丹":"단","青":"청","九":"구","州":"주","禹":"우","跡":"적","百":"백","郡":"군","秦":"진","并":"병","嶽":"악","宗":"종","恆":"항","岱":"대","禪":"선","主":"주","云":"운","亭":"정","雁":"안","門":"문","紫":"자","塞":"새","雞":"계","田":"전","赤":"적","城":"성","昆":"곤","池":"지","碣":"갈","石":"석","鉅":"거","野":"야","洞":"동","庭":"정","曠":"광","遠":"원","緜":"면","邈":"막","巖":"암","岫":"수","杳":"묘","冥":"명","治":"치","本":"본","於":"어","農":"농","務":"무","茲":"자","稼":"가","穡":"색","俶":"숙","載":"재","南":"남","畝":"무","我":"아","藝":"예","黍":"서","稷":"직","稅":"세","熟":"숙","貢":"공","新":"신","勸":"권","賞":"상","黜":"출","陟":"척","孟":"맹","軻":"가","敦":"돈","素":"소","史":"사","魚":"어","秉":"병","直":"직","庶":"서","幾":"기","中":"중","庸":"용","勞":"노","謙":"겸","謹":"근","敕":"칙","聆":"영","音":"음","察":"찰","理":"이","鑑":"감","貌":"모","辨":"변","色":"색","貽":"이","厥":"궐","嘉":"가","猷":"유","勉":"면","其":"기","祗":"지","植":"식","省":"성","躬":"궁","譏":"기","誡":"계","寵":"총","增":"증","抗":"항","極":"극","殆":"태","辱":"욕","近":"근","恥":"치","林":"임","皋":"고","幸":"행","即":"즉","兩":"양","疏":"소","見":"견","機":"기","解":"해","組":"조","誰":"수","逼":"핍","索":"색","居":"거","閒":"한","處":"처","沈":"침","默":"묵","寂":"적","寥":"요","求":"구","古":"고","尋":"심","論":"논","散":"산","慮":"여","逍":"소","遙":"요","欣":"흔","奏":"주","累":"누","遣":"견","慼":"척","謝":"사","歡":"환","招":"초","渠":"거","荷":"하","的":"적","歷":"역","園":"원","莽":"망","抽":"추","條":"조","枇":"비","杷":"파","晚":"만","翠":"취","梧":"오","桐":"동","早":"조","凋":"조","陳":"진","根":"근","委":"위","翳":"예","落":"낙","葉":"엽","飄":"표","颻":"요","游":"유","鵾":"곤","獨":"독","運":"운","凌":"능","摩":"마","絳":"강","霄":"소","耽":"탐","讀":"독","翫":"완","市":"시","寓":"우","目":"목","囊":"낭","箱":"상","易":"역","輶":"유","攸":"유","畏":"외","屬":"속","耳":"이","垣":"원","牆":"장","具":"구","膳":"선","餐":"찬","飯":"반","適":"적","口":"구","充":"충","腸":"장","飽":"포","飫":"어","烹":"팽","宰":"재","飢":"기","厭":"염","糟":"조","糠":"강","親":"친","戚":"척","故":"고","舊":"구","老":"노","少":"소","異":"이","糧":"양","妾":"첩","御":"어","績":"적","紡":"방","侍":"시","巾":"건","帷":"유","房":"방","紈":"환","扇":"선","圓":"원","潔":"결","銀":"은","燭":"촉","煒":"위","煌":"황","晝":"주","眠":"면","夕":"석","寐":"매","籃":"남","筍":"순","象":"상","牀":"상","弦":"현","歌":"가","酒":"주","讌":"연","接":"접","杯":"배","舉":"거","觴":"상","矯":"교","手":"수","頓":"돈","足":"족","悅":"열","豫":"예","且":"차","康":"강","嫡":"적","後":"후","嗣":"사","續":"속","祭":"제","祀":"사","烝":"증","嘗":"상","稽":"계","顙":"상","再":"재","拜":"배","悚":"송","懼":"구","恐":"공","惶":"황","箋":"전","牒":"첩","簡":"간","要":"요","顧":"고","答":"답","審":"심","詳":"상","骸":"해","垢":"구","想":"상","浴":"욕","執":"집","熱":"열","願":"원","涼":"양","驢":"여","騾":"나","犢":"독","特":"특","駭":"해","躍":"약","超":"초","驤":"양","誅":"주","斬":"참","賊":"적","盜":"도","捕":"포","獲":"획","叛":"반","亡":"망","布":"포","射":"사","遼":"요","丸":"환","嵇":"혜","琴":"금","阮":"완","嘯":"소","恬":"염","筆":"필","倫":"윤","紙":"지","鈞":"균","巧":"교","任":"임","釣":"조","釋":"석","紛":"분","利":"이","俗":"속","並":"병","皆":"개","佳":"가","妙":"묘","毛":"모","施":"시","淑":"숙","姿":"자","工":"공","顰":"빈","妍":"연","笑":"소","年":"연","矢":"시","每":"매","催":"최","曦":"희","暉":"휘","朗":"낭","耀":"요","璇":"선","璣":"기","懸":"현","斡":"알","晦":"회","魄":"백","環":"환","照":"조","指":"지","薪":"신","脩":"수","祜":"호","永":"영","綏":"수","吉":"길","劭":"초","矩":"구","步":"보","引":"인","領":"영","俯":"부","仰":"앙","廊":"낭","廟":"묘","束":"속","帶":"대","矜":"긍","莊":"장","徘":"배","徊":"회","瞻":"첨","眺":"조","孤":"고","陋":"누","寡":"과","聞":"문","愚":"우","蒙":"몽","等":"등","誚":"초","謂":"위","語":"어","助":"조","者":"자","焉":"언","哉":"재","乎":"호","也":"야"};
+
+const HUNEUM = {"天":"하늘 천","地":"땅 지","玄":"검다 현","黃":"누렇다 황","宇":"집 우","宙":"집 주","洪":"큰물 홍","荒":"거칠다 황","日":"해 일","月":"달 월","盈":"찰 영","昃":"기울 측","辰":"다섯째 지지 진","宿":"자다 별자리 숙","列":"나누어 세우다 렬","張":"베풀다 장","寒":"차다 한","來":"오다 래","暑":"덥다 서","往":"가다 왕","秋":"가을 추","收":"거두다 수","冬":"겨울 동","藏":"감추다 장","閏":"윤달 윤","餘":"남다 여","成":"이루다 성","歲":"나이 세","律":"법률 률","召":"부르다 소","調":"고르다 조","陽":"해 양","雲":"구름 운","騰":"오르다 등","致":"이르다 치","雨":"비 우","露":"이슬 로","結":"맺다 결","爲":"하다 위","霜":"서리 상","金":"쇠 금","生":"나다 생","麗":"곱다 려","水":"물 수","玉":"구슬 옥","出":"나다 출","崑":"산 이름 곤","岡":"산등성이 강","劍":"칼 검","號":"부르짖다 호","巨":"크다 거","闕":"대궐 궐","珠":"구슬 주","稱":"일컫다 칭","夜":"밤 야","光":"빛 광","果":"실과 과","珍":"보배 진","李":"오얏 리","柰":"능금 내","菜":"나물 채","重":"무겁다 중","芥":"겨자 개","薑":"생강 강","海":"바다 해","鹹":"짜다 함","河":"강 하","淡":"맑다 담","鱗":"비늘 린","潛":"물에 잠기다 잠","羽":"깃 우","翔":"날개 상","龍":"용 룡","師":"스승 사","火":"불 화","帝":"임금 제","鳥":"새 조","官":"벼슬 관","人":"사람 인","皇":"임금 황","始":"비로소 시","制":"억제하다 제","文":"글월 문","字":"글 자","乃":"이에 내","服":"옷 복","衣":"옷 의","裳":"치마 상","推":"밀다 추","位":"자리 위","讓":"사양하다 양","國":"나라 국","有":"있다 유","虞":"생각하다 우","陶":"질그릇 도","唐":"나라 이름 당","弔":"슬퍼하다 조","民":"백성 민","伐":"치다 벌","罪":"허물 죄","周":"두루 주","發":"쏘다 발","殷":"성하다 은","湯":"끓이다 탕","坐":"앉다 좌","朝":"아침 조","問":"묻다 문","道":"길 도","垂":"드리우다 수","拱":"손을 마주 잡다 공","平":"평평하다 평","章":"글 장","愛":"사랑하다 애","育":"기르다 육","黎":"검다 려","首":"머리 수","臣":"신하 신","伏":"엎드리다 복","戎":"병장기 융","羌":"오랑캐 강","遐":"멀다 하","邇":"가깝다 이","壹":"하나 일","體":"몸 체","率":"거느리다 솔","賓":"손님 빈","歸":"돌아가다 귀","王":"임금 왕","鳴":"울다 명","鳳":"봉황새 봉","在":"있다 재","樹":"나무 수","白":"희다 백","駒":"망아지 구","食":"밥 식","場":"마당 장","化":"되다 화","被":"입다 피","草":"풀 초","木":"나무 목","賴":"맡기다 뢰","及":"미치다 급","萬":"만 만","方":"모 방","蓋":"덮다 개","此":"이 차","身":"몸 신","髮":"터럭 발","四":"넷 사","大":"크다 대","五":"다섯 오","常":"언제나 상","恭":"공손하다 공","惟":"생각하다 유","鞠":"기르다 국","養":"기르다 양","豈":"어찌 기","敢":"감히 감","毀":"헐다 훼","傷":"상하다 상","女":"계집 녀","慕":"생각하다 모","貞":"곧다 정","烈":"불길이 세차다 렬","男":"사내 남","效":"본받다 효","才":"재주 재","良":"어질다 량","知":"알다 지","過":"지나다 과","必":"반드시 필","改":"고치다 개","得":"얻다 득","能":"능하다 능","莫":"없다 막","忘":"잊다 망","罔":"그물 망","談":"말씀 담","彼":"저 피","短":"짧다 단","靡":"아니다 미","恃":"믿다 시","己":"몸 기","長":"길다 장","信":"믿다 신","使":"하여금 사","可":"옳다 가","覆":"덮다 복","器":"그릇 기","欲":"하고자 하다 욕","難":"어렵다 난","量":"헤아리다 량","墨":"먹 묵","悲":"슬프다 비","絲":"실 사","淬":"담그다 쉬","詩":"시 시","讚":"기리다 찬","羔":"새끼 양 고","羊":"양 양","景":"볕 경","行":"다니다 행","維":"벼리 유","賢":"어질다 현","克":"이기다 극","念":"생각 념","作":"짓다 작","聖":"거룩하다 성","德":"덕 덕","建":"세우다 건","名":"이름 명","立":"서다 립","形":"형상 형","端":"단정하다 단","表":"겉 표","正":"바르다 정","空":"비다 공","谷":"골 곡","傳":"전하다 전","聲":"소리 성","虛":"비다 허","堂":"집 당","習":"익히다 습","聽":"듣다 청","禍":"재난 화","因":"인하다 인","惡":"악하다 악","積":"쌓다 적","福":"복 복","緣":"맺다 연","善":"착하다 선","慶":"좋은 일 경","尺":"자 척","璧":"둥근 옥 벽","非":"아니다 비","寶":"보배 보","寸":"마디 촌","陰":"달 음","是":"이 시","競":"겨루다 경","資":"재물 자","父":"아버지 부","事":"일 사","君":"임금 군","曰":"가로되 왈","嚴":"엄하다 엄","與":"더불어 여","敬":"공경하다 경","孝":"효도 효","當":"마땅하다 당","竭":"다하다 갈","力":"힘 역","忠":"충성 충","則":"법칙 칙","盡":"다하다 진","命":"목숨 명","臨":"임하다 림","深":"깊다 심","履":"밟다 리","薄":"엷다 박","夙":"일찍 숙","興":"일어나다 흥","溫":"따뜻하다 온","凊":"서늘하다 청","似":"닮다 사","蘭":"난초 란","斯":"이것 사","馨":"향기 형","如":"같다 여","松":"소나무 송","之":"가다 지","盛":"무성하다 성","川":"내 천","流":"흐르다 류","不":"아니다 불","息":"숨쉬다 식","淵":"연못 연","澄":"맑다 징","取":"취하다 취","映":"비치다 영","容":"얼굴 용","止":"그치다 지","若":"같다 약","思":"생각하다 사","言":"말씀 언","辭":"말 사","安":"편안하다 안","定":"정하다 정","篤":"도탑다 독","初":"처음 초","誠":"정성 성","美":"아름답다 미","慎":"삼가다 신","終":"마치다 종","宜":"마땅하다 의","令":"하여금 령","榮":"영화롭다 영","業":"업 업","所":"바 소","基":"터 기","籍":"문서 적","甚":"심하다 심","無":"없다 무","竟":"끝나다 경","學":"배우다 학","優":"넉넉하다 우","登":"오르다 등","仕":"벼슬 사","攝":"당기다 섭","職":"구실 직","從":"좇다 종","政":"나랏일 정","存":"있다 존","以":"써 이","甘":"달다 감","棠":"아가위 당","去":"가다 거","而":"말을 잇다 이","益":"더하다 익","詠":"읊다 영","樂":"즐기다 락","殊":"베어 죽이다 수","貴":"귀하다 귀","賤":"천하다 천","禮":"예도 례","別":"다르다 별","尊":"높다 존","卑":"낮다 비","上":"위 상","和":"화하다 화","下":"아래 하","睦":"화목하다 목","夫":"지아비 부","唱":"부르다 창","婦":"아내 부","隨":"따르다 수","外":"바깥 외","受":"받다 수","傅":"스승 부","訓":"가르치다 훈","入":"들다 입","奉":"받들다 봉","母":"어머니 모","儀":"거동 의","諸":"모든 제","姑":"시어머니 고","伯":"맏이 백","叔":"아재비 숙","猶":"오히려 유","子":"아들 자","比":"견주다 비","兒":"아이 아","孔":"구멍 공","懷":"품다 회","兄":"오빠 형","弟":"아우 제","同":"한가지 동","氣":"기운 기","連":"잇다 련","枝":"가지 지","交":"사귀다 교","友":"벗 우","投":"던지다 투","分":"나누다 분","切":"끊다 절","磨":"갈다 마","箴":"바늘 잠","規":"그림쇠 규","仁":"어질다 인","慈":"사랑하다 자","隱":"숨다 은","惻":"슬프다 측","造":"만들다 조","次":"버금 차","弗":"아니다 불","離":"떠나다 리","節":"마디 절","義":"옳다 의","廉":"청렴하다 렴","退":"물러나다 퇴","顛":"엎어지다 전","沛":"늪 패","匪":"비적 비","虧":"이지러지다 휴","性":"성품 성","靜":"조용하다 정","情":"품은 뜻 정","逸":"잃다 일","心":"마음 심","動":"움직이다 동","神":"귀신 신","疲":"고달프다 피","守":"지키다 수","眞":"참 진","志":"뜻 지","滿":"차다 만","逐":"쫓다 축","物":"물건 물","意":"뜻 의","移":"옮기다 이","堅":"굳다 견","持":"가지다 지","雅":"맑다 아","操":"잡다 조","好":"좋다 호","爵":"벼슬 작","自":"스스로 자","縻":"얽매이다 미","都":"도읍 도","邑":"고을 읍","華":"빛나다 화","夏":"여름 하","東":"동녘 동","西":"서녘 서","二":"둘 이","京":"서울 경","背":"등 배","邙":"망산 망","面":"얼굴 면","洛":"물 이름 락","浮":"뜨다 부","渭":"위수 위","據":"의지하다 거","涇":"경수 경","宮":"집 궁","殿":"큰 집 전","盤":"소반 반","鬱":"답답하다 울","樓":"다락 누","觀":"보다 관","飛":"날다 비","驚":"놀라다 경","圖":"그림 도","寫":"베끼다 사","禽":"날짐승 금","獸":"짐승 수","畫":"그림 화","彩":"무늬 채","仙":"신선 선","靈":"신령 령","丙":"셋째 천간 병","舍":"집 사","傍":"곁 방","啟":"열다 계","甲":"갑옷 갑","帳":"휘장 장","對":"마주하다 대","楹":"기둥 영","肆":"방자하다 사","筵":"대 돗자리 연","設":"베풀다 설","席":"자리 석","鼓":"북 고","瑟":"비파 슬","吹":"불다 취","笙":"생황 생","升":"되 승","階":"섬돌 계","納":"들이다 납","陛":"섬돌 폐","弁":"고깔 변","轉":"구르다 전","疑":"의심하다 의","星":"별 성","右":"오른쪽 우","通":"통하다 통","廣":"넓다 광","內":"안 내","左":"왼쪽 좌","達":"통달하다 달","承":"잇다 승","明":"밝다 명","既":"이미 기","集":"모으다 집","墳":"무덤 분","典":"법 전","亦":"또 역","聚":"모으다 취","群":"무리 군","英":"꽃부리 영","杜":"막다 두","稾":"원고 고","鍾":"술잔 종","隸":"예서 예","漆":"옻 칠","書":"글 서","壁":"벽 벽","經":"세로 경","府":"마을 부","羅":"그물 라","將":"장수 장","相":"서로 상","路":"길 로","俠":"용감하다 협","槐":"느티나무 괴","卿":"벼슬 경","戶":"지게 호","封":"봉하다 봉","八":"팔 팔","縣":"매달다 현","家":"집 가","給":"주다 급","千":"천 천","兵":"군사 병","高":"높다 고","冠":"갓 관","陪":"모실 배","輦":"손수레 련","驅":"몰다 구","轂":"바퀴통 곡","振":"떨치다 진","纓":"갓끈 영","世":"누리 세","祿":"복 록","侈":"사치하다 치","富":"부유하다 부","車":"수레 차","駕":"멍에 가","肥":"살찌다 비","輕":"가볍다 경","策":"꾀 책","功":"공 공","茂":"풀이 우거지다 무","實":"열매 실","勒":"굴레 륵","碑":"비석 비","刻":"새기다 각","銘":"새기다 명","磻":"강 이름 반","溪":"시내 계","伊":"저 이","尹":"다스리다 윤","佐":"돕다 좌","時":"때 시","阿":"언덕 아","衡":"저울 형","奄":"문득 엄","宅":"집 택","曲":"굽다 곡","阜":"언덕 부","微":"작다 미","旦":"아침 단","孰":"누구 숙","營":"경영하다 영","桓":"굳세다 환","公":"공평하다 공","匡":"바루다 광","合":"합하다 합","濟":"건너다 제","弱":"약하다 약","扶":"돕다 부","傾":"기울다 경","綺":"비단 기","迴":"돌다 회","漢":"나라 이름 한","惠":"은혜 혜","說":"말씀 설","感":"느끼다 감","武":"굳세다 무","丁":"넷째 천간 정","俊":"뛰어나다 준","乂":"베다 예","密":"빽빽하다 밀","勿":"말다 물","多":"많다 다","士":"선비 사","寔":"이 식","寧":"편안하다 녕","晉":"나라 이름 진","楚":"나라 이름 초","更":"다시 갱","霸":"으뜸 패","趙":"나라 이름 조","魏":"나라 이름 위","困":"곤하다 곤","橫":"가로 횡","假":"거짓 가","途":"길 도","滅":"멸망하다 멸","虢":"나라 이름 괵","踐":"밟다 천","土":"흙 토","會":"모으다 회","盟":"맹세 맹","何":"어찌 하","遵":"좇다 준","約":"맺다 약","法":"법 법","韓":"나라 이름 한","弊":"해어지다 폐","煩":"답답하다 번","刑":"형벌 형","起":"일어나다 기","翦":"자르다 전","頗":"치우치다 파","牧":"가축을 치다 목","用":"쓰다 용","軍":"군사 군","最":"가장 최","精":"정하다 정","宣":"베풀다 선","威":"위엄 위","沙":"모래 사","漠":"사막 막","馳":"달리다 치","譽":"명예 예","丹":"붉다 단","青":"푸르다 청","九":"아홉 구","州":"고을 주","禹":"하우씨 우","跡":"자취 적","百":"백 백","郡":"고을 군","秦":"나라 이름 진","并":"아우르다 병","嶽":"큰 산 악","宗":"마루 종","恆":"항상 항","岱":"태산 대","禪":"양위하다 선","主":"주인 주","云":"구름 운","亭":"정자 정","雁":"기러기 안","門":"문 문","紫":"자줏빛 자","塞":"막다 색","雞":"닭 계","田":"밭 전","赤":"붉다 적","城":"성 성","昆":"맏형 곤","池":"연못 지","碣":"비석 갈","石":"돌 석","鉅":"크다 거","野":"들 야","洞":"고을 동","庭":"뜰 정","曠":"비다 광","遠":"멀다 원","緜":"솜 면","邈":"멀다 막","巖":"바위 암","岫":"산의 굴 수","杳":"아득하다 묘","冥":"어둡다 명","治":"다스리다 치","本":"근본 본","於":"어조사 어","農":"농사 농","務":"힘쓰다 무","茲":"이 자","稼":"심다 가","穡":"거두다 색","俶":"비로소 숙","載":"싣다 재","南":"남녘 남","畝":"이랑 무","我":"나 아","藝":"재주 예","黍":"기장 서","稷":"기장 직","稅":"구실 세","熟":"익다 숙","貢":"바치다 공","新":"새롭다 신","勸":"권하다 권","賞":"상주다 상","黜":"내치다 출","陟":"오르다 척","孟":"맏 맹","軻":"수레 가","敦":"도탑다 돈","素":"희다 소","史":"역사 사","魚":"물고기 어","秉":"잡다 병","直":"곧다 직","庶":"여러 서","幾":"기약하다 기","中":"가운데 중","庸":"쓰다 용","勞":"애쓰다 로","謙":"겸손하다 겸","謹":"삼가다 근","敕":"조서 칙","聆":"듣다 령","音":"소리 음","察":"살피다 찰","理":"다스리다 리","鑑":"거울 감","貌":"모양 모","辨":"분별하다 변","色":"빛 색","貽":"주다 이","厥":"그 궐","嘉":"아름답다 가","猷":"꾀 유","勉":"힘쓰다 면","其":"그 기","祗":"공경하다 지","植":"심다 식","省":"살피다 성","躬":"몸소 궁","譏":"나무라다 기","誡":"경계하다 계","寵":"사랑 총","增":"더하다 증","抗":"막다 항","極":"다하다 극","殆":"위태롭다 태","辱":"욕되다 욕","近":"가깝다 근","恥":"부끄러워하다 치","林":"수풀 림","皋":"언덕 고","幸":"다행 행","即":"곧 즉","兩":"둘 량","疏":"트이다 소","見":"보다 견","機":"틀 기","解":"풀다 해","組":"짜다 조","誰":"누구 수","逼":"핍박하다 핍","索":"찾다 색","居":"살다 거","閒":"한가하다 한","處":"곳 처","沈":"잠기다 침","默":"잠잠하다 묵","寂":"고요하다 적","寥":"쓸쓸하다 요","求":"구하다 구","古":"옛 고","尋":"찾다 심","論":"의논하다 론","散":"흩다 산","慮":"생각하다 려","逍":"거닐다 소","遙":"멀다 요","欣":"기쁘다 흔","奏":"아뢰다 주","累":"묶다 루","遣":"보내다 견","慼":"슬프다 척","謝":"사례하다 사","歡":"기뻐하다 환","招":"부르다 초","渠":"도랑 거","荷":"연꽃 하","的":"과녁 적","歷":"지내다 력","園":"동산 원","莽":"우거지다 망","抽":"빼다 추","條":"곁가지 조","枇":"비파나무 비","杷":"비파나무 파","晚":"늦다 만","翠":"물총새 취","梧":"오동나무 오","桐":"오동나무 동","早":"일찍 조","凋":"시들다 조","陳":"베풀다 진","根":"뿌리 근","委":"맡기다 위","翳":"가리다 예","落":"떨어지다 락","葉":"잎 엽","飄":"나부끼다 표","颻":"나부끼다 요","游":"놀다 유","鵾":"새 이름 곤","獨":"홀로 독","運":"옮기다 운","凌":"업신여기다 릉","摩":"갈다 마","絳":"붉다 강","霄":"하늘 소","耽":"즐기다 탐","讀":"읽다 독","翫":"희롱하다 완","市":"저자 시","寓":"붙어 살다 우","目":"눈 목","囊":"주머니 낭","箱":"상자 상","易":"쉽다 이","輶":"가벼운 수레 유","攸":"바 유","畏":"두려워하다 외","屬":"무리 속","耳":"귀 이","垣":"담 원","牆":"담 장","具":"갖추다 구","膳":"음식 선","餐":"반찬 찬","飯":"밥 반","適":"알맞다 적","口":"입 구","充":"채우다 충","腸":"창자 장","飽":"배부르다 포","飫":"실컷 먹다 어","烹":"삶다 팽","宰":"우두머리 재","飢":"굶주리다 기","厭":"싫다 염","糟":"지게미 조","糠":"겨 강","親":"친하다 친","戚":"친척 척","故":"연고 고","舊":"옛 구","老":"늙다 로","少":"적다 소","異":"다르다 이","糧":"양식 량","妾":"첩 첩","御":"어거하다 어","績":"길쌈하다 적","紡":"길쌈 방","侍":"모시다 시","巾":"수건 건","帷":"휘장 유","房":"방 방","紈":"흰 비단 환","扇":"부채 선","圓":"둥글다 원","潔":"깨끗하다 결","銀":"은 은","燭":"초 촉","煒":"빛나다 위","煌":"빛나다 황","晝":"낮 주","眠":"잠자다 면","夕":"저녁 석","寐":"잠자다 매","籃":"바구니 람","筍":"죽순 순","象":"코끼리 상","牀":"평상 상","弦":"줄 현","歌":"노래 가","酒":"술 주","讌":"잔치 연","接":"사귀다 접","杯":"술잔 배","舉":"들다 거","觴":"술잔 상","矯":"바로잡다 교","手":"손 수","頓":"조아리다 돈","足":"발 족","悅":"기쁘다 열","豫":"미리 예","且":"또 차","康":"편안하다 강","嫡":"정실 적","後":"뒤 후","嗣":"대를 잇다 사","續":"잇다 속","祭":"제사 제","祀":"제사 사","烝":"김 오르다 증","嘗":"일찍이 상","稽":"상고하다 계","顙":"이마 상","再":"다시 재","拜":"절하다 배","悚":"두렵다 송","懼":"두려워하다 구","恐":"두렵다 공","惶":"두렵다 황","箋":"기록하다 전","牒":"나무판 첩","簡":"대쪽 간","要":"구하다 요","顧":"돌아보다 고","答":"대답하다 답","審":"살피다 심","詳":"자세하다 상","骸":"뼈 해","垢":"때 구","想":"생각하다 상","浴":"목욕하다 욕","執":"잡다 집","熱":"덥다 열","願":"원하다 원","涼":"서늘하다 량","驢":"나귀 여","騾":"노새 나","犢":"송아지 독","特":"남다르다 특","駭":"놀라다 해","躍":"뛰다 약","超":"뛰어넘다 초","驤":"달리다 양","誅":"베다 주","斬":"베다 참","賊":"도둑 적","盜":"도둑 도","捕":"잡다 포","獲":"얻다 획","叛":"배반하다 반","亡":"망하다 망","布":"베 포","射":"쏘다 사","遼":"멀다 요","丸":"알 환","嵇":"성씨 혜","琴":"거문고 금","阮":"성씨 완","嘯":"휘파람 소","恬":"고요하다 염","筆":"붓 필","倫":"인륜 륜","紙":"종이 지","鈞":"고르다 균","巧":"교묘하다 교","任":"맡기다 임","釣":"낚시 조","釋":"놓다 석","紛":"어지럽다 분","利":"이롭다 리","俗":"풍속 속","並":"아우르다 병","皆":"다 개","佳":"아름답다 가","妙":"묘하다 묘","毛":"털 모","施":"베풀다 시","淑":"맑다 숙","姿":"맵시 자","工":"장인 공","顰":"찡그리다 빈","妍":"아름답다 연","笑":"웃다 소","年":"해 년","矢":"화살 시","每":"각각 매","催":"재촉하다 최","曦":"햇빛 희","暉":"빛 휘","朗":"밝다 랑","耀":"빛나다 요","璇":"구슬 선","璣":"구슬 기","懸":"매달다 현","斡":"돌다 알","晦":"그믐 회","魄":"넋 백","環":"고리 환","照":"비치다 조","指":"가리키다 지","薪":"섶 신","脩":"마른 고기 수","祜":"복 호","永":"길다 영","綏":"편안하다 수","吉":"길하다 길","劭":"힘쓰다 소","矩":"곱자 구","步":"걷다 보","引":"끌다 인","領":"옷깃 령","俯":"숙이다 부","仰":"우러르다 앙","廊":"복도 랑","廟":"사당 묘","束":"묶다 속","帶":"띠 대","矜":"자랑하다 긍","莊":"씩씩하다 장","徘":"노닐다 배","徊":"노닐다 회","瞻":"보다 첨","眺":"바라보다 조","孤":"외롭다 고","陋":"더럽다 누","寡":"적다 과","聞":"듣다 문","愚":"어리석다 우","蒙":"어둡다 몽","等":"같다 등","誚":"꾸짖다 초","謂":"이르다 위","語":"말씀 어","助":"돕다 조","者":"놈 자","焉":"어찌 언","哉":"어조사 재","乎":"어조사 호","也":"어조사 야"};
+
+const HUN_EUM_OVR = {"天":"하늘 천","地":"땅 지","玄":"검을 현","黃":"누를 황","宇":"집 우","宙":"집 주","洪":"넓을 홍","荒":"거칠 황","日":"해 일","月":"달 월","盈":"찰 영","昃":"기울 측","辰":"별 진","宿":"잘 숙","列":"벌일 렬","張":"베풀 장"};
+
+const HINTS = {"天地玄黃":"하늘은 검고 땅은 누르다","宇宙洪荒":"우주는 넓고 거칠다","日月盈昃":"해와 달은 차고 기운다","辰宿列張":"별자리가 펼쳐져 있다","寒來暑往":"추위가 가면 더위가 온다","秋收冬藏":"가을에는 거두고 겨울에는 저장한다","閏餘成歲":"윤달의 남은 날까지 모여 한 해를 이룬다","律召調陽":"율려가 양기를 불러 계절의 조화를 이룬다","雲騰致雨":"구름이 올라 비를 이루고","露結爲霜":"이슬이 맺혀 서리가 된다","金生麗水":"금은 여수에서 나고","玉出崑岡":"옥은 곤강에서 난다","劍號巨闕":"명검의 이름은 거궐이라 하고","珠稱夜光":"구슬은 야광이라 일컫는다","果珍李柰":"과일로는 오얏과 능금이 귀하고","菜重芥薑":"채소로는 겨자와 생강을 중히 여긴다","海鹹河淡":"바다는 짜고 강물은 담담하며","鱗潛羽翔":"비늘 달린 것은 잠기고 깃 달린 것은 난다","龍師火帝":"용사와 화제의 시대가 있었고","鳥官人皇":"조관과 인황의 시대가 이어졌다","始制文字":"비로소 문자를 만들고","乃服衣裳":"이에 의복을 갖추어 입었다","推位讓國":"지위를 미루고 나라를 양보했으며","有虞陶唐":"유우씨와 도당씨가 이를 실천했다","弔民伐罪":"백성을 위로하고 죄 있는 이를 벌하니","周發殷湯":"주 무왕과 은 탕왕의 정치가 그러했다","坐朝問道":"조정에 앉아 도를 묻고","垂拱平章":"수고를 덜고도 천하를 바르게 다스렸다","愛育黎首":"백성을 사랑하고 길렀으며","臣伏戎羌":"신하와 이민족까지도 복종하였다","遐邇壹體":"멀고 가까운 곳이 한몸처럼 되었고","率賓歸王":"모두가 복종하여 왕에게 귀의하였다","鳴鳳在樹":"봉황이 나무에서 울고","白駒食場":"흰 망아지가 들에서 풀을 뜯으니","化被草木":"교화가 초목에까지 미치고","賴及萬方":"그 은택이 만방에 두루 미쳤다","蓋此身髮":"대저 이 몸과 머리카락은","四大五常":"사대와 오상의 이치로 이루어졌으니","恭惟鞠養":"부모의 길러 주심을 공경히 생각하여","豈敢毀傷":"어찌 감히 훼손하겠는가","女慕貞烈":"여자는 정절과 굳셈을 사모하고","男效才良":"남자는 재능과 선량함을 본받아야 한다","知過必改":"허물을 알면 반드시 고치고","得能莫忘":"배운 바와 재능을 얻었으면 잊지 말라","罔談彼短":"남의 단점을 함부로 말하지 말고","靡恃己長":"자기 장점만 믿고 뽐내지 말라","信使可覆":"믿음은 되풀이해도 변함이 없어야 한다","器欲難量":"그릇은 그 깊이를 헤아리기 어려워야 한다","墨悲絲淬":"먹은 실이 검게 물드는 것을 슬퍼하고","詩讚羔羊":"시경은 어린 양의 순함을 찬미한다","景行維賢":"큰 도를 걷는 것이 참된 어짊이다","克念作聖":"생각을 잘 다스리면 성인에 이른다","德建名立":"덕을 세우면 이름도 함께 선다","形端表正":"몸가짐이 바르면 겉모습도 바르다","空谷傳聲":"빈 골짜기에는 소리가 멀리 전해지고","虛堂習聽":"빈 집에서는 작은 소리도 익히 들린다","禍因惡積":"화는 악이 쌓여 생기고","福緣善慶":"복은 선행에서 비롯된다","尺璧非寶":"한 자 되는 구슬도 참된 보배가 아니요","寸陰是競":"짧은 시간 한순간이야말로 다투어 아껴야 한다","資父事君":"아버지를 섬기고 임금을 받들며","曰嚴與敬":"엄정함과 공경을 지켜야 한다","孝當竭力":"효도는 마땅히 힘을 다하고","忠則盡命":"충성은 목숨까지 다해야 한다","臨深履薄":"깊은 못에 임하고 엷은 얼음을 밟듯 삼가며","夙興溫凊":"이른 새벽에 일어나 부모의 기거를 살핀다","似蘭斯馨":"난초처럼 그 향기가 멀리 퍼지고","如松之盛":"소나무처럼 굳세고 무성해야 한다","川流不息":"내가 흐르듯 쉼이 없고","淵澄取映":"못이 맑아 만물을 비추듯 마음을 닦아야 한다","容止若思":"용모와 거동은 깊이 생각하는 듯하고","言辭安定":"말과 글은 차분하고 안정되어야 한다","篤初誠美":"처음을 돈독히 하면 참으로 아름답고","慎終宜令":"마침을 삼가면 마땅히 훌륭해진다","榮業所基":"영예로운 업적의 바탕이 되고","籍甚無竟":"큰 명성이 끝없이 이어진다","學優登仕":"학문이 뛰어나면 벼슬에 오르고","攝職從政":"직책을 맡아 정사를 행한다","存以甘棠":"남긴 은덕은 감당처럼 기억되고","去而益詠":"떠난 뒤에도 더욱 칭송된다","樂殊貴賤":"음악은 신분에 따라 차이가 있고","禮別尊卑":"예는 높고 낮음을 분별하게 한다","上和下睦":"윗사람과 아랫사람이 화목하고","夫唱婦隨":"남편이 이끌면 아내가 따른다","外受傅訓":"밖에서는 스승의 가르침을 받고","入奉母儀":"집에서는 어머니의 법도를 받든다","諸姑伯叔":"여러 고모와 백숙을 대할 때도","猶子比兒":"조카를 자식처럼 여겨야 하며","孔懷兄弟":"형제간 우애를 지극히 하고","同氣連枝":"한 기운에서 난 가지처럼 서로 잇는다","交友投分":"벗을 사귈 때는 뜻이 맞아야 하고","切磨箴規":"서로 갈고닦으며 바르게 경계한다","仁慈隱惻":"어질고 자비하며 측은한 마음을 가지고","造次弗離":"급한 때에도 그 마음을 놓지 않는다","節義廉退":"절개와 의리, 청렴과 겸양을 지키고","顛沛匪虧":"곤궁한 때에도 그 덕을 잃지 않는다","性靜情逸":"성품이 고요하면 마음이 한가롭고","心動神疲":"마음이 흔들리면 정신이 피로해진다","守眞志滿":"참됨을 지키면 뜻이 충만해지고","逐物意移":"사물을 좇으면 뜻이 쉬이 흔들린다","堅持雅操":"고아한 절조를 굳게 지키면","好爵自縻":"좋은 벼슬도 스스로를 얽매지 못한다","都邑華夏":"도읍은 화하의 중심에 있고","東西二京":"동경과 서경, 두 서울이 있으며","背邙面洛":"북으로 망산을 등지고 남으로 낙수를 바라보며","浮渭據涇":"위수에 기대고 경수를 끼고 있다","宮殿盤鬱":"궁전은 굽이치듯 웅장하고","樓觀飛驚":"누각은 날아오를 듯 빼어나다","圖寫禽獸":"새와 짐승을 그리고","畫彩仙靈":"신선과 영물을 채색해 그렸다","丙舍傍啟":"별궁들이 좌우로 열려 있고","甲帳對楹":"화려한 장막이 기둥마다 마주한다","肆筵設席":"잔치를 크게 벌여 자리를 펴고","鼓瑟吹笙":"비파를 타고 생황을 분다","升階納陛":"계단을 올라 전각에 들어가고","弁轉疑星":"관의 구슬이 돌아 별빛처럼 빛난다","右通廣內":"오른쪽으로 광내전에 통하고","左達承明":"왼쪽으로 승명전에 닿는다","既集墳典":"이미 삼황오제의 고전을 모았고","亦聚群英":"또한 많은 영재가 모여들었다","杜稾鍾隸":"두도의 초서와 종요의 예서를 익히고","漆書壁經":"옻칠 글씨와 벽경의 경전도 갖추었다","府羅將相":"관부에는 장수와 재상이 즐비하고","路俠槐卿":"길에는 삼공과 경대부가 오간다","戶封八縣":"집집마다 여덟 현의 식읍을 받고","家給千兵":"가문마다 천 명의 병사를 거느렸다","高冠陪輦":"높은 관을 쓰고 임금의 수레를 호위하며","驅轂振纓":"수레를 달리고 갓끈을 떨친다","世祿侈富":"대대로 녹을 받아 부유하고","車駕肥輕":"살찐 말이 가벼운 수레를 끈다","策功茂實":"공적을 기록한 내용이 성대하고 충실하여","勒碑刻銘":"비석에 새겨 이름을 남긴다","磻溪伊尹":"반계의 이윤이","佐時阿衡":"시대를 도와 재상의 직분을 다했고","奄宅曲阜":"문왕은 마침내 곡부를 차지하였으니","微旦孰營":"주공 단이 아니면 누가 경영하랴","桓公匡合":"제 환공이 제후를 바로잡아 모으고","濟弱扶傾":"약한 나라를 구하고 기운 나라를 도왔다","綺迴漢惠":"기리는 한 혜제를 바른 길로 돌렸고","說感武丁":"부열은 은 무정을 감동시켰다","俊乂密勿":"준수한 인재들이 힘써 일하니","多士寔寧":"많은 선비로 나라가 안정되었다","晉楚更霸":"진과 초가 번갈아 패권을 잡고","趙魏困橫":"조와 위는 횡행한 세력에 시달렸으며","假途滅虢":"길을 빌린 뒤 괵나라를 멸망시켰고","踐土會盟":"천토에서 제후가 모여 맹약했다","何遵約法":"소하는 간략한 법을 따랐고","韓弊煩刑":"한비의 엄한 형벌론은 폐단을 낳았다","起翦頗牧":"백기와 왕전, 염파와 이목은","用軍最精":"군사를 쓰는 데 가장 뛰어났고","宣威沙漠":"위엄을 사막까지 떨쳤으며","馳譽丹青":"명성이 역사 그림에 길이 남았다","九州禹跡":"구주는 우임금의 자취가 남은 땅이고","百郡秦并":"백 군현은 진나라가 통합한 영역이다","嶽宗恆岱":"큰 산으로는 항산과 태산을 으뜸으로 삼고","禪主云亭":"봉선 제사는 운산과 정산에서 지냈다","雁門紫塞":"안문과 자새가 험한 요새를 이루고","雞田赤城":"계전과 적성이 변방을 지킨다","昆池碣石":"곤명지와 갈석이 있으며","鉅野洞庭":"거야와 동정 같은 큰 못이 있다","曠遠緜邈":"광활하고 아득히 멀며","巖岫杳冥":"바위와 봉우리는 그윽하고 깊다","治本於農":"나라를 다스리는 근본은 농업에 있고","務茲稼穡":"마땅히 농사일에 힘써야 하며","俶載南畝":"비로소 남쪽 밭에 씨를 뿌려 경작하고","我藝黍稷":"내가 기장과 피를 심어 가꾼다","稅熟貢新":"곡식이 익으면 세를 거두고 햇곡식을 바친다","勸賞黜陟":"권장할 이는 상주고 그릇된 이는 물리치고 올린다","孟軻敦素":"맹자는 순박함을 돈독히 하였고","史魚秉直":"사어는 곧음을 굳게 지녔다","庶幾中庸":"거의 중용의 도에 이르렀고","勞謙謹敕":"부지런하고 겸손하며 삼가 힘쓴다","聆音察理":"말소리를 듣고 이치를 살피며","鑑貌辨色":"얼굴빛을 보고 뜻을 분별한다","貽厥嘉猷":"좋은 계책을 후대에 남기고","勉其祗植":"삼가 덕을 세우도록 힘쓴다","省躬譏誡":"몸을 살펴 스스로 경계하고","寵增抗極":"총애가 지나치면 교만이 극에 달하니","殆辱近恥":"위태로움과 치욕이 가까워진다","林皋幸即":"숲과 언덕으로 물러남을 다행으로 여기고","兩疏見機":"두 소씨는 기미를 보고 물러났다","解組誰逼":"인끈을 풀고 벼슬을 버리니 누가 억지로 시켰겠는가","索居閒處":"홀로 한가한 곳에 거처하며","沈默寂寥":"침묵 속에 고요히 지낸다","求古尋論":"옛일을 구하고 글을 탐구하며","散慮逍遙":"번민을 흩고 소요한다","欣奏累遣":"기쁜 일을 모아 펼치고 근심을 보내며","慼謝歡招":"슬픔은 물리치고 기쁨을 부른다","渠荷的歷":"도랑의 연꽃은 또렷하게 빛나고","園莽抽條":"동산의 풀숲은 새 가지를 뽑아 올린다","枇杷晚翠":"비파는 늦도록 푸르며","梧桐早凋":"오동은 일찍 시든다","陳根委翳":"묵은 뿌리는 쓰러져 가려지고","落葉飄颻":"낙엽은 흩날려 떠돈다","游鵾獨運":"큰 새는 홀로 날개를 펴고","凌摩絳霄":"붉은 하늘을 넘어 높이 난다","耽讀翫市":"독서를 즐기고 서책을 가까이하며","寓目囊箱":"주머니와 상자 속 책에도 눈을 둔다","易輶攸畏":"가벼운 일도 두려워해야 하며","屬耳垣牆":"담장 너머에도 귀가 있음을 경계하라","具膳餐飯":"반찬을 갖추어 밥을 먹고","適口充腸":"입에 맞게 배를 채운다","飽飫烹宰":"배부르면 진수성찬도 물리고","飢厭糟糠":"굶주리면 거친 음식도 달게 느낀다","親戚故舊":"친척과 오랜 벗 사이에도","老少異糧":"나이와 형편에 따라 음식이 다르다","妾御績紡":"여인들은 길쌈과 물레질을 하고","侍巾帷房":"수건과 휘장을 받들며 방을 지킨다","紈扇圓潔":"비단 부채는 둥글고 깨끗하며","銀燭煒煌":"은촛불은 밝고 찬란하다","晝眠夕寐":"낮에 쉬고 밤에 잠들며","籃筍象牀":"대자리와 상아 침상이 갖추어졌다","弦歌酒讌":"거문고와 노래, 술자리의 잔치가 있고","接杯舉觴":"잔을 주고받으며 술잔을 든다","矯手頓足":"손짓과 발짓을 크게 하며","悅豫且康":"즐겁고 화평하며 또한 편안하다","嫡後嗣續":"적자의 후손이 대를 잇고","祭祀烝嘗":"제사를 계절마다 받든다","稽顙再拜":"머리를 조아려 두 번 절하고","悚懼恐惶":"두렵고 공경하는 마음을 지닌다","箋牒簡要":"문서와 편지는 간결하고 요점 있게 하고","顧答審詳":"묻고 답함은 자세히 살핀다","骸垢想浴":"몸이 때 묻으면 목욕을 생각하고","執熱願涼":"더위를 만나면 서늘함을 원한다","驢騾犢特":"나귀와 노새, 송아지와 수소가 있고","駭躍超驤":"놀라 뛰고 달리며 치솟는다","誅斬賊盜":"도적과 반역은 베어 다스리고","捕獲叛亡":"반역자를 사로잡아 평정한다","布射遼丸":"여포의 활쏘기와 요동의 탄환 놀이는","嵇琴阮嘯":"혜강의 거문고와 완적의 휘파람과 함께","恬筆倫紙":"몽염의 붓과 채륜의 종이,","鈞巧任釣":"마균의 기교와 임공자의 낚시는","釋紛利俗":"어지러움을 풀고 세속에 이롭게 하니","並皆佳妙":"모두 훌륭하고 오묘하다","毛施淑姿":"모장과 서시는 아름다운 자태를 지녔고","工顰妍笑":"찡그림과 웃음마저도 곱게 보였다","年矢每催":"세월은 화살처럼 늘 재촉하고","曦暉朗耀":"햇빛은 밝고 찬란하게 비춘다","璇璣懸斡":"선기옥형이 하늘에 걸려 돌고","晦魄環照":"그믐과 초승달이 돌며 비춘다","指薪脩祜":"선행을 쌓아 복을 닦으면","永綏吉劭":"길하고 아름다운 복이 길이 편안하다","矩步引領":"법도에 맞게 걷고 고개를 바로 세우며","俯仰廊廟":"조정의 낭묘에서 굽히고 우러러 예를 갖춘다","束帶矜莊":"띠를 바르게 매고 단정히 삼가며","徘徊瞻眺":"오가며 둘러보고 멀리 바라본다","孤陋寡聞":"나는 고루하고 들은 바 적어","愚蒙等誚":"어리석다는 비웃음을 받기 쉽다","謂語助者":"이를 일러 어조를 돕는 글자라 하니","焉哉乎也":"언 재 호 야 같은 글자들이다"};
+
+const SECTIONS = [
+  [1,16,"천지와 자연 구간"],[17,36,"정치와 문물 구간"],[37,64,"수신과 덕행 구간"],
+  [65,96,"윤리와 교우 구간"],[97,128,"도읍과 궁궐 구간"],[129,160,"역사 인물 구간"],
+  [161,192,"농정과 수양 구간"],[193,224,"일상과 생활 구간"],[225,250,"마무리와 문법 구간"]
+];
+
+// ── STATE ───────────────────────────────────────────────────
+let gHist=[], gPos=-1, gMode='random', gCat=null, gPool=new Set();
+let gGroup='', gPreviewChar='';
+let gWriter=null, gAnimating=false, gPaused=false, gFinished=false;
+let gSpeed=60;
+
+// ── UTILS ───────────────────────────────────────────────────
+function fmtHunEum(ch){
+  if(HUN_EUM_OVR[ch]) return HUN_EUM_OVR[ch];
+  const h=HUNEUM[ch];
+  if(h){
+    let v=h.replace(/\[\[|\]\]|\{\{[^}]*\}\}|~~|''/g,' ').replace(/\s+/g,' ').trim();
+    return v||h;
+  }
+  const r=READINGS[ch];
+  return r?`한자 ${r}`:`한자 ${ch}`;
+}
+function meaning(he){const p=he.trim().split(/\s+/);return p.length>=2?p.slice(0,-1).join(' '):p[0]||''}
+function catFor(idx1){for(const[s,e,n]of SECTIONS)if(idx1>=s&&idx1<=e)return n;return '기타 구간'}
+function poolFor(){
+  if(!gCat)return new Set(GROUPS.map((_,i)=>i));
+  for(const[s,e,n]of SECTIONS)if(n===gCat){
+    const r=new Set();for(let i=s-1;i<e;i++)r.add(i);return r;
+  }
+  return new Set(GROUPS.map((_,i)=>i));
+}
+function speedParams(){
+  const r=gSpeed/100;
+  return{spd:0.3+r*2.7, delay:Math.round(700-r*600)};
+}
+
+// ── SOUND ────────────────────────────────────────────────────
+function playSound(type){
+  try{
+    const ac=new(window.AudioContext||window.webkitAudioContext)();
+    const g=ac.createGain();g.connect(ac.destination);
+    const o=ac.createOscillator();o.connect(g);
+    const t=ac.currentTime;
+    if(type==='start'){o.type='sine';o.frequency.setValueAtTime(440,t);o.frequency.linearRampToValueAtTime(880,t+.18);g.gain.setValueAtTime(.22,t);g.gain.exponentialRampToValueAtTime(.001,t+.25);o.start(t);o.stop(t+.25);}
+    else if(type==='nav'){o.type='triangle';o.frequency.setValueAtTime(700,t);o.frequency.exponentialRampToValueAtTime(350,t+.07);g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.08);o.start(t);o.stop(t+.1);}
+    else if(type==='char'){o.type='sine';o.frequency.setValueAtTime(1320,t);o.frequency.exponentialRampToValueAtTime(880,t+.12);g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.15);o.start(t);o.stop(t+.15);}
+    else if(type==='home'){o.type='sine';o.frequency.setValueAtTime(660,t);o.frequency.linearRampToValueAtTime(330,t+.18);g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.001,t+.22);o.start(t);o.stop(t+.22);}
+    else{o.type='sine';o.frequency.setValueAtTime(900,t);o.frequency.exponentialRampToValueAtTime(500,t+.06);g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.07);o.start(t);o.stop(t+.08);}
+    setTimeout(()=>{try{ac.close()}catch(e){}},400);
+  }catch(e){}
+}
+
+// ── NAVIGATION ──────────────────────────────────────────────
+function seqIndices(){return[...poolFor()].sort((a,b)=>a-b)}
+function fixSeqNav(idx){
+  const arr=seqIndices();const i=arr.indexOf(idx);
+  document.getElementById('hist-lbl').textContent=`${i+1}/${arr.length}`;
+  document.getElementById('btn-prev').disabled=(i<=0);
+  document.getElementById('btn-next').disabled=(i>=arr.length-1);
+}
+function resetPool(){gPool=poolFor()}
+function nextIdx(cur){
+  if(!gPool.size)return null;
+  let cands=[...gPool];
+  if(cur!==undefined&&cands.length>1)cands=cands.filter(i=>i!==cur);
+  let nx;
+  if(gMode==='sequential'){
+    cands.sort((a,b)=>a-b);
+    nx=cur===undefined?cands[0]:cands.find(i=>i>cur)??null;
+    if(nx===null)return null;
+  }else{
+    nx=cands[Math.floor(Math.random()*cands.length)];
+  }
+  gPool.delete(nx);return nx;
+}
+function showGroup(idx,dispIdx){
+  localStorage.setItem('last_viewed',idx+1);
+  if(typeof gMode!=='undefined')localStorage.setItem('last_mode',gMode);
+  const g=GROUPS[idx];gGroup=g;gPreviewChar='';
+  for(let i=0;i<4;i++){
+    const ch=g[i];
+    document.getElementById(`read${i}`).textContent=READINGS[ch]||'?';
+    document.getElementById(`char${i}`).textContent=ch;
+    document.getElementById(`mean${i}`).textContent='';
+    document.getElementById(`col${i}`).classList.remove('active');
+  }
+  document.getElementById('prev-guide').style.display='flex';
+  document.getElementById('prev-info').style.display='none';
+  document.getElementById('speed-ctrl').style.display='none';
+  clearStrokeBox();
+  document.getElementById('sentence').textContent=HINTS[g]||'해당 해설이 없음';
+  const n=dispIdx??idx+1;
+  const cat=catFor(n);
+  document.getElementById('cnt-idx').textContent=`<${n}번째 사자성어>`;
+  document.getElementById('cnt-cat').textContent=`[${cat.replace(' 구간','')} 구간]`;
+  document.getElementById('hist-lbl').textContent=`${gPos+1}/${gHist.length}`;
+  document.getElementById('btn-prev').disabled=gPos<=0;
+  document.getElementById('btn-next').disabled=(gMode==='sequential'&&idx>=GROUPS.length-1);
+}
+function goNext(init){
+  if(gMode==='sequential'){
+    const arr=seqIndices();if(!arr.length)return;
+    const cur=gPos>=0&&gHist.length?gHist[gPos]:undefined;
+    const curI=cur!==undefined?arr.indexOf(cur):-1;
+    const nextI=init?0:curI+1;
+    if(nextI>=arr.length){document.getElementById('btn-next').disabled=true;return;}
+    const nxt=arr[nextI];gHist=[nxt];gPos=0;showGroup(nxt);fixSeqNav(nxt);if(!init)saveSeqProgress(nxt);return;
+  }
+  if(!init&&gPos<gHist.length-1){gPos++;showGroup(gHist[gPos]);return}
+  const cur=gPos>=0?gHist[gPos]:undefined;
+  const nx=nextIdx(cur);
+  if(nx===null){
+    document.getElementById('btn-next').disabled=true;
+    const total=poolFor().size+gHist.length;
+    alert(`현재 구간의 모든 항목을 확인했습니다. (${total}/${total})`);return;
+  }
+  gHist.push(nx);gPos++;showGroup(nx);
+  if(!init)saveRandProgress();
+  if(init&&gPos===0)document.getElementById('btn-prev').disabled=true;
+}
+function goPrev(){
+  if(gMode==='sequential'){
+    const cur=gHist[gPos];const arr=seqIndices();const i=arr.indexOf(cur);
+    if(i<=0)return;
+    const prev=arr[i-1];gHist=[prev];gPos=0;showGroup(prev);fixSeqNav(prev);saveSeqLast(prev);return;
+  }
+  if(gPos<=0)return;gPos--;showGroup(gHist[gPos]);
+}
+function restart(){gHist=[];gPos=-1;resetPool();goNext(true)}
+function setMode(m){
+  gMode=m;
+  document.getElementById('btn-rand').className='btn '+(m==='random'?'btn-mode-on':'btn-mode-off');
+  document.getElementById('btn-seq').className='btn '+(m==='sequential'?'btn-mode-on':'btn-mode-off');
+  if(m==='sequential'&&gPos>=0&&gHist[gPos]>=GROUPS.length-1)
+    document.getElementById('btn-next').disabled=true;
+  else document.getElementById('btn-next').disabled=false;
+}
+function onIndexClick(){
+  const v=prompt('이동할 번호를 입력하세요 (1-250)');
+  if(!v)return;const t=parseInt(v,10);
+  if(isNaN(t)||t<1||t>250){alert('1~250 사이 숫자를 입력하세요');return}
+  gCat=null;const idx=t-1;
+  gHist=[idx];gPos=0;resetPool();gPool.delete(idx);
+  showGroup(idx,t);
+  if(gMode==='sequential')fixSeqNav(idx);
+}
+function onCatClick(e){
+  const dd=document.getElementById('cat-dd');
+  const r=e.target.getBoundingClientRect();
+  dd.style.top=(r.bottom+4)+'px';dd.style.left=r.left+'px';
+  dd.style.display='block';e.stopPropagation();
+}
+function setCategory(cat){gCat=cat;closeCatDd();restart()}
+function closeCatDd(){document.getElementById('cat-dd').style.display='none'}
+
+// ── CHAR CLICK ──────────────────────────────────────────────
+function onCharClick(i){
+  if(i>=gGroup.length)return;
+  const ch=gGroup[i];gPreviewChar=ch;
+  for(let j=0;j<4;j++)document.getElementById(`col${j}`).classList.toggle('active',j===i);
+  document.getElementById('prev-guide').style.display='none';
+  const pi=document.getElementById('prev-info');pi.style.display='flex';
+  document.getElementById('prev-huneum').textContent=fmtHunEum(ch);
+  document.getElementById('prev-char-big').textContent=ch;
+  for(let j=0;j<4;j++)document.getElementById(`mean${j}`).textContent=meaning(fmtHunEum(gGroup[j]));
+  showStroke(ch);
+}
+
+// ── STROKE ANIMATION ────────────────────────────────────────
+function clearStrokeBox(){
+  if(gWriter){try{gWriter.cancelAnimation()}catch(e){}gWriter=null}
+  gAnimating=gPaused=gFinished=false;
+  const box=document.getElementById('stroke-box');
+  box.innerHTML='<div class="stroke-ph" id="stroke-ph">획순 보여주기</div>';
+  document.getElementById('speed-ctrl').style.display='none';
+}
+function showStroke(ch){
+  clearStrokeBox();
+  const box=document.getElementById('stroke-box');
+  box.innerHTML='';
+  const w=Math.max(box.offsetWidth||0,160),h=Math.max(box.offsetHeight||0,160);
+  const {spd,delay}=speedParams();
+  try{
+    gWriter=HanziWriter.create(box,ch,{
+      width:w,height:h,padding:18,
+      showOutline:true,showCharacter:false,
+      strokeColor:'#25343e',outlineColor:'#d3e1e3',
+      strokeAnimationSpeed:spd,delayBetweenStrokes:delay,
+      onLoadCharDataSuccess:()=>{
+        gAnimating=true;gPaused=false;gFinished=false;
+        document.getElementById('speed-ctrl').style.display='flex';
+        updAnimBtns();
+        gWriter.animateCharacter({onComplete:()=>{gAnimating=false;gFinished=true;updAnimBtns()}});
+      },
+      onLoadCharDataError:()=>{
+        box.innerHTML='<div class="stroke-ph">획순 데이터를 불러올 수 없습니다</div>';
+      }
+    });
+  }catch(e){box.innerHTML='<div class="stroke-ph">획순 표시 오류</div>'}
+}
+function updAnimBtns(){
+  const bp=document.getElementById('btn-pause'),bpl=document.getElementById('btn-play');
+  if(gFinished||gPaused){bp.style.display='none';bpl.style.display='';bpl.disabled=false}
+  else{bp.style.display='';bpl.style.display='none';bp.disabled=false}
+}
+function pauseAnim(){if(!gWriter)return;gWriter.pauseAnimation();gPaused=true;updAnimBtns()}
+function playAnim(){
+  if(!gWriter)return;
+  if(gPaused){
+    // 멈췄던 위치에서 이어서 재생
+    gPaused=false;gAnimating=true;updAnimBtns();
+    gWriter.resumeAnimation();
+  } else {
+    // 완료 후 처음부터 다시 재생
+    gFinished=false;gAnimating=true;updAnimBtns();
+    gWriter.animateCharacter({onComplete:()=>{gAnimating=false;gFinished=true;updAnimBtns()}});
+  }
+}
+function onSpeedChange(v){
+  gSpeed=+v;
+  document.getElementById('speed-val').textContent=gSpeed<34?'느림':gSpeed<67?'보통':'빠름';
+}
+
+// ── TRACE ───────────────────────────────────────────────────
+let tDrawing=false,tLx=0,tLy=0,tCtx=null;
+function openTrace(){
+  if(!gPreviewChar){alert('먼저 상단 한자를 클릭해 주세요');return}
+  const ch=gPreviewChar,he=fmtHunEum(ch);
+  document.getElementById('trace-title').textContent=`${ch} (${he})`;
+  const guide=document.getElementById('trace-guide');
+  guide.textContent=ch;
+  guide.style.visibility='';
+  document.getElementById('btn-trace-guide').textContent='배경 한자 숨기기';
+  document.getElementById('trace-modal').classList.add('show');
+  setTimeout(initTraceCanvas,60);
+}
+function closeTrace(){document.getElementById('trace-modal').classList.remove('show')}
+function initTraceCanvas(){
+  const wrap=document.getElementById('trace-wrap'),cvs=document.getElementById('trace-canvas');
+  cvs.width=wrap.clientWidth;cvs.height=wrap.clientHeight;
+  tCtx=cvs.getContext('2d');
+  const sz=Math.round(Math.min(cvs.width,cvs.height)*0.72);
+  document.getElementById('trace-guide').style.fontSize=Math.min(sz,240)+'px';
+  tCtx.clearRect(0,0,cvs.width,cvs.height);
+}
+function eraseTrace(){
+  if(tCtx)tCtx.clearRect(0,0,tCtx.canvas.width,tCtx.canvas.height);
+}
+function clearTrace(){
+  const guide=document.getElementById('trace-guide');
+  const btn=document.getElementById('btn-trace-guide');
+  const hiding=guide.style.visibility!=='hidden';
+  guide.style.visibility=hiding?'hidden':'';
+  btn.textContent=hiding?'배경 한자 보이기':'배경 한자 숨기기';
+}
+function setupTrace(){
+  const cvs=document.getElementById('trace-canvas');
+  const pos=(e,touch)=>{const r=cvs.getBoundingClientRect();return touch?[touch.clientX-r.left,touch.clientY-r.top]:[e.clientX-r.left,e.clientY-r.top]};
+  const draw=(x,y)=>{if(!tCtx)return;tCtx.beginPath();tCtx.moveTo(tLx,tLy);tCtx.lineTo(x,y);tCtx.strokeStyle='#1f2f3a';tCtx.lineWidth=6;tCtx.lineCap='round';tCtx.lineJoin='round';tCtx.stroke();tLx=x;tLy=y};
+  cvs.addEventListener('mousedown',e=>{tDrawing=true;[tLx,tLy]=pos(e)});
+  cvs.addEventListener('mousemove',e=>{if(!tDrawing)return;const[x,y]=pos(e);draw(x,y)});
+  cvs.addEventListener('mouseup',()=>tDrawing=false);
+  cvs.addEventListener('mouseleave',()=>tDrawing=false);
+  cvs.addEventListener('touchstart',e=>{e.preventDefault();tDrawing=true;[tLx,tLy]=pos(e,e.touches[0])},{passive:false});
+  cvs.addEventListener('touchmove',e=>{e.preventDefault();if(!tDrawing)return;const[x,y]=pos(e,e.touches[0]);draw(x,y)},{passive:false});
+  cvs.addEventListener('touchend',()=>tDrawing=false);
+}
+
+// ── HOME ─────────────────────────────────────────────────────
+function goHome(){
+  const ms=document.getElementById('main-screen'),ss=document.getElementById('start-screen');
+  ms.style.opacity='0';
+  setTimeout(()=>{
+    ms.style.display='none';
+    // 현재 설정을 시작화면에 반영
+    document.querySelector(`input[name="learn-mode"][value="${gMode}"]`).checked=true;
+    document.getElementById('sc-cat').value=gCat||'';
+    ss.style.opacity='0';ss.style.display='';
+    setTimeout(()=>{ss.style.opacity='1'},20);
+  },220);
+}
+
+// ── START ────────────────────────────────────────────────────
+function startApp(){
+  const modeEl=document.querySelector('input[name="learn-mode"]:checked');
+  gMode=modeEl?modeEl.value:'random';
+  gCat=document.getElementById('sc-cat').value||null;
+  // 모드 버튼 초기 상태 반영
+  document.getElementById('btn-rand').className='btn '+(gMode==='random'?'btn-mode-on':'btn-mode-off');
+  document.getElementById('btn-seq').className='btn '+(gMode==='sequential'?'btn-mode-on':'btn-mode-off');
+  // 화면 전환
+  const ss=document.getElementById('start-screen'),ms=document.getElementById('main-screen');
+  ss.style.opacity='0';
+  setTimeout(()=>{ss.style.display='none';ms.style.display='';ms.style.opacity='0';setTimeout(()=>{ms.style.opacity='1'},20)},220);
+  resetPool();goNext(true);
+}
+
+// ── PROGRESS ─────────────────────────────────────────────────
+function loadProg(){
+  return{seqCount:+(localStorage.getItem('seq_count')||0),seqLast:+(localStorage.getItem('seq_last')||0),randCount:+(localStorage.getItem('rand_count')||0),lastViewed:+(localStorage.getItem('last_viewed')||0),lastMode:localStorage.getItem('last_mode')||''};
+}
+function saveSeqProgress(idx){
+  const p=loadProg();
+  localStorage.setItem('seq_count',p.seqCount+1);
+  localStorage.setItem('seq_last',idx+1);
+}
+function saveSeqLast(idx){localStorage.setItem('seq_last',idx+1);}
+function saveRandProgress(){localStorage.setItem('rand_count',loadProg().randCount+1);}
+function showProgress(){
+  const p=loadProg();
+  document.getElementById('prog-seq-count').textContent=p.seqCount+'회';
+  const pct=Math.min(p.seqCount/1000*100,100).toFixed(1);
+  document.getElementById('prog-bar-fill').style.width=pct+'%';
+  document.getElementById('prog-bar-lbl').textContent=p.seqCount;
+  const modeLabel=p.lastMode==='random'?'랜덤하게':p.lastMode==='sequential'?'순차적으로':'';
+  document.getElementById('prog-last-mode').textContent=modeLabel;
+  document.getElementById('prog-last-viewed').textContent=p.lastViewed>0?p.lastViewed+'번째':'없음';
+  document.getElementById('prog-rand-count').textContent=p.randCount+'회';
+  document.getElementById('btn-continue').disabled=(p.lastViewed<=0);
+  const ss=document.getElementById('start-screen'),ps=document.getElementById('prog-screen');
+  ss.style.opacity='0';
+  setTimeout(()=>{ss.style.display='none';ps.style.display='';ps.style.opacity='0';setTimeout(()=>{ps.style.opacity='1'},20);},220);
+}
+function goBackToStart(){
+  const ps=document.getElementById('prog-screen'),ss=document.getElementById('start-screen');
+  ps.style.opacity='0';
+  setTimeout(()=>{ps.style.display='none';ss.style.display='';ss.style.opacity='0';setTimeout(()=>{ss.style.opacity='1'},20);},220);
+}
+function continueLearn(){
+  const p=loadProg();if(p.lastViewed<=0)return;
+  const mode=p.lastMode||'sequential';
+  gMode=mode;
+  document.querySelector(`input[name="learn-mode"][value="${mode}"]`).checked=true;
+  document.getElementById('btn-rand').className='btn '+(mode==='random'?'btn-mode-on':'btn-mode-off');
+  document.getElementById('btn-seq').className='btn '+(mode==='sequential'?'btn-mode-on':'btn-mode-off');
+  gCat=document.getElementById('sc-cat').value||null;
+  const ps=document.getElementById('prog-screen');
+  const ss=ps.style.display!=='none'?ps:document.getElementById('start-screen');
+  const ms=document.getElementById('main-screen');
+  ss.style.opacity='0';
+  setTimeout(()=>{
+    ss.style.display='none';ms.style.display='';ms.style.opacity='0';
+    setTimeout(()=>{ms.style.opacity='1'},20);
+  },220);
+  resetPool();
+  const idx=p.lastViewed-1;
+  gHist=[idx];gPos=0;showGroup(idx);
+  if(mode==='sequential')fixSeqNav(idx);
+  else document.getElementById('hist-lbl').textContent='1/1';
+}
+
+// ── SERVICE WORKER ──────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js');
+  });
+}
+
+// ── INIT ────────────────────────────────────────────────────
+setupTrace();
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#cat-dd')&&!e.target.closest('#cnt-cat'))closeCatDd();
+});
+document.addEventListener('click',function(e){
+  const el=e.target.closest('button,.char-col,.dd-item,.counter-index,.counter-cat');
+  if(!el)return;
+  if(el.classList.contains('char-col'))playSound('char');
+  else if(el.classList.contains('sc-start-btn'))playSound('start');
+  else if(el.classList.contains('sc-exit-btn')||el.classList.contains('btn-dark'))playSound('home');
+  else if(el.id==='btn-prev'||el.id==='btn-next')playSound('nav');
+  else playSound('click');
+});
+window.addEventListener('resize',()=>{
+  if(document.getElementById('trace-modal').classList.contains('show'))initTraceCanvas();
+});
+</script>
+</body>
+</html>

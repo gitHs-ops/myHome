@@ -1,6 +1,102 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+  <meta charset="UTF-8">
+  <title>데일리 브리핑</title>
+  <style>
+    body {
+      background: #181828;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+    .briefing-card {
+      background: #221c36;
+      border-radius: 24px;
+      box-shadow: 0 8px 40px #000a;
+      padding: 36px 32px 28px 32px;
+      width: 420px;
+      max-width: 95vw;
+      color: #ede9fe;
+    }
+    .briefing-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: #c4b5fd;
+      letter-spacing: 0.01em;
+    }
+    .briefing-section {
+      background: #1a1530;
+      border-radius: 16px;
+      margin-bottom: 18px;
+      padding: 18px 20px;
+      min-height: 70px;
+    }
+    .briefing-label {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #fcd34d;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .briefing-content {
+      font-size: 2.1rem;
+      color: #ede9fe;
+      min-height: 32px;
+      margin-bottom: 6px;
+      letter-spacing: 0.1em;
+    }
+    .briefing-sub {
+      font-size: 0.92rem;
+      color: #a89cc8;
+      margin-bottom: 2px;
+    }
+    .briefing-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .briefing-chip {
+      background: #2a2342;
+      border-radius: 8px;
+      padding: 4px 12px;
+      font-size: 0.92rem;
+      color: #fcd34d;
+      border: 1px solid #fcd34d22;
+    }
+  </style>
+</head>
+<body>
+  <div class="briefing-card">
+    <div class="briefing-title">📑 데일리 브리핑 <span style="font-size:0.95rem;color:#a89cc8;">2026.03.24 (화)</span></div>
+    <div class="briefing-section">
+      <div class="briefing-label">🌤️ 포항시 날씨</div>
+      <div class="briefing-content">_ _ ° --</div>
+      <div class="briefing-row">
+        <div class="briefing-chip">최고 --°</div>
+        <div class="briefing-chip">최저 --°</div>
+        <div class="briefing-chip">강수 --%</div>
+        <div class="briefing-chip">바람 --</div>
+      </div>
+    </div>
+    <div class="briefing-section">
+      <div class="briefing-label">📈 증시 현황</div>
+      <div class="briefing-sub">전일 마감 기준</div>
+    </div>
+    <div class="briefing-section">
+      <div class="briefing-label">🌐 주요 이슈</div>
+      <div class="briefing-sub">오늘의 뉴스</div>
+    </div>
+  </div>
+</body>
+</html>
+ 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI 자동화 서비스 · 김현수</title>
@@ -26,7 +122,105 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
 body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background-image:radial-gradient(circle,rgba(167,139,250,.05) 1px,transparent 1px);
   background-size:32px 32px;}
-
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>데일리 브리핑</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #181828;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+    .briefing-card {
+      background: #221c36;
+      border-radius: 24px;
+      box-shadow: 0 8px 40px #000a;
+      padding: 36px 32px 28px 32px;
+      width: 420px;
+      max-width: 95vw;
+      color: #ede9fe;
+    }
+    .briefing-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: #c4b5fd;
+      letter-spacing: 0.01em;
+    }
+    .briefing-section {
+      background: #1a1530;
+      border-radius: 16px;
+      margin-bottom: 18px;
+      padding: 18px 20px;
+      min-height: 70px;
+    }
+    .briefing-label {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #fcd34d;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .briefing-content {
+      font-size: 2.1rem;
+      color: #ede9fe;
+      min-height: 32px;
+      margin-bottom: 6px;
+      letter-spacing: 0.1em;
+    }
+    .briefing-sub {
+      font-size: 0.92rem;
+      color: #a89cc8;
+      margin-bottom: 2px;
+    }
+    .briefing-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .briefing-chip {
+      background: #2a2342;
+      border-radius: 8px;
+      padding: 4px 12px;
+      font-size: 0.92rem;
+      color: #fcd34d;
+      border: 1px solid #fcd34d22;
+    }
+  </style>
+</head>
+<body>
+  <div class="briefing-card">
+    <div class="briefing-title">📑 데일리 브리핑 <span style="font-size:0.95rem;color:#a89cc8;">2026.03.24 (화)</span></div>
+    <div class="briefing-section">
+      <div class="briefing-label">🌤️ 포항시 날씨</div>
+      <div class="briefing-content">_ _ ° --</div>
+      <div class="briefing-row">
+        <div class="briefing-chip">최고 --°</div>
+        <div class="briefing-chip">최저 --°</div>
+        <div class="briefing-chip">강수 --%</div>
+        <div class="briefing-chip">바람 --</div>
+      </div>
+    </div>
+    <div class="briefing-section">
+      <div class="briefing-label">📈 증시 현황</div>
+      <div class="briefing-sub">전일 마감 기준</div>
+    </div>
+    <div class="briefing-section">
+      <div class="briefing-label">🌐 주요 이슈</div>
+      <div class="briefing-sub">오늘의 뉴스</div>
+    </div>
+  </div>
+</body>
+</html>
 nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(15,12,26,.75);
   backdrop-filter:blur(16px);border-bottom:1px solid var(--border2);padding:0 5%;height:64px;
   display:flex;align-items:center;justify-content:space-between;}

@@ -1,0 +1,19 @@
+{
+  "name": "읽고쓰는 천자문",
+  "short_name": "천자문",
+  "description": "천자문 한자 학습 앱 - 250 사자성어, 획순 애니메이션, 따라쓰기",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#086266",
+  "theme_color": "#0b6f70",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
