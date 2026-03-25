@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>전기철도기사 문제은행 — CBT 모의고사</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f4ff;--surface:#fff;--surface2:#f7f9ff;
+  --border:#dde3f5;--primary:#2c4fd4;--primary-light:#eef1ff;
+  --accent:#0aad8e;--warn:#f59e0b;--danger:#ef4444;--success:#16a34a;
+  --text:#0d1b3e;--sub:#3d4f7c;--muted:#8090b8;
+  --mono:'DM Mono',monospace;--sans:'Noto Sans KR',sans-serif;
+  --shadow:0 2px 16px rgba(44,79,212,.09);
+  --shadow-lg:0 8px 40px rgba(44,79,212,.14);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;}
+
+/* ── HEADER ── */
+.site-header{
+  background:var(--primary);padding:18px 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 2px 20px rgba(44,79,212,.3);position:sticky;top:0;z-index:100;
+}
+.header-left{display:flex;align-items:center;gap:14px;}
+.header-icon{width:42px;height:42px;border-radius:11px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:1.3rem;}
+.header-title{color:#fff;font-size:1.05rem;font-weight:800;letter-spacing:-.01em;}
+.header-sub{color:rgba(255,255,255,.6);font-size:.72rem;font-family:var(--mono);}
+.header-badge{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:5px 14px;color:rgba(255,255,255,.88);font-size:.72rem;font-family:var(--mono);display:flex;align-items:center;gap:7px;}
+.hb-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── START SCREEN ── */
+.start-wrap{max-width:680px;margin:36px auto;padding:0 20px 60px;}
+.start-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px 36px;box-shadow:var(--shadow-lg);animation:cardIn .45s ease;}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.start-hero{text-align:center;margin-bottom:32px;}
+.start-emoji{font-size:3.2rem;margin-bottom:14px;}
+.start-title{font-size:1.65rem;font-weight:900;letter-spacing:-.02em;margin-bottom:8px;}
+.start-desc{font-size:.88rem;color:var(--sub);line-height:1.8;}
+
+/* ── SETTINGS ── */
+.settings-section{margin-bottom:28px;}
+.settings-title{font-size:.72rem;font-family:var(--mono);color:var(--primary);letter-spacing:.12em;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+
+/* 문항 수 콤보박스 */
+.combo-row{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap;}
+.combo-label{font-size:.85rem;font-weight:700;color:var(--text);min-width:80px;}
+.combo-select{
+  appearance:none;-webkit-appearance:none;
+  background:var(--surface2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238090b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+  border:1.5px solid var(--border);border-radius:10px;
+  padding:10px 38px 10px 16px;font-family:var(--sans);font-size:.9rem;
+  font-weight:700;color:var(--text);cursor:pointer;
+  transition:border-color .15s,box-shadow .15s;min-width:160px;
+}
+.combo-select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(44,79,212,.12);}
+.combo-hint{font-size:.75rem;color:var(--muted);font-family:var(--mono);}
+
+/* 시간 표시 */
+.time-preview{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--primary-light);border:1px solid rgba(44,79,212,.2);
+  border-radius:8px;padding:6px 14px;
+  font-size:.8rem;font-weight:700;color:var(--primary);font-family:var(--mono);
+}
+
+/* 과목 선택 체크박스 */
+.subject-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.subject-check{
+  display:flex;align-items:center;gap:10px;
+  padding:13px 16px;border:1.5px solid var(--border);border-radius:11px;
+  cursor:pointer;background:var(--surface2);transition:all .15s;
+  user-select:none;
+}
+.subject-check:hover{border-color:var(--primary);background:var(--primary-light);}
+.subject-check.active{border-color:var(--primary);background:var(--primary-light);}
+.subject-check input[type=checkbox]{display:none;}
+.check-box{
+  width:20px;height:20px;border-radius:6px;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:all .15s;background:#fff;
+}
+.subject-check.active .check-box{background:var(--primary);border-color:var(--primary);}
+.check-icon{color:#fff;font-size:.75rem;display:none;}
+.subject-check.active .check-icon{display:block;}
+.check-info{}
+.check-name{font-size:.82rem;font-weight:700;color:var(--text);}
+.check-count{font-size:.68rem;color:var(--muted);font-family:var(--mono);margin-top:2px;}
+.subject-pill{
+  font-size:.6rem;padding:2px 7px;border-radius:4px;font-weight:700;
+  font-family:var(--mono);margin-left:auto;flex-shrink:0;
+}
+.sp1{background:rgba(44,79,212,.1);color:var(--primary);}
+.sp2{background:rgba(10,173,142,.1);color:var(--accent);}
+.sp3{background:rgba(139,92,246,.1);color:#7c3aed;}
+.sp4{background:rgba(245,158,11,.1);color:#d97706;}
+
+/* 선택 요약 */
+.summary-bar{
+  background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+  padding:12px 16px;margin-top:16px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
+}
+.summary-text{font-size:.8rem;color:var(--sub);}
+.summary-text strong{color:var(--primary);}
+.summary-warn{font-size:.75rem;color:var(--danger);display:none;}
+
+.btn-start{
+  width:100%;background:linear-gradient(135deg,var(--primary),#1e3ab8);
+  color:#fff;border:none;border-radius:12px;
+  padding:15px;font-family:var(--sans);font-size:1rem;font-weight:800;
+  cursor:pointer;box-shadow:0 4px 20px rgba(44,79,212,.3);
+  transition:transform .15s,box-shadow .2s,opacity .15s;margin-top:24px;
+}
+.btn-start:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(44,79,212,.4);}
+.btn-start:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+/* ── QUIZ AREA ── */
+.quiz-header{
+  background:var(--surface);border-bottom:1px solid var(--border);
+  padding:10px 40px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+.quiz-meta{display:flex;gap:18px;align-items:center;flex-wrap:wrap;}
+.qm-item{font-size:.78rem;color:var(--sub);display:flex;align-items:center;gap:5px;}
+.qm-item strong{color:var(--primary);font-weight:700;}
+.timer-box{display:flex;align-items:center;gap:8px;}
+.timer-label{font-size:.72rem;color:var(--muted);font-family:var(--mono);}
+.timer{font-family:var(--mono);font-size:1.25rem;font-weight:700;color:var(--primary);letter-spacing:.05em;}
+.timer.warn{color:var(--warn);}
+.timer.danger{color:var(--danger);animation:tblink .6s infinite;}
+@keyframes tblink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.progress-wrap{padding:10px 40px 0;background:var(--surface);border-bottom:1px solid var(--border);}
+.progress-info{display:flex;justify-content:space-between;margin-bottom:6px;}
+.progress-label{font-size:.72rem;color:var(--muted);font-family:var(--mono);}
+.progress-count{font-size:.72rem;font-weight:700;color:var(--primary);font-family:var(--mono);}
+.progress-bar{height:5px;background:var(--border);border-radius:999px;overflow:hidden;margin-bottom:0;}
+.progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--primary),var(--accent));transition:width .4s cubic-bezier(.4,0,.2,1);width:0%;}
+
+/* ── QUESTIONS ── */
+.q-main{padding:22px 40px 60px;max-width:900px;margin:0 auto;}
+.controls{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:16px 22px;margin-bottom:20px;box-shadow:var(--shadow);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+.controls-btns{display:flex;gap:9px;flex-wrap:wrap;}
+.btn-primary{background:var(--primary);color:#fff;border:none;border-radius:9px;padding:9px 22px;font-family:var(--sans);font-size:.85rem;font-weight:700;cursor:pointer;box-shadow:0 2px 12px rgba(44,79,212,.25);transition:opacity .15s,transform .1s;}
+.btn-primary:hover{opacity:.88;transform:translateY(-1px);}
+.btn-secondary{background:transparent;border:1.5px solid var(--border);border-radius:9px;padding:8px 18px;font-family:var(--sans);font-size:.85rem;font-weight:600;color:var(--sub);cursor:pointer;transition:all .15s;}
+.btn-secondary:hover{border-color:var(--primary);color:var(--primary);}
+.btn-ghost{background:rgba(239,68,68,.06);border:1.5px solid #fca5a5;border-radius:9px;padding:8px 18px;font-family:var(--sans);font-size:.85rem;font-weight:600;color:var(--danger);cursor:pointer;transition:all .15s;}
+.btn-ghost:hover{background:rgba(239,68,68,.12);}
+
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px 28px;margin-bottom:16px;box-shadow:var(--shadow);transition:border-color .2s;animation:cardIn .35s ease both;}
+.q-card.answered{border-left:4px solid var(--primary);}
+.q-card.correct{border-left:4px solid var(--success);background:#f0fdf4;}
+.q-card.wrong{border-left:4px solid var(--danger);background:#fff5f5;}
+
+.q-header{display:flex;align-items:flex-start;gap:13px;margin-bottom:16px;}
+.q-num{flex-shrink:0;width:32px;height:32px;border-radius:8px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.82rem;font-weight:700;color:var(--primary);}
+.q-num.cn-correct{background:#dcfce7;color:var(--success);}
+.q-num.cn-wrong{background:#fee2e2;color:var(--danger);}
+.q-meta-row{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:7px;}
+.q-subj{font-size:.63rem;font-family:var(--mono);font-weight:700;padding:2px 8px;border-radius:4px;}
+.qs1{background:rgba(44,79,212,.1);color:var(--primary);}
+.qs2{background:rgba(10,173,142,.1);color:var(--accent);}
+.qs3{background:rgba(139,92,246,.1);color:#7c3aed;}
+.qs4{background:rgba(245,158,11,.1);color:#d97706;}
+.q-year{font-size:.63rem;color:var(--muted);font-family:var(--mono);}
+.q-text{font-size:.93rem;line-height:1.75;font-weight:500;}
+
+.options{display:flex;flex-direction:column;gap:8px;margin-top:16px;}
+.option{display:flex;align-items:flex-start;gap:11px;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;transition:all .15s;background:var(--surface2);font-size:.86rem;line-height:1.6;color:var(--sub);}
+.option:hover{border-color:var(--primary);color:var(--text);background:var(--primary-light);}
+.option.selected{border-color:var(--primary);background:var(--primary-light);color:var(--primary);font-weight:600;}
+.option.opt-correct{border-color:var(--success)!important;background:#dcfce7!important;color:var(--success)!important;font-weight:700;}
+.option.opt-wrong{border-color:var(--danger)!important;background:#fee2e2!important;color:var(--danger)!important;}
+.option.opt-show{border-color:var(--success)!important;background:#dcfce7!important;color:var(--success)!important;font-weight:700;}
+.opt-lbl{flex-shrink:0;width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.72rem;font-weight:700;background:rgba(44,79,212,.08);color:var(--primary);transition:all .15s;}
+.option.selected .opt-lbl{background:var(--primary);color:#fff;}
+.option.opt-correct .opt-lbl,.option.opt-show .opt-lbl{background:var(--success);color:#fff;}
+.option.opt-wrong .opt-lbl{background:var(--danger);color:#fff;}
+
+.q-footer{display:flex;align-items:center;justify-content:space-between;margin-top:14px;gap:8px;}
+.btn-exp{background:transparent;border:1px solid var(--border);border-radius:7px;padding:5px 12px;font-family:var(--sans);font-size:.74rem;color:var(--muted);cursor:pointer;transition:all .15s;}
+.btn-exp:hover{border-color:var(--primary);color:var(--primary);}
+.q-badge{font-size:.72rem;font-family:var(--mono);font-weight:700;padding:3px 10px;border-radius:5px;display:none;}
+.q-badge.bc{display:inline-block;background:#dcfce7;color:var(--success);}
+.q-badge.bw{display:inline-block;background:#fee2e2;color:var(--danger);}
+.explanation{margin-top:12px;padding:13px 15px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;font-size:.81rem;line-height:1.78;color:var(--sub);display:none;}
+.explanation.show{display:block;animation:fadeIn .25s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.exp-head{font-weight:700;color:var(--primary);margin-bottom:5px;font-size:.72rem;font-family:var(--mono);}
+
+/* ── RESULT MODAL ── */
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(13,27,62,.5);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;animation:fadeIn .2s ease;}
+.result-modal{background:var(--surface);border-radius:20px;width:100%;max-width:500px;box-shadow:0 32px 80px rgba(0,0,0,.2);animation:slideUp .28s ease;overflow:hidden;}
+@keyframes slideUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+.result-head{background:linear-gradient(135deg,var(--primary),#1a36b0);padding:28px 28px 24px;text-align:center;color:#fff;}
+.r-circle{width:88px;height:88px;border-radius:50%;background:rgba(255,255,255,.14);border:3px solid rgba(255,255,255,.28);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 14px;}
+.r-score{font-size:1.9rem;font-weight:900;font-family:var(--mono);}
+.r-score-lbl{font-size:.62rem;opacity:.65;}
+.r-title{font-size:1.1rem;font-weight:800;margin-bottom:5px;}
+.r-sub{font-size:.8rem;opacity:.72;}
+.result-body{padding:24px 28px;}
+.r-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.r-stat{text-align:center;padding:14px 8px;background:var(--surface2);border:1px solid var(--border);border-radius:11px;}
+.r-stat-val{font-size:1.4rem;font-weight:900;font-family:var(--mono);}
+.rv-c{color:var(--success);}.rv-w{color:var(--danger);}.rv-s{color:var(--warn);}
+.r-stat-lbl{font-size:.7rem;color:var(--muted);margin-top:3px;}
+.r-grade{text-align:center;padding:12px;border-radius:10px;font-weight:800;font-size:.92rem;margin-bottom:18px;}
+.rg-pass{background:#dcfce7;color:var(--success);border:1px solid #86efac;}
+.rg-fail{background:#fee2e2;color:var(--danger);border:1px solid #fca5a5;}
+.r-btns{display:flex;gap:10px;}
+.r-btns .btn-primary,.r-btns .btn-secondary{flex:1;padding:11px;}
+
+.hidden{display:none!important;}
+
+@media(max-width:680px){
+  .site-header,.quiz-header,.progress-wrap,.q-main{padding-left:16px;padding-right:16px;}
+  .start-card{padding:28px 18px;}
+  .subject-grid{grid-template-columns:1fr;}
+  .controls{flex-direction:column;}
+  .r-stats{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="site-header">
+  <div class="header-left">
+    <div class="header-icon">🚄</div>
+    <div>
+      <div class="header-title">전기철도(산업)기사 문제은행</div>
+      <div class="header-sub">Electric Railway Engineer CBT</div>
+    </div>
+  </div>
+  <div class="header-badge"><span class="hb-dot"></span>기출 기반 모의고사</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     START SCREEN
+══════════════════════════════════════ -->
+<div class="start-wrap" id="startScreen">
+  <div class="start-card">
+    <div class="start-hero">
+      <div class="start-emoji">🚆</div>
+      <div class="start-title">전기철도기사 CBT 모의고사</div>
+      <p class="start-desc">문항 수와 과목을 선택하고 원하는 구성으로 시험을 시작하세요.<br>기출문제를 랜덤으로 출제합니다.</p>
+    </div>
+
+    <!-- 문항 수 선택 -->
+    <div class="settings-section">
+      <div class="settings-title">// 01. 문항 수 선택</div>
+      <div class="combo-row">
+        <div class="combo-label">📋 문항 수</div>
+        <select class="combo-select" id="qCountSelect" onchange="onSettingChange()">
+          <option value="5">5 문항</option>
+          <option value="10">10 문항</option>
+          <option value="15">15 문항</option>
+          <option value="20" selected>20 문항</option>
+          <option value="25">25 문항</option>
+          <option value="30">30 문항</option>
+        </select>
+        <div id="timePreview" class="time-preview">⏱ 제한시간: 20:00</div>
+      </div>
+      <div class="combo-hint">// 문항당 배점 5점 · 60점 이상 합격</div>
+    </div>
+
+    <!-- 과목 선택 -->
+    <div class="settings-section">
+      <div class="settings-title">// 02. 과목 선택 (복수 선택 가능)</div>
+      <div class="subject-grid" id="subjectGrid">
+        <label class="subject-check active" id="sc-1" onclick="toggleSubject(1)">
+          <input type="checkbox" checked>
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="check-info">
+            <div class="check-name">전기철도공학</div>
+            <div class="check-count" id="cnt-1">0문항 보유</div>
+          </div>
+          <span class="subject-pill sp1">1과목</span>
+        </label>
+        <label class="subject-check active" id="sc-2" onclick="toggleSubject(2)">
+          <input type="checkbox" checked>
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="check-info">
+            <div class="check-name">전기철도구조물공학</div>
+            <div class="check-count" id="cnt-2">0문항 보유</div>
+          </div>
+          <span class="subject-pill sp2">2과목</span>
+        </label>
+        <label class="subject-check active" id="sc-3" onclick="toggleSubject(3)">
+          <input type="checkbox" checked>
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="check-info">
+            <div class="check-name">전기자기학</div>
+            <div class="check-count" id="cnt-3">0문항 보유</div>
+          </div>
+          <span class="subject-pill sp3">3과목</span>
+        </label>
+        <label class="subject-check active" id="sc-4" onclick="toggleSubject(4)">
+          <input type="checkbox" checked>
+          <div class="check-box"><span class="check-icon">✓</span></div>
+          <div class="check-info">
+            <div class="check-name">전력공학</div>
+            <div class="check-count" id="cnt-4">0문항 보유</div>
+          </div>
+          <span class="subject-pill sp4">4과목</span>
+        </label>
+      </div>
+
+      <!-- 선택 요약 -->
+      <div class="summary-bar">
+        <div class="summary-text" id="summaryText">전체 <strong>30</strong>문항 중 <strong>20</strong>문항 출제</div>
+        <div class="summary-warn" id="summaryWarn">⚠ 선택 과목의 문항이 부족합니다</div>
+      </div>
+    </div>
+
+    <button class="btn-start" id="btnStart" onclick="startQuiz()">모의고사 시작하기 →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     QUIZ AREA
+══════════════════════════════════════ -->
+<div id="quizArea" class="hidden">
+  <!-- 퀴즈 상단 메타 -->
+  <div class="quiz-header">
+    <div class="quiz-meta">
+      <div class="qm-item">📋 <strong id="qhCount">20</strong>문항</div>
+      <div class="qm-item">✅ 합격 <strong>60점</strong></div>
+      <div class="qm-item" id="qhSubjects" style="font-size:.72rem;color:var(--muted);font-family:var(--mono);"></div>
+    </div>
+    <div class="timer-box">
+      <span class="timer-label">남은시간</span>
+      <span class="timer" id="timer">20:00</span>
+    </div>
+  </div>
+
+  <!-- 진행률 -->
+  <div class="progress-wrap">
+    <div class="progress-info">
+      <span class="progress-label">// 진행률</span>
+      <span class="progress-count" id="progressCount">0 / 20</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- 문제 목록 -->
+  <div class="q-main">
+    <div class="controls">
+      <div class="controls-btns">
+        <button class="btn-primary" onclick="submitQuiz()">채점하기</button>
+        <button class="btn-secondary" onclick="showAllAnswers()">정답 보기</button>
+        <button class="btn-ghost" onclick="resetQuiz()">처음으로</button>
+      </div>
+    </div>
+    <div id="questionList"></div>
+  </div>
+</div>
+
+<!-- ── RESULT MODAL ── -->
+<div class="modal-overlay" id="resultModal">
+  <div class="result-modal">
+    <div class="result-head">
+      <div class="r-circle">
+        <div class="r-score" id="rScore">0</div>
+        <div class="r-score-lbl">점</div>
+      </div>
+      <div class="r-title" id="rTitle">결과</div>
+      <div class="r-sub" id="rSub"></div>
+    </div>
+    <div class="result-body">
+      <div class="r-stats">
+        <div class="r-stat"><div class="r-stat-val rv-c" id="rCorrect">0</div><div class="r-stat-lbl">정답</div></div>
+        <div class="r-stat"><div class="r-stat-val rv-w" id="rWrong">0</div><div class="r-stat-lbl">오답</div></div>
+        <div class="r-stat"><div class="r-stat-val rv-s" id="rSkip">0</div><div class="r-stat-lbl">미응답</div></div>
+      </div>
+      <div class="r-grade" id="rGrade"></div>
+      <div class="r-btns">
+        <button class="btn-primary" onclick="closeResult()">결과 확인</button>
+        <button class="btn-secondary" onclick="resetQuiz()">다시 풀기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// 전기철도기사 문제은행
+// 출처: kinz.kr 공개 기출 (2019~2021) + 재구성
+// ═══════════════════════════════════════════════════════
+const ALL_QUESTIONS = [
+  // ──────────────────────────────────────────
+  // 1과목: 전기철도공학 (12문항)
+  // ──────────────────────────────────────────
+  {id:1,s:1,yr:"2021",
+   q:"곡선부에서 차량이 외측으로 넘어지는 것을 막기 위해 외측 레일을 내측 레일보다 높게 부설한 고저차를 무엇이라 하는가?",
+   o:["캔트","슬랙","구배","확장"],a:0,
+   exp:"캔트(Cant)는 곡선부에서 외측 레일을 높게 하여 원심력과 중력의 합력이 수직방향이 되도록 하는 것으로, 차량 전복을 방지합니다."},
+  {id:2,s:1,yr:"2021",
+   q:"두 금속의 상대 전위차로부터 알 수 있는 것은?",
+   o:["부하의 정도","부식의 정도","전류의 정도","저항의 정도"],a:1,
+   exp:"두 금속 간 상대 전위차(전위 서열)를 통해 어느 금속이 산화(부식)되기 쉬운지 파악할 수 있습니다. 전위가 낮은 금속이 양극이 되어 부식이 진행됩니다."},
+  {id:3,s:1,yr:"2021",
+   q:"순환전류의 경로로 볼 수 없는 것은?",
+   o:["급전분기장치","M-T 균압선","보호선","조가선"],a:3,
+   exp:"순환전류의 경로는 급전분기장치, M-T 균압선, 보호선 등입니다. 조가선(전차선을 매달기 위한 선)은 순환전류 경로에 포함되지 않습니다."},
+  {id:4,s:1,yr:"2021",
+   q:"열차저항의 분류에 들어가지 않는 것은?",
+   o:["주행저항","곡선저항","출발저항","누설저항"],a:3,
+   exp:"열차저항은 주행저항, 곡선저항, 구배저항, 출발저항, 가속저항으로 분류됩니다. 누설저항은 전기적 개념으로 열차저항 분류에 포함되지 않습니다."},
+  {id:5,s:1,yr:"2021",
+   q:"이선(離線)에 따른 장애방지 대책이 아닌 것은?",
+   o:["전차선의 높이를 높게 한다.","전차선로의 경점을 작게 한다.","내마모성이 우수한 재료를 사용한다.","2대의 팬터그래프를 1조로 하여 운행한다."],a:0,
+   exp:"이선 방지 대책으로는 경점 감소, 내마모성 재료 사용, 복수 팬터그래프 운행이 있습니다. 전차선 높이를 높게 하는 것은 오히려 이선 가능성을 높입니다."},
+  {id:6,s:1,yr:"2021",
+   q:"가공전차선의 편위는 직선구간에서 좌우 몇 mm를 표준으로 하는가?",
+   o:["100","200","300","400"],a:1,
+   exp:"전차선 편위는 팬터그래프 집전판의 균일한 마모를 위해 전주마다 교대로 편위를 줍니다. 직선구간 표준 편위는 좌우 200mm입니다."},
+  {id:7,s:1,yr:"2021",
+   q:"흡상변압기(BT)의 주요 역할은?",
+   o:["전압강하를 보상한다.","역률을 개선시킨다.","전차선의 절연을 향상시킨다.","통신유도장애를 경감한다."],a:3,
+   exp:"흡상변압기(Booster Transformer)는 귀선전류를 레일에서 부급전선으로 흐르게 하여 통신선에 대한 전자유도장애를 경감합니다."},
+  {id:8,s:1,yr:"2021",
+   q:"전기철도의 표준전압이 아닌 것은?",
+   o:["직류 750V","교류단상 25000V","직류 1500V","교류단상 50000V"],a:3,
+   exp:"전기철도 표준전압은 DC 750V(도시철도), DC 1500V, AC 25000V입니다. 교류 50000V는 전기철도 표준전압이 아닙니다."},
+  {id:9,s:1,yr:"2020",
+   q:"직류전기철도에서 귀선용 레일의 전위에 대한 설명으로 틀린 것은?",
+   o:["부하전류가 작을수록 높아진다.","레일의 고유저항이 클수록 높아진다.","레일의 대지 절연저항이 클수록 높아진다.","부하점과 변전소간 거리가 멀수록 높아진다."],a:0,
+   exp:"레일 전위는 부하전류가 클수록 높아집니다. 부하전류가 작을수록 레일 전위는 낮아지므로 ①번은 틀린 설명입니다."},
+  {id:10,s:1,yr:"2020",
+   q:"금속체가 레일에 대해 높은 전위에 있을 때만 전류를 유출시키는 전식 방지 방식은?",
+   o:["직류 배류 방식","선택 배류 방식","강제 배류 방식","간접 배류 방식"],a:1,
+   exp:"선택 배류 방식은 다이오드를 이용해 금속체가 레일보다 전위가 높을 때만 전류를 배류하여 전식을 방지합니다. 가장 널리 사용됩니다."},
+  {id:11,s:1,yr:"2020",
+   q:"교류 전기철도 변전소에서 사용되는 재폐로 계전기 번호는?",
+   o:["21F","51F","79F","99F"],a:2,
+   exp:"계전기 번호 체계에서 79는 재폐로(Reclosing) 계전기, 21은 거리계전기, 51은 과전류 시한계전기입니다."},
+  {id:12,s:1,yr:"2020",
+   q:"가공 급전선(케이블 제외)의 인장하중 안전율은?",
+   o:["2.0","2.2","2.5","3.0"],a:2,
+   exp:"가공 급전선의 인장하중에 대한 안전율은 2.5 이상으로 규정되어 있습니다."},
+
+  // ──────────────────────────────────────────
+  // 2과목: 전기철도구조물공학 (10문항)
+  // ──────────────────────────────────────────
+  {id:13,s:2,yr:"2021",
+   q:"지선과 전주 사이의 표준 취부각도는 45°이다. 최소 취부각도는?",
+   o:["25°","30°","35°","40°"],a:1,
+   exp:"지선의 표준 취부각도는 45°이며, 부지 사정에 의해 부득이한 경우 최소 30°까지 허용됩니다."},
+  {id:14,s:2,yr:"2021",
+   q:"힘의 3요소는?",
+   o:["면적, 방향, 작용점","크기, 방향, 작용점","부피, 방향, 작용점","밀도, 방향, 작용점"],a:1,
+   exp:"힘의 3요소는 크기(magnitude), 방향(direction), 작용점(point of application)입니다."},
+  {id:15,s:2,yr:"2021",
+   q:"철주의 기초 시공 후 상부주체를 볼트로 체결하는 시공 방식은?",
+   o:["직 매입","핀(Pin) 매입","앵카볼트 매입","근계 매입"],a:2,
+   exp:"앵카볼트 매입 방식은 기초에 앵카볼트를 미리 매설하고 상부 철주를 볼트로 체결하는 방식으로, 시공 정밀도가 높습니다."},
+  {id:16,s:2,yr:"2020",
+   q:"전주에 취부하여 급전선, 부급전선, 보호선 등을 지지하는 구조물은?",
+   o:["전주 대용물","하수강","완철","평형틀"],a:2,
+   exp:"완철(腕鐵, Cross-arm)은 전주에 수평으로 설치하여 각종 전선류를 지지하는 구조물입니다."},
+  {id:17,s:2,yr:"2020",
+   q:"도로를 횡단하여 시설하는 지선의 높이는 지표상 몇 m 이상으로 하는가?",
+   o:["5","6","7","8"],a:1,
+   exp:"도로를 횡단하는 지선은 차량 통행에 지장 없도록 지표상 6m 이상 확보해야 합니다."},
+  {id:18,s:2,yr:"2020",
+   q:"탄성계수 E와 변형률 ε의 관계는?",
+   o:["E와 ε는 비례","E와 ε는 반비례","E는 ε의 제곱에 비례","E는 ε의 제곱에 반비례"],a:1,
+   exp:"훅의 법칙 σ=Eε에서 응력이 일정하면 탄성계수 E와 변형률 ε는 반비례합니다."},
+  {id:19,s:2,yr:"2021",
+   q:"탄성한도 내에서 인장응력이 2배가 되면 단위체적의 탄성 에너지는?",
+   o:["1/2배","2배","1/4배","4배"],a:3,
+   exp:"탄성 에너지 u = σ²/(2E) 이므로, 응력이 2배가 되면 탄성 에너지는 2²=4배가 됩니다."},
+  {id:20,s:2,yr:"2020",
+   q:"지선의 취부각도가 30°이고 전선 최대장력이 1000kgf일 때 지선이 받는 최대장력(kgf)은?",
+   o:["2000","1000","860","500"],a:0,
+   exp:"지선장력 T = F/sin(θ) = 1000/sin(30°) = 1000/0.5 = 2000kgf입니다."},
+  {id:21,s:2,yr:"2020",
+   q:"조합철주에서 복경사재인 경우 수평면에 대한 경사각도는?",
+   o:["30°","45°","60°","65°"],a:1,
+   exp:"조합철주의 복경사재는 수평면에 대해 45° 경사로 설치합니다."},
+  {id:22,s:2,yr:"2021",
+   q:"단순보에 모멘트 하중이 작용할 때의 설명으로 틀린 것은?",
+   o:["양 지점의 반력은 모멘트 작용위치에 관계없다.","전단력도 면적의 대수합은 휨모멘트도 종거와 같다.","모멘트 작용 위치에서 좌우 휨모멘트 값이 다르다.","전단력 계산에 모멘트 하중은 제외된다."],a:0,
+   exp:"단순보에 모멘트 하중이 작용할 때 지점 반력의 크기는 모멘트의 작용 위치에 따라 달라집니다. ①번은 틀린 설명입니다."},
+
+  // ──────────────────────────────────────────
+  // 3과목: 전기자기학 (4문항)
+  // ──────────────────────────────────────────
+  {id:23,s:3,yr:"재구성",
+   q:"평행판 콘덴서에서 두 판 사이의 거리를 2배로 늘리면 정전용량은?",
+   o:["2배가 된다.","1/2배가 된다.","4배가 된다.","변하지 않는다."],a:1,
+   exp:"평행판 콘덴서의 정전용량 C = εA/d 이므로, 거리 d가 2배가 되면 C는 1/2배가 됩니다."},
+  {id:24,s:3,yr:"재구성",
+   q:"자기장 내에서 전류가 흐르는 도체에 작용하는 힘의 방향을 결정하는 법칙은?",
+   o:["플레밍의 왼손 법칙","플레밍의 오른손 법칙","앙페르의 법칙","패러데이의 법칙"],a:0,
+   exp:"모터 원리에 해당하는 전자력(전류를 받는 도체에 작용하는 힘)의 방향은 플레밍의 왼손 법칙으로 결정합니다. 오른손 법칙은 발전기(유도기전력 방향)에 사용됩니다."},
+  {id:25,s:3,yr:"재구성",
+   q:"비오-사바르 법칙으로 구할 수 있는 것은?",
+   o:["전계의 세기","자계의 세기","유전율","투자율"],a:1,
+   exp:"비오-사바르(Biot-Savart) 법칙은 전류 요소에 의해 임의 점에 발생하는 자계(자기장)의 세기를 계산하는 법칙입니다."},
+  {id:26,s:3,yr:"재구성",
+   q:"정전계에서 전위(V)와 전계(E)의 관계로 올바른 것은?",
+   o:["E = V/d (d: 거리)","E = -dV/dl","E = V × d","E = dV/dl"],a:1,
+   exp:"전계는 전위의 공간적 변화율로 E = -dV/dl (전위 기울기의 음수)입니다. 음의 부호는 전계가 전위가 낮아지는 방향을 나타냅니다."},
+
+  // ──────────────────────────────────────────
+  // 4과목: 전력공학 (4문항)
+  // ──────────────────────────────────────────
+  {id:27,s:4,yr:"재구성",
+   q:"전력계통에서 중성점 접지 방식의 목적이 아닌 것은?",
+   o:["이상전압 발생 억제","보호계전기 동작의 확실성","지락 시 건전상 전위 상승 억제","선로 임피던스 감소"],a:3,
+   exp:"중성점 접지의 목적은 이상전압 억제, 보호계전기 동작 확실성, 건전상 전위 상승 억제 등입니다. 선로 임피던스 감소는 중성점 접지와 관련 없습니다."},
+  {id:28,s:4,yr:"재구성",
+   q:"전력 계통에서 사용되는 차단기의 주요 역할은?",
+   o:["전압을 변성한다.","부하전류 및 고장전류를 차단한다.","전력 역률을 개선한다.","고조파를 제거한다."],a:1,
+   exp:"차단기(Circuit Breaker)는 정상 부하전류뿐만 아니라 단락·지락 등 고장 시 대전류를 안전하게 차단하는 것이 주요 역할입니다."},
+  {id:29,s:4,yr:"재구성",
+   q:"송전선로에서 코로나(Corona) 현상이 발생하는 주요 원인은?",
+   o:["선로 임피던스 증가","전선 주변 공기의 절연 파괴","지락전류 발생","변압기 과열"],a:1,
+   exp:"코로나 현상은 전선 주변의 전계가 공기 절연 내력(약 30kV/cm)을 초과할 때 공기가 부분 방전·이온화되는 현상입니다."},
+  {id:30,s:4,yr:"재구성",
+   q:"전력계통의 안정도 향상 대책이 아닌 것은?",
+   o:["직렬 콘덴서 설치","고속도 재폐로 방식 채용","선로 리액턴스 증가","자동 전압 조정기 사용"],a:2,
+   exp:"전력 계통 안정도 향상 대책으로는 직렬 콘덴서(리액턴스 보상), 고속도 재폐로, AVR 사용 등이 있습니다. 선로 리액턴스를 증가시키면 안정도가 악화됩니다."},
+];
+
+// ══════════════════════════════════════════
+// 상태
+// ══════════════════════════════════════════
+let selectedSubjects = new Set([1,2,3,4]);
+let selectedCount    = 20;
+let activeQuestions  = [];
+let userAnswers      = {};
+let timerInterval    = null;
+let secondsLeft      = 0;
+let submitted        = false;
+
+// ── 초기화 ──────────────────────────────
+function init(){
+  // 과목별 문항 수 표시
+  [1,2,3,4].forEach(s=>{
+    document.getElementById(`cnt-${s}`).textContent =
+      ALL_QUESTIONS.filter(q=>q.s===s).length + '문항 보유';
+  });
+  updateSummary();
+}
+
+// ── 과목 토글 ────────────────────────────
+function toggleSubject(s){
+  event.preventDefault();
+  if(selectedSubjects.has(s)){
+    if(selectedSubjects.size===1) return; // 최소 1개
+    selectedSubjects.delete(s);
+    document.getElementById(`sc-${s}`).classList.remove('active');
+  } else {
+    selectedSubjects.add(s);
+    document.getElementById(`sc-${s}`).classList.add('active');
+  }
+  updateSummary();
+}
+
+// ── 설정 변경 ────────────────────────────
+function onSettingChange(){
+  selectedCount = parseInt(document.getElementById('qCountSelect').value);
+  const mins = Math.round(selectedCount * 1.5);
+  const mm = String(mins).padStart(2,'0');
+  document.getElementById('timePreview').textContent = `⏱ 제한시간: ${mm}:00`;
+  updateSummary();
+}
+
+function updateSummary(){
+  const pool = ALL_QUESTIONS.filter(q=>selectedSubjects.has(q.s));
+  const available = pool.length;
+  const want = selectedCount;
+  const ok = available >= want;
+  const summaryText = document.getElementById('summaryText');
+  const summaryWarn = document.getElementById('summaryWarn');
+  const btnStart    = document.getElementById('btnStart');
+  summaryText.innerHTML = `선택 과목 <strong>${available}</strong>문항 중 <strong>${Math.min(want,available)}</strong>문항 출제`;
+  summaryWarn.style.display = ok ? 'none' : 'block';
+  summaryWarn.textContent = `⚠ 선택 과목 보유 문항(${available}개)이 요청 문항(${want}개)보다 부족합니다`;
+  btnStart.disabled = available === 0;
+}
+
+// ── 시작 ─────────────────────────────────
+function startQuiz(){
+  const pool = ALL_QUESTIONS.filter(q=>selectedSubjects.has(q.s));
+  // 랜덤 셔플 후 n개 추출
+  const shuffled = [...pool].sort(()=>Math.random()-.5);
+  activeQuestions = shuffled.slice(0, Math.min(selectedCount, pool.length));
+  userAnswers = {};
+  submitted   = false;
+
+  // 상단 메타 업데이트
+  document.getElementById('qhCount').textContent = activeQuestions.length;
+  const subjNames = {1:'전기철도공학',2:'구조물공학',3:'전기자기학',4:'전력공학'};
+  const subjList = [...selectedSubjects].sort().map(s=>subjNames[s]).join(' · ');
+  document.getElementById('qhSubjects').textContent = subjList;
+
+  // 타이머
+  const mins = Math.round(activeQuestions.length * 1.5);
+  secondsLeft = mins * 60;
+  document.getElementById('timer').textContent = `${String(mins).padStart(2,'0')}:00`;
+
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('quizArea').classList.remove('hidden');
+  renderQuestions();
+  startTimer();
+}
+
+// ── 문제 렌더링 ──────────────────────────
+const SUBJ_CLASS = {1:'qs1',2:'qs2',3:'qs3',4:'qs4'};
+const SUBJ_NAME  = {1:'1과목 전기철도공학',2:'2과목 전기철도구조물공학',3:'3과목 전기자기학',4:'4과목 전력공학'};
+const OPT_LABEL  = ['①','②','③','④'];
+
+function renderQuestions(){
+  const container = document.getElementById('questionList');
+  container.innerHTML = '';
+  activeQuestions.forEach((q,idx)=>{
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = `qcard-${idx}`;
+    card.style.animationDelay = `${idx*0.04}s`;
+    card.innerHTML = `
+      <div class="q-header">
+        <div class="q-num" id="qnum-${idx}">${idx+1}</div>
+        <div style="flex:1">
+          <div class="q-meta-row">
+            <span class="q-subj ${SUBJ_CLASS[q.s]}">${SUBJ_NAME[q.s]}</span>
+            <span class="q-year">${q.yr}년 기출</span>
+          </div>
+          <div class="q-text">${q.q}</div>
+        </div>
+      </div>
+      <div class="options" id="opts-${idx}">
+        ${q.o.map((opt,i)=>`
+          <div class="option" id="opt-${idx}-${i}" onclick="selectAnswer(${idx},${i})">
+            <div class="opt-lbl">${OPT_LABEL[i]}</div>
+            <div class="opt-text">${opt}</div>
+          </div>`).join('')}
+      </div>
+      <div class="q-footer">
+        <button class="btn-exp" onclick="toggleExp(${idx})">해설 보기 ▾</button>
+        <span class="q-badge" id="badge-${idx}"></span>
+      </div>
+      <div class="explanation" id="exp-${idx}">
+        <div class="exp-head">// 해설</div>${q.exp}
+      </div>`;
+    container.appendChild(card);
+  });
+  updateProgress();
+}
+
+// ── 답 선택 ──────────────────────────────
+function selectAnswer(idx, optIdx){
+  if(submitted) return;
+  userAnswers[idx] = optIdx;
+  activeQuestions[idx].o.forEach((_,i)=>{
+    document.getElementById(`opt-${idx}-${i}`).className =
+      'option' + (i===optIdx?' selected':'');
+  });
+  document.getElementById(`qcard-${idx}`).classList.add('answered');
+  updateProgress();
+}
+
+function updateProgress(){
+  const done = Object.keys(userAnswers).length;
+  const total = activeQuestions.length;
+  document.getElementById('progressCount').textContent = `${done} / ${total}`;
+  document.getElementById('progressFill').style.width = (done/total*100)+'%';
+}
+
+function toggleExp(idx){
+  const el = document.getElementById(`exp-${idx}`);
+  el.classList.toggle('show');
+  const btn = el.previousElementSibling.querySelector('.btn-exp');
+  btn.textContent = el.classList.contains('show') ? '해설 닫기 ▴' : '해설 보기 ▾';
+}
+
+// ── 채점 ─────────────────────────────────
+function submitQuiz(){
+  if(submitted) return;
+  submitted = true;
+  clearInterval(timerInterval);
+  let correct=0,wrong=0,skip=0;
+  activeQuestions.forEach((q,idx)=>{
+    const ua = userAnswers[idx];
+    const card  = document.getElementById(`qcard-${idx}`);
+    const numEl = document.getElementById(`qnum-${idx}`);
+    const badge = document.getElementById(`badge-${idx}`);
+    document.getElementById(`exp-${idx}`).classList.add('show');
+    if(ua === undefined){
+      skip++;
+    } else if(ua === q.a){
+      correct++;
+      card.classList.remove('answered','wrong');
+      card.classList.add('correct');
+      numEl.classList.add('cn-correct');
+      badge.className='q-badge bc'; badge.textContent='✓ 정답';
+    } else {
+      wrong++;
+      card.classList.remove('answered','correct');
+      card.classList.add('wrong');
+      numEl.classList.add('cn-wrong');
+      badge.className='q-badge bw'; badge.textContent='✗ 오답';
+    }
+    q.o.forEach((_,i)=>{
+      const opt = document.getElementById(`opt-${idx}-${i}`);
+      opt.classList.remove('selected','opt-correct','opt-wrong','opt-show');
+      if(i===q.a) opt.classList.add('opt-show');
+      if(ua!==undefined && i===ua && ua!==q.a) opt.classList.add('opt-wrong');
+    });
+  });
+  const total = activeQuestions.length;
+  const score = Math.round(correct/total*100);
+  document.getElementById('rScore').textContent = score;
+  document.getElementById('rCorrect').textContent = correct;
+  document.getElementById('rWrong').textContent   = wrong;
+  document.getElementById('rSkip').textContent    = skip;
+  const pass = score >= 60;
+  document.getElementById('rTitle').textContent = pass ? '🎉 합격!' : '😢 불합격';
+  document.getElementById('rSub').textContent   = `${total}문항 중 ${correct}문항 정답`;
+  const gradeEl = document.getElementById('rGrade');
+  gradeEl.className = 'r-grade ' + (pass?'rg-pass':'rg-fail');
+  gradeEl.textContent = pass
+    ? '✅ 합격 기준(60점) 이상입니다!'
+    : `❌ 합격까지 ${60-score}점 부족합니다. 오답을 확인하세요.`;
+  document.getElementById('resultModal').classList.add('open');
+}
+
+function showAllAnswers(){
+  submitted = true;
+  clearInterval(timerInterval);
+  activeQuestions.forEach((q,idx)=>{
+    document.getElementById(`exp-${idx}`).classList.add('show');
+    q.o.forEach((_,i)=>{
+      const opt = document.getElementById(`opt-${idx}-${i}`);
+      if(i===q.a) opt.classList.add('opt-show');
+      const ua = userAnswers[idx];
+      if(ua!==undefined && i===ua && ua!==q.a) opt.classList.add('opt-wrong');
+    });
+  });
+}
+
+function closeResult(){ document.getElementById('resultModal').classList.remove('open'); }
+function resetQuiz(){
+  clearInterval(timerInterval);
+  submitted = false; userAnswers = {}; activeQuestions = [];
+  document.getElementById('resultModal').classList.remove('open');
+  document.getElementById('quizArea').classList.add('hidden');
+  document.getElementById('startScreen').classList.remove('hidden');
+  document.getElementById('questionList').innerHTML = '';
+}
+
+// ── 타이머 ───────────────────────────────
+function startTimer(){
+  updateTimerDisplay();
+  timerInterval = setInterval(()=>{
+    secondsLeft--;
+    updateTimerDisplay();
+    if(secondsLeft<=0){ clearInterval(timerInterval); submitQuiz(); }
+  },1000);
+}
+function updateTimerDisplay(){
+  const m = String(Math.floor(secondsLeft/60)).padStart(2,'0');
+  const s = String(secondsLeft%60).padStart(2,'0');
+  const el = document.getElementById('timer');
+  el.textContent = `${m}:${s}`;
+  el.className = 'timer';
+  if(secondsLeft<=60) el.classList.add('danger');
+  else if(secondsLeft<=300) el.classList.add('warn');
+}
+
+// ── 시작 ─────────────────────────────────
+init();
+</script>
+</body>
+</html>
